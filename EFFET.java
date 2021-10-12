@@ -1,0 +1,4 @@
+
+public enum EFFET {
+	BRULURE, GEL, PARALYSIE, POISON, SOMMEIL;
+}
