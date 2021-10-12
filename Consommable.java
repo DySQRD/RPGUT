@@ -1,27 +1,66 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
-public class Consommable extends Objet {
+public abstract class Consommable implements BDTable {
 	/**
-	 * Nombre d'utilisations restantes de l'objet.
-	 * S'il est null, nombre d'utilisations infini.
+	 * Identifiant de l'instance du consommable dans la BD.
+	 */
+	private int id;
+	/**
+	 * Nombre d'utilisations restantes de l'objet.<br>
+	 * S'il est null, nombre d'utilisations infini.<br>
 	 * S'il est inferieur a 0, il ne disparait pas mais est inutilisable.
 	 */
-	private int nbUtilisations;
+	private int durabilite;
 	
+	private static ArrayList<String> noms = null;
+	private static ArrayList<Integer> durabilites = null;
+	private static ArrayList<ArrayList<EFFET>> effets = null;
 	
-	public Consommable(int nbUtilisations) {
-		setNbUtilisations(nbUtilisations);
-	}
+	//EFFET.valueOf(res.getString(0)); a utiliser
 	
 	public void utiliser() {
-		//code incomplet ici
-		setNbUtilisations(getNbUtilisations() - 1);
+		ArrayList<EFFET> e = effets.get(this.id);
+		for(int i = 0; i < effets.size(); i++) {
+			activer(effets.get(i)); //A SE METTRE D'ACCORD ICI SUR COMMENT ACTIVER LES EFFETS
+		}
+	}
+	
+	/*
+	 * Getters et setters des instances de consommables.
+	 */
+	
+	public int getId() {
+		return id;
 	}
 
-	public int getNbUtilisations() {
-		return nbUtilisations;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public void setNbUtilisations(int nbUtilisations) {
-		this.nbUtilisations = nbUtilisations;
+	public int getDurabilite() {
+		return durabilite;
 	}
+
+	public void setDurabilite(int durabilite) {
+		this.durabilite = durabilite;
+	}
+	
+	/*
+	 * Getters pour les données STATIQUES de la BD.
+	 */
+	
+	public static ArrayList<String> getNoms() {
+		return noms;
+	}
+	public static ArrayList<Integer> getDurabilites() {
+		return durabilites;
+	}
+
+	public static ArrayList<ArrayList<EFFET>> getEffets() {
+		return effets;
+	}
+
+	
 }

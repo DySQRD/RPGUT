@@ -13,7 +13,7 @@ public class Inventaire {
 	private Joueur joueur;
 	
 	public Inventaire(Joueur joueur) {
-		CRUD crud = new CRUD();
+		BD crud = new BD();
 		
 	}
 	

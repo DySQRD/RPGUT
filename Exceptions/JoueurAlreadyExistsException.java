@@ -1,5 +1,5 @@
 package Exceptions;
 
-public class JoueurAlreadyExistsException extends Throwable {
+public class JoueurAlreadyExistsException extends Exception {
 
 }

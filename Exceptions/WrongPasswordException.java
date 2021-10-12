@@ -1,5 +1,5 @@
 package Exceptions;
 
-public class WrongPasswordException extends Throwable {
+public class WrongPasswordException extends Exception {
 	
 }
