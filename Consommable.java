@@ -2,7 +2,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public abstract class Consommable implements BDTable {
+public abstract class Consommable {
 	/**
 	 * Identifiant de l'instance du consommable dans la BD.
 	 */
@@ -23,7 +23,7 @@ public abstract class Consommable implements BDTable {
 	public void utiliser() {
 		ArrayList<EFFET> e = effets.get(this.id);
 		for(int i = 0; i < effets.size(); i++) {
-			activer(effets.get(i)); //A SE METTRE D'ACCORD ICI SUR COMMENT ACTIVER LES EFFETS
+			effets.get(i); //activer: A SE METTRE D'ACCORD ICI SUR COMMENT ACTIVER LES EFFETS
 		}
 	}
 	
