@@ -1,0 +1,14 @@
+{ "columns":8,
+ "image":"C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/tmw_desert_spacing.png",
+ "imageheight":199,
+ "imagewidth":265,
+ "margin":1,
+ "name":"default_set",
+ "spacing":1,
+ "tilecount":48,
+ "tiledversion":"1.7.2",
+ "tileheight":32,
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.6"
+}
