@@ -8,12 +8,15 @@ import java.util.ArrayList;
 public enum EFFET {
 	BRULURE, GEL, PARALYSIE, POISON, SOMMEIL;
 	
-	ArrayList<EFFET> effets;
+	private static ArrayList<EFFET> effets = null;
 	
-
 	void activer() {
 		if (this == BRULURE) {
 			//do stuff
 		}
+	}
+	
+	public static ArrayList<EFFET> getEffets() {
+		return effets;
 	}
 }

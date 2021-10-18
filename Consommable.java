@@ -11,20 +11,29 @@ public abstract class Consommable {
 	 * Nombre d'utilisations restantes de l'objet.<br>
 	 * S'il est null, nombre d'utilisations infini.<br>
 	 * S'il est inferieur a 0, il ne disparait pas mais est inutilisable.
+	 * Supposé disparaître à 0.
 	 */
 	private int durabilite;
 	
 	private static ArrayList<String> noms = null;
 	private static ArrayList<Integer> durabilites = null;
-	private static ArrayList<ArrayList<EFFET>> effets = null;
-	
 	//EFFET.valueOf(res.getString(0)); a utiliser
 	
+	
+	/**
+	 * Activer tous les effets de l'objet, puis décrémenter la durabilité.
+	 */
 	public void utiliser() {
-		ArrayList<EFFET> e = effets.get(this.id);
+		//Renvoyer les effets du consommable.
+		ArrayList<EFFET> effets = EFFET.getEffets().get(id);
+		
+		//Activer tous les effets du consommable.
 		for(int i = 0; i < effets.size(); i++) {
-			e.get(i).activer(); //activer: A SE METTRE D'ACCORD ICI SUR COMMENT ACTIVER LES EFFETS
+			effets.get(i).activer();
 		}
+		
+		//Décrémente la durabilité de l'objet de 1.
+		setDurabilite(getDurabilite() - 1);
 	}
 	
 	/*
@@ -34,7 +43,6 @@ public abstract class Consommable {
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -42,13 +50,14 @@ public abstract class Consommable {
 	public int getDurabilite() {
 		return durabilite;
 	}
-
 	public void setDurabilite(int durabilite) {
 		this.durabilite = durabilite;
 	}
 	
+	
+	
 	/*
-	 * Getters pour les donn�es STATIQUES de la BD.
+	 * Getters pour les données STATIQUES de la BD.
 	 */
 	
 	public static ArrayList<String> getNoms() {

@@ -100,33 +100,45 @@ public class BD {
 		}
 	}
 	
+	/**
+	 * Enclenche toutes les méthodes "download".<br>
+	 * Càd, télécharge toutes les tables statiques ainsi que les données du joueur dont l'id est donnée.
+	 * @param joueurId
+	 * @throws SQLException
+	 */
 	private void downloadDatabase(int joueurId) throws SQLException {
+		//Téléchargement des données du joueur
 		downloadConsommable(joueurId);
-		//setEffet();
-		//setMob();
-		//setNiveau();
+		downloadJoueur(joueurId);
+		downloadJoueurConsommable(joueurId);
+		
+		//Téléchargement des données statiques
+		downloadMob();
 	}
 	
 	/**
-	 * 
+	 * Télécharge l'intégralité de la table demandée.<br>
+	 * A n'utiliser que pour les tables statiques,<br>
+	 * c'est-à-dire ne contenant que des données qui ne sont pas susceptibles de changer.
 	 * @param table
-	 * @return L'integralite de la table demandee.
+	 * @return L'integralite de la table demandée.
 	 * @throws SQLException
 	 */
-	private ResultSet getTable(String table) throws SQLException {
+	private ResultSet downloadTable(String table) throws SQLException {
 		return statement.executeQuery(""
 				+ "SELECT *"
 				+ "FROM `" + table + "`"
 			+ "");
 	}
+	
 	/**
-	 * 
-	 * @param table
-	 * @param joueurId
-	 * @return L'integralite de la table demandée uniquement avec les tuples du joueur demandé.
-	 * @throws SQLException
+	 * Télécharge les données d'une table correspondants à l'id du joueur donné.
+	 * @param 	table		Le nom de la table à télécharger.
+	 * @param 	joueurId	L'id du joueur dans la BD dont il faut télécharger les données.
+	 * @return 	L'integralite de la table demandée uniquement avec les tuples du joueur demandé.
+	 * @throws 	SQLException
 	 */
-	private ResultSet getTable(String table, int joueurId) throws SQLException {
+	private ResultSet downloadTable(String table, int joueurId) throws SQLException {
 		return statement.executeQuery(""
 				+ "SELECT *"
 				+ "FROM `" + table + "`"
@@ -137,24 +149,42 @@ public class BD {
 	
 	
 	/*
-	 * Copie des tables STATIQUES de la BD en ArrayLists.
+	 * Téléchargement des tables STATIQUES de la BD dans des ArrayLists.
 	 */
 	
+	/**
+	 * Télécharge l'intégralité de la table Consommable<br>
+	 * et range ses données dans les ArrayLists de la classe Consommable.
+	 * @throws SQLException
+	 */
 	private void downloadConsommable() throws SQLException {
-		ResultSet consommable = getTable("consommable");
-		while(consommable.next()) {
-			int consommableId = consommable.getInt("id");
-			Consommable.getNoms().add(consommableId, consommable.getString("nom"));
-			Consommable.getDurabilites().add(consommableId, consommable.getInt("durabilite"));
-			//
+		ResultSet consommableTable = downloadTable("consommable");
+		
+		//Tant qu'il reste une ligne à télécharger
+		while(consommableTable.next()) {
+			int consommableId = consommableTable.getInt("id");
+			
+			//Ajoute les attributs des objets dans les ArrayLists,
+			//dont les clès sont les ids des objets
+			Consommable.getNoms().add(consommableId, consommableTable.getString("nom"));
+			Consommable.getDurabilites().add(consommableId, consommableTable.getInt("durabilite"));
+			Consommable.getEffets().add(consommableId, Consommable.getEffets().get(consommableId));
 			//Consommable.getEffets().add(consommableId, EFFET.valueOf(consommable.getString("durabilite")));
 		}
 	}
-	//TODO 
-	private void downloadJoueurConsommable(int joueurId) throws SQLException {
-		ResultSet joueurConsommable = getTable("joueur_consommable");
+	
+	/*
+	 * Téléchargement des tables DYNAMIQUES de la BD.
+	 */
+
+	public Joueur downloadJoueur(int joueurId) throws SQLException {
+		ResultSet joueur = downloadTable("joueur", joueurId);
+		return new Joueur(joueur.getString("nom"), joueur.getInt("id"), joueur.getInt("xp"), joueur.getInt("pv"), joueur.getInt("attaque"), joueur.getInt("vitesse"));
+	}
+	public void downloadJoueurConsommable(int joueurId) throws SQLException {
+		ResultSet joueurConsommable = downloadTable("joueur_consommable");
 		while(joueurConsommable.next()) {
-			int consommableId = joueurConsommable.getInt("id");
+			
 		}
 	}
 	
@@ -167,7 +197,6 @@ public class BD {
 	public Connection getConnexion() {
 		return connexion;
 	}
-
 	public void setConnexion(Connection connexion) {
 		this.connexion = connexion;
 	}
@@ -175,7 +204,6 @@ public class BD {
 	public Statement getStatement() {
 		return statement;
 	}
-
 	public void setStatement(Statement statement) {
 		this.statement = statement;
 	}
