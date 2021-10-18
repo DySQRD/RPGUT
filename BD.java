@@ -169,7 +169,6 @@ public class BD {
 			Consommable.getNoms().add(consommableId, consommableTable.getString("nom"));
 			Consommable.getDurabilites().add(consommableId, consommableTable.getInt("durabilite"));
 			Consommable.getEffets().add(consommableId, Consommable.getEffets().get(consommableId));
-			//Consommable.getEffets().add(consommableId, EFFET.valueOf(consommable.getString("durabilite")));
 		}
 	}
 	

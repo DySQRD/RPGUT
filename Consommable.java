@@ -8,16 +8,25 @@ public abstract class Consommable {
 	 */
 	private int id;
 	/**
-	 * Nombre d'utilisations restantes de l'objet.<br>
+	 * Nombre d'utilisations restantes de l'instance du consommable.<br>
 	 * S'il est null, nombre d'utilisations infini.<br>
 	 * S'il est inferieur a 0, il ne disparait pas mais est inutilisable.
 	 * Supposé disparaître à 0.
 	 */
 	private int durabilite;
 	
+	/**
+	 * Nom de tous les consommables existants dans la BD.
+	 */
 	private static ArrayList<String> noms = null;
+	/**
+	 * Durabilité par défaut de tous les consommables existants dans la BD.
+	 */
 	private static ArrayList<Integer> durabilites = null;
-	//EFFET.valueOf(res.getString(0)); a utiliser
+	/**
+	 * Effets de tous les consommables existants dans la BD.
+	 */
+	private static ArrayList<ArrayList<EFFET>> effets = null;
 	
 	
 	/**
@@ -59,17 +68,15 @@ public abstract class Consommable {
 	/*
 	 * Getters pour les données STATIQUES de la BD.
 	 */
-	
+
 	public static ArrayList<String> getNoms() {
 		return noms;
 	}
 	public static ArrayList<Integer> getDurabilites() {
 		return durabilites;
 	}
-
 	public static ArrayList<ArrayList<EFFET>> getEffets() {
 		return effets;
 	}
-
 	
 }
