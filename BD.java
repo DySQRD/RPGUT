@@ -40,34 +40,45 @@ public class BD {
 	 */
 	public void connexion(String pseudo, String mdp) throws JoueurNotFoundException, UnexpectedDBError, SQLException, WrongPasswordException {
 		ResultSet rs = statement.executeQuery(""
-			+ "SELECT *"
-			+ "FROM `compte`"
-			+ "WHERE `nom` = '" + pseudo
+				+ "SELECT * FROM `joueur`"
+				+ "LEFT JOIN `joueur_role`"
+				+ "ON joueur.id = joueur_role.joueur_id"
+				+ "WHERE `joueur`.`nom` = '" + pseudo + "' AND mdp = '" + mdp + "'"
 		+ "");
 		
-		//S'il n'y a pas de joueur pour le pseudonyme donne...
-		if(!rs.next()) {throw new JoueurNotFoundException();}
-		//On demandera de saisir le pseudo de nouveau
-		
+		//S'il n'y a pas de joueur pour le pseudonyme donné...
+		if(!rs.next()) {
+			//On demandera de saisir le pseudo de nouveau
+			throw new JoueurNotFoundException();
+			
 		//S'il y a plus d'un resultat...
-		else if(!rs.isLast()) {throw new UnexpectedDBError();}
-		//Ici, une erreur, pas une exception, car on requiert qu'un humain aille inspecter la BD pour corriger le probleme,
-		//prendre contact avec les joueurs concernes, et enfin modifier le code pour que cette erreur ne se reproduise plus.
-		//Du cote de l'interface graphique, on indiquera au joueur qu'une erreur est survenue sans preciser laquelle,
-		//que le service technique a ete prevenu et qu'il faudra essayer de se connecter de nouveau plus tard.
+		} else if(!rs.isLast()) {
+			//Une erreur qui n'est pas censée survenir.
+			throw new UnexpectedDBError();
+		/*Ici, une erreur, pas une exception, car on requiert qu'un humain aille inspecter la BD pour corriger le probleme,
+		prendre contact avec les joueurs concernes, et enfin modifier le code pour que cette erreur ne se reproduise plus.
+		Du cote de l'interface graphique, on indiquera au joueur qu'une erreur est survenue sans preciser laquelle,
+		que le service technique a ete prevenu et qu'il faudra essayer de se connecter de nouveau plus tard.*/
 		
 		//S'il y a un joueur mais que le mot de passe ne correspond pas...
-		else if(!(rs.getString("mdp") == mdp)) {throw new WrongPasswordException();}
-		//On demandera de saisir le mdp de nouveau
-		
-		else {
+		} else if(!(rs.getString("mdp") == mdp)) {	
+			//Sur l'interface, on demandera de saisir le mdp de nouveau.
+			throw new WrongPasswordException();
+		} else {
 			int joueurId = rs.getInt("id");
-			setDatabase();
+			
+			//Si le joueur est admin...
+			if(rs.getInt("role_id") == 1) {
+				//On se reconnecte avec les droits roots.
+				setConnexion(DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "root", "root"));
+				setStatement(connexion.createStatement());
+			}
+			downloadDatabase(joueurId);
 		}
 	}
 	
 	/**
-	 * Ajoute un pseudo et un mdp a la BD a condition que le pseudonyme ne soit pas deja utilise.
+	 * Ajoute un pseudo et un mdp a la BD a condition que le pseudonyme ne soit pas deja utilisé.
 	 * 
 	 * @param pseudo
 	 * @param mdp
@@ -79,8 +90,9 @@ public class BD {
 			+ "SELECT nom "
 			+ "FROM joueur "
 			+ "WHERE nom = '" + pseudo + "'");
-		if(res.next()) {
-			throw new JoueurAlreadyExistsException();
+		
+		if(res.next()) {									// S'il existe déjà un joueur avec ce pseudo...
+			throw new JoueurAlreadyExistsException();		// On empêche d'aller plus loin.
 		} else {
 			statement.executeUpdate(""
 				+ "INSERT INTO joueur(id, nom, mdp, xp)"
@@ -88,8 +100,8 @@ public class BD {
 		}
 	}
 	
-	private void setDatabase() throws SQLException {
-		setConsommable();
+	private void downloadDatabase(int joueurId) throws SQLException {
+		downloadConsommable(joueurId);
 		//setEffet();
 		//setMob();
 		//setNiveau();
@@ -111,7 +123,7 @@ public class BD {
 	 * 
 	 * @param table
 	 * @param joueurId
-	 * @return L'integralite de la table demandee uniquement avec les tuples du joueur demande.
+	 * @return L'integralite de la table demandée uniquement avec les tuples du joueur demandé.
 	 * @throws SQLException
 	 */
 	private ResultSet getTable(String table, int joueurId) throws SQLException {
@@ -122,11 +134,13 @@ public class BD {
 			+ "");
 	}
 	
+	
+	
 	/*
 	 * Copie des tables STATIQUES de la BD en ArrayLists.
 	 */
 	
-	private void setConsommable() throws SQLException {
+	private void downloadConsommable() throws SQLException {
 		ResultSet consommable = getTable("consommable");
 		while(consommable.next()) {
 			int consommableId = consommable.getInt("id");
@@ -136,6 +150,15 @@ public class BD {
 			//Consommable.getEffets().add(consommableId, EFFET.valueOf(consommable.getString("durabilite")));
 		}
 	}
+	//TODO 
+	private void downloadJoueurConsommable(int joueurId) throws SQLException {
+		ResultSet joueurConsommable = getTable("joueur_consommable");
+		while(joueurConsommable.next()) {
+			int consommableId = joueurConsommable.getInt("id");
+		}
+	}
+	
+	
 	
 	/*
 	 * Getters et setters classiques.

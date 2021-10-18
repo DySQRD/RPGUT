@@ -5,5 +5,10 @@ public enum EFFET {
 	
 	ArrayList<EFFET> effets;
 	
-	
+
+	void activer() {
+		if (this == BRULURE) {
+			//do stuff
+		}
+	}
 }

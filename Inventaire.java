@@ -10,11 +10,10 @@ import java.util.ArrayList;
  */
 public class Inventaire {
 	private ArrayList<Objet> inventaire;
-	private Joueur joueur;
+	private Joueur joueur; /* é*/
 	
 	public Inventaire(Joueur joueur) {
 		BD crud = new BD();
-		
 	}
 	
 	

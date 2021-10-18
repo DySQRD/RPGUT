@@ -23,7 +23,7 @@ public abstract class Consommable {
 	public void utiliser() {
 		ArrayList<EFFET> e = effets.get(this.id);
 		for(int i = 0; i < effets.size(); i++) {
-			effets.get(i); //activer: A SE METTRE D'ACCORD ICI SUR COMMENT ACTIVER LES EFFETS
+			e.get(i).activer(); //activer: A SE METTRE D'ACCORD ICI SUR COMMENT ACTIVER LES EFFETS
 		}
 	}
 	
@@ -48,7 +48,7 @@ public abstract class Consommable {
 	}
 	
 	/*
-	 * Getters pour les données STATIQUES de la BD.
+	 * Getters pour les donnï¿½es STATIQUES de la BD.
 	 */
 	
 	public static ArrayList<String> getNoms() {
