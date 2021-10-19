@@ -1,25 +1,35 @@
 package Jeu;
 
-import com.google.gson.Gson;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import com.google.gson.annotations.Expose;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 
 public class Map {
+    private int spawnX;
+    private int spawnY;
+    private ArrayList<Obstacle> obstacles = new ArrayList<>();
 
+    @Expose
     //Layers de la map (texture + objets)
     public ArrayList<Layer> layers;
 
+    @Expose
     //Nombre de tiles par ligne/colonne
     public int height;
+    @Expose
     public int width;
 
+    @Expose
     //Nombre de pixels par tile (32)
     public int tileheight;
+    @Expose
     public int tilewidth;
 
     //Tileset
@@ -30,6 +40,11 @@ public class Map {
 
     //Rendu image
     public BufferedImage imageRendered;
+
+    //Canvas
+    private Canvas canvas = new Canvas();
+
+    private GraphicsContext context;
 
     public Map(){
     }
@@ -61,5 +76,40 @@ public class Map {
         for(int i=0; i<this.layers.get(0).data.size(); i++){
             graphics2D.drawImage(this.imageTiles.get(i),null, i%this.width * this.tilewidth, i/this.width * this.tileheight);
         }
+    }
+
+    public void loadCanvas(){
+        this.canvas = new Canvas(this.tilewidth * this.width, this.tileheight * this.height);
+        this.context = canvas.getGraphicsContext2D();
+        context.drawImage(SwingFXUtils.toFXImage(imageRendered, null), 0, 0);
+    }
+
+    public Canvas getCanvas(){
+        return canvas;
+    }
+
+    public int getSpawnX() {
+        return spawnX;
+    }
+    public int getSpawnY(){
+        return spawnY;
+    }
+
+    public void setSpawnX(int spawnX) {
+        this.spawnX = spawnX;
+    }
+
+    public void setSpawnY(int spawnY) {
+        this.spawnY = spawnY;
+    }
+
+    public void setObstacles(){
+        for(int i=0; i<this.layers.get(1).objects.size(); i++){
+            this.obstacles.add(this.layers.get(1).objects.get(i));
+            this.obstacles.get(i).setHitbox();
+        }
+    }
+    public ArrayList<Obstacle> getObstacles(){
+        return obstacles;
     }
 }
