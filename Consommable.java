@@ -34,7 +34,7 @@ public abstract class Consommable {
 	 */
 	public void utiliser() {
 		//Renvoyer les effets du consommable.
-		ArrayList<EFFET> effets = EFFET.getEffets().get(id);
+		ArrayList<EFFET> effets = getEffets().get(id);
 		
 		//Activer tous les effets du consommable.
 		for(int i = 0; i < effets.size(); i++) {

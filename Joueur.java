@@ -1,3 +1,5 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +12,7 @@ public class Joueur {
 	private int vitesse;
 	private int degat;*/
 	private ArrayList<Consommable> inventaire = new ArrayList<Consommable>();
+	private BD bd;
 
 	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse) {
 		this.pseudo = pseudo;
@@ -22,6 +25,12 @@ public class Joueur {
 		this.xp = xp;
 		this.degat =degat ;*/
 	}
+	
+	
+	
+	/*
+	 * Getters et setters
+	 */
 
 	public String getPseudo() {
 		return pseudo;
@@ -39,6 +48,10 @@ public class Joueur {
 	
 	public HashMap<String, Integer> getStats() {
 		return stats;
+	}
+
+	public void setStats(HashMap<String, Integer> stats) {
+		this.stats = stats;
 	}
 
 	/*
@@ -62,13 +75,41 @@ public class Joueur {
 	public void setDegat(int degat) {
 		this.degat = degat;
 	}*/
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public ArrayList<Consommable> getInventaire() {
+		return inventaire;
+	}
+
+	public void setInventaire(ArrayList<Consommable> inventaire) {
+		this.inventaire = inventaire;
+	}
+
+	public BD getBd() {
+		return bd;
+	}
+
+	public void setBd(BD bd) {
+		this.bd = bd;
+	}
 	
 	
+	
+	/*
+	 * Fonctions classiques
+	 */
 
 	public String toString() {
 		return 	" pseudo : " 	+ pseudo +
-				" pv : " 		+ stats.get("pv") +
 				" xp : " 		+ xp +
+				" pv : " 		+ stats.get("pv") +
 				" vitesse : " 	+ stats.get("vitesse") +
 				" attaque : " 	+ stats.get("attaque");
 	}

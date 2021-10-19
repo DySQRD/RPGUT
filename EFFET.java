@@ -6,13 +6,13 @@
 import java.util.ArrayList;
 
 public enum EFFET {
-	BRULURE, GEL, PARALYSIE, POISON, SOMMEIL;
+	BRULURE;
 	
 	private static ArrayList<EFFET> effets = null;
 	
 	void activer() {
 		if (this == BRULURE) {
-			//do stuff
+			System.out.println("nice");
 		}
 	}
 	

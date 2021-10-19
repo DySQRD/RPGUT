@@ -5,3 +5,7 @@
 /NotUniqueResultException.class
 /NotUniqueResultError.class
 /UnexpectedDBError.class
+/JoueurExisteException.class
+/JoueurIntrouvableException.class
+/ImprevuDBError.class
+/MauvaisMDPException.class
