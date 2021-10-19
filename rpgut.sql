@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost
--- Généré le : mar. 12 oct. 2021 à 21:08
+-- Généré le : mar. 19 oct. 2021 à 22:02
 -- Version du serveur :  8.0.23
 -- Version de PHP : 8.0.3
 
@@ -46,6 +46,15 @@ CREATE TABLE `consommable` (
   `durabilite` smallint DEFAULT NULL COMMENT 'Nombre d''utilisations de base du consommable.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Déchargement des données de la table `consommable`
+--
+
+INSERT INTO `consommable` (`id`, `nom`, `durabilite`) VALUES
+(1, 'test', NULL),
+(2, 'retest', NULL),
+(3, 'nicetest', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -65,10 +74,23 @@ CREATE TABLE `consommable_effet` (
 
 CREATE TABLE `joueur` (
   `id` int NOT NULL,
-  `nom` tinytext NOT NULL,
+  `nom` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `mdp` varchar(45) NOT NULL,
-  `xp` int NOT NULL
+  `xp` int NOT NULL DEFAULT '0',
+  `pv` int NOT NULL DEFAULT '0',
+  `attaque` int NOT NULL DEFAULT '0',
+  `vitesse` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `joueur`
+--
+
+INSERT INTO `joueur` (`id`, `nom`, `mdp`, `xp`, `pv`, `attaque`, `vitesse`) VALUES
+(9, 'DySQRD', 'nice', 0, 0, 0, 0),
+(10, 'Idzou', 'wouaf', 0, 0, 0, 0),
+(11, 'Dylan', 'soverynice', 0, 0, 0, 0),
+(12, 'Woodman', 'thenicest', 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -109,6 +131,24 @@ CREATE TABLE `joueur_niveau` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `joueur_role`
+--
+
+CREATE TABLE `joueur_role` (
+  `joueur_id` int NOT NULL,
+  `role_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `joueur_role`
+--
+
+INSERT INTO `joueur_role` (`joueur_id`, `role_id`) VALUES
+(9, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `mob`
 --
 
@@ -127,6 +167,24 @@ CREATE TABLE `niveau` (
   `id` int NOT NULL,
   `nom` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `role`
+--
+
+CREATE TABLE `role` (
+  `id` int NOT NULL,
+  `nom` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `role`
+--
+
+INSERT INTO `role` (`id`, `nom`) VALUES
+(1, 'admin');
 
 --
 -- Index pour les tables déchargées
@@ -178,6 +236,13 @@ ALTER TABLE `joueur_niveau`
   ADD KEY `compte_niveau_niveau_id` (`niveau_id`);
 
 --
+-- Index pour la table `joueur_role`
+--
+ALTER TABLE `joueur_role`
+  ADD PRIMARY KEY (`joueur_id`,`role_id`),
+  ADD KEY `joueur_role_role_id` (`role_id`);
+
+--
 -- Index pour la table `mob`
 --
 ALTER TABLE `mob`
@@ -187,6 +252,12 @@ ALTER TABLE `mob`
 -- Index pour la table `niveau`
 --
 ALTER TABLE `niveau`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `role`
+--
+ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -203,19 +274,25 @@ ALTER TABLE `connexion`
 -- AUTO_INCREMENT pour la table `consommable`
 --
 ALTER TABLE `consommable`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `joueur`
 --
 ALTER TABLE `joueur`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT pour la table `mob`
 --
 ALTER TABLE `mob`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `role`
+--
+ALTER TABLE `role`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Contraintes pour les tables déchargées
@@ -240,6 +317,13 @@ ALTER TABLE `joueur_consommable`
 ALTER TABLE `joueur_niveau`
   ADD CONSTRAINT `compte_niveau_compte_id` FOREIGN KEY (`compte_id`) REFERENCES `joueur` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `compte_niveau_niveau_id` FOREIGN KEY (`niveau_id`) REFERENCES `niveau` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Contraintes pour la table `joueur_role`
+--
+ALTER TABLE `joueur_role`
+  ADD CONSTRAINT `joueur_role_joueur_id` FOREIGN KEY (`joueur_id`) REFERENCES `joueur` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `joueur_role_role_id` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

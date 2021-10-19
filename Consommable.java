@@ -1,17 +1,14 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-public abstract class Consommable {
+public class Consommable {
+	//Note à moi-même : pas besoin d'attribut nom puisqu'il est partagé par tous les Consommables de la même id.
+	//Peut changer si on donne la possibilité de personnaliser les noms.
 	/**
 	 * Identifiant de l'instance du consommable dans la BD.
 	 */
 	private int id;
 	/**
-	 * Nombre d'utilisations restantes de l'instance du consommable.<br>
-	 * S'il est null, nombre d'utilisations infini.<br>
-	 * S'il est inferieur a 0, il ne disparait pas mais est inutilisable.
-	 * Supposé disparaître à 0.
+	 * Nombre d'utilisations restantes de l'instance du consommable.
 	 */
 	private int durabilite;
 	
@@ -24,26 +21,32 @@ public abstract class Consommable {
 	 */
 	private static ArrayList<Integer> durabilites = null;
 	/**
-	 * Effets de tous les consommables existants dans la BD.
+	 * Actions effectuées lors de l'utilisation de l'objet.
 	 */
-	private static ArrayList<ArrayList<EFFET>> effets = null;
+	private static ArrayList<ArrayList<Action>> actions;
 	
+	Consommable(int id, int durabilite) {
+		this.id = id;
+		this.durabilite = durabilite;
+	}
 	
 	/**
 	 * Activer tous les effets de l'objet, puis décrémenter la durabilité.
 	 */
 	public void utiliser() {
 		//Renvoyer les effets du consommable.
-		ArrayList<EFFET> effets = getEffets().get(id);
+		ArrayList<Action> actions = getActions().get(id);
 		
 		//Activer tous les effets du consommable.
-		for(int i = 0; i < effets.size(); i++) {
-			effets.get(i).activer();
+		for(int i = 0; i < actions.size(); i++) {
+			actions.get(i).utiliser();
 		}
 		
 		//Décrémente la durabilité de l'objet de 1.
 		setDurabilite(getDurabilite() - 1);
 	}
+	
+	
 	
 	/*
 	 * Getters et setters des instances de consommables.
@@ -75,8 +78,8 @@ public abstract class Consommable {
 	public static ArrayList<Integer> getDurabilites() {
 		return durabilites;
 	}
-	public static ArrayList<ArrayList<EFFET>> getEffets() {
-		return effets;
+	public static ArrayList<ArrayList<Action>> getActions() {
+		return actions;
 	}
 	
 }

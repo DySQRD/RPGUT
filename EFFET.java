@@ -10,7 +10,7 @@ public enum EFFET {
 	
 	private static ArrayList<EFFET> effets = null;
 	
-	void activer() {
+	void utiliser() {
 		if (this == BRULURE) {
 			System.out.println("nice");
 		}
