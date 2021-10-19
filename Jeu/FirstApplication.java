@@ -1,6 +1,7 @@
 package Jeu;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
@@ -12,11 +13,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
@@ -37,33 +42,6 @@ public class FirstApplication extends Application {
         System.out.println("Before");
     }
 
-    /*@Override
-    public void start(Stage primaryStage) {
-        Circle character = new Circle(100, 100, 20, Color.RED);
-        Rectangle background = new Rectangle(2000, 200, new LinearGradient(0, 0, 100, 0, false, CycleMethod.REPEAT, new Stop(0, Color.WHITE), new Stop(100, Color.BLUE)));
-        Group group = new Group(background, character);
-        group.setManaged(false);
-
-        Pane root = new Pane(group);
-        root.setPrefSize(200, 200);
-
-        Scene scene = new Scene(root);
-        scene.setOnKeyPressed(evt -> {
-            double direction = -1;
-            switch (evt.getCode()) {
-                case RIGHT:
-                    direction = 1;
-                case LEFT:
-                    double delta = direction * 10;
-                    character.setTranslateX(character.getTranslateX() + delta);
-                    group.setTranslateX(group.getTranslateX() - delta);
-            }
-        });
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }*/
-
     //Lancement de l'application
     @Override
     public void start(Stage stage) throws Exception {
@@ -78,62 +56,87 @@ public class FirstApplication extends Application {
         window.setHeight(600);
         window.setResizable(false);
 
-        //Désérialisation de la map Json dans map1
-        Path path = FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/mapTest_28_18.json");
-        Gson gson = new Gson();
-        String json = new String(Files.readAllBytes(path));
-        Map map1 = gson.fromJson(json, Map.class);
 
         //Désérialisation du tileset dans tileset1
-        path = FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/default_set.json");
-        json = new String(Files.readAllBytes(path));
-        Tileset tileset1 = gson.fromJson(json, Tileset.class);
+        Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-        //Conversion (img -> BufferedImage) du tileset
-        tileset1.loadbImage();
 
-        //Mise en forme de la map
+        String json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/default_set.json")));
+        Tileset tileset1 = gsonBuilder.fromJson(json, Tileset.class);
+
+        //Désérialisation des map
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map1.json")));
+        Map map1 = gsonBuilder.fromJson(json, Map.class);
+        map1.setSpawnX(242);
+        map1.setSpawnY(242);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map2.json")));
+        Map map2 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map3.json")));
+        Map map3 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map4.json")));
+        Map map4 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map5.json")));
+        Map map5 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map6.json")));
+        Map map6 = gsonBuilder.fromJson(json, Map.class);
+
+
+
         map1.addTileset(tileset1);
-        map1.loadTiles();
-        map1.renderMap();
+        map2.addTileset(tileset1);
+        map3.addTileset(tileset1);
+        map4.addTileset(tileset1);
+        map5.addTileset(tileset1);
+        map6.addTileset(tileset1);
+
+
+        //Création du niveau
+        Level level1 = new Level("Level 1");
+        level1.addMap(map1);
+        level1.addMap(map2);
+        level1.addMap(map3);
+        level1.addMap(map4);
+        level1.addMap(map5);
+        level1.addMap(map6);
+        level1.loadLevel();
+
 
         //Création des root (Layout manager)
         Group root = new Group();
-        Group root2 = new Group();
-
-        //Création du canvas sur lequel sera dessiné la map
-        Canvas canvas = new Canvas(map1.tilewidth * map1.width, map1.tileheight * map1.width);
-        GraphicsContext context = canvas.getGraphicsContext2D();
-
-        //Dessin de la map
-        context.drawImage(SwingFXUtils.toFXImage(map1.imageRendered, null),0,0);
+        Group root_bis = new Group();
 
         //canvas -> root
-        root.getChildren().add(canvas);
+        root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
 
         //Zones de texte
         Label label1 = new Label();     // Text
         label1.setTextFill(Color.BLUE);
 
-        Label label2 = new Label();     // Text
-        label2.setTextFill(Color.RED);
+        Label mouseLocation = new Label();
+        mouseLocation.setLayoutX(700);
+        mouseLocation.setLayoutY(30);
+        mouseLocation.setTextFill(Color.MIDNIGHTBLUE);
+        mouseLocation.setFont(Font.font("",FontWeight.BOLD, 18));
 
-        //Obstacles
-        ArrayList<Shape> obstacles = new ArrayList<>();
-        for(int i=0; i<map1.layers.get(1).objects.size(); i++){
-            obstacles.add(new Rectangle(map1.layers.get(1).objects.get(i).x, map1.layers.get(1).objects.get(i).y, map1.layers.get(1).objects.get(i).width, map1.layers.get(1).objects.get(i).height));
-            obstacles.get(i).setFill(Color.RED);
-            root.getChildren().add(obstacles.get(i));
-        }
+
 
         //Personnages
-        Personnage perso1 = new Personnage(20, 20, "C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/teemo1.png");
-        
+        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), "C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/teemo1.png");
+
         //Nodes -> root
-        root.getChildren().addAll(perso1.imageV, label1);
-        root2.getChildren().addAll(label2);
+        root.getChildren().addAll(perso1.imageV, perso1.hitbox, root_bis, label1, mouseLocation);
 
         //Root -> scene
         Scene scene1 = new Scene(root);
@@ -141,6 +144,13 @@ public class FirstApplication extends Application {
         //Scene -> stage et affichage stage
         window.setScene(scene1);
         window.show();
+
+        scene1.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                mouseLocation.setText("x = " + mouseEvent.getSceneX() + ", y = "+mouseEvent.getSceneY());
+            }
+        });
 
         //Pression d'une touche sur la scene1
         scene1.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -151,20 +161,8 @@ public class FirstApplication extends Application {
                     case DOWN : down=true; break;
                     case LEFT : left=true; break;
                     case RIGHT : right=true; break;
-                    /*case SPACE :
-                        if(scene1.getRoot().equals(root)){
-                            rectangle1.setFill(Color.RED);
-                            root.getChildren().remove(rectangle1);
-                            root2.getChildren().add(rectangle1);
-                            scene1.setRoot(root2);
-                        } break;
-                    case A :
-                        if(scene1.getRoot().equals(root2)){
-                            rectangle1.setFill(Color.BLUE);
-                            root2.getChildren().remove(rectangle1);
-                            root.getChildren().add(rectangle1);
-                            scene1.setRoot(root);
-                        } break;*/
+                    case SPACE :
+                        System.out.println(""+level1.getCurrentMap());break;
                 }
             }
         });
@@ -182,6 +180,9 @@ public class FirstApplication extends Application {
             }
         });
 
+
+
+
         //Initialisation GameLoop
         AnimationTimer gameLoop = new AnimationTimer() {
             private long delta = 0;
@@ -197,46 +198,121 @@ public class FirstApplication extends Application {
                 delta = now - lastFrameTime;
                 lastFrameTime = now;
                 fps = (long) 1e9 / delta;
-/*
-                //Déplacement joueur
-                rectangleX = rectangle1.getLayoutX();
-                rectangleY = rectangle1.getLayoutY();
-                if(up) rectangleY -= 3;
-                if(down) rectangleY += 3;
-                if(left) rectangleX -= 3;
-                if(right) rectangleX += 3;
-                rectangle1.relocate(rectangleX, rectangleY);*/
 
-                if(up) perso1.moveUp();
-                if(down) perso1.moveDown();
-                if(left) perso1.moveLeft();
-                if(right) perso1.moveRight();
+                if(up){
+
+                    perso1.hitbox.setY(perso1.hitbox.getY()-perso1.velocity);
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getObstacles().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
+                            //obstacles.get(i).setFill(Color.BLUE);
+                            if(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
+                                root.getChildren().clear();
+
+                                perso1.tp(perso1.posX, 530);
+
+                                level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
+
+                                root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                            }
+                            perso1.collision = true; break;
+
+                        }
+                        else{
+                            //obstacles.get(i).setFill(Color.RED);
+                        }
+                    }
+                    if(!(perso1.collision)) perso1.moveUp();
+                    perso1.collision = false;
+                    perso1.hitbox.setY(perso1.hitbox.getY()+perso1.velocity);
+                }
+                if(down){
+                    perso1.hitbox.setY(perso1.hitbox.getY()+perso1.velocity);
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getObstacles().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
+                            //obstacles.get(i).setFill(Color.BLUE);
+                            if(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
+                                root.getChildren().clear();
+
+                                perso1.tp(perso1.posX, 30);
+
+                                level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
+
+                                root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                            }
+                            perso1.collision = true; break;
+
+                        }
+                        else{
+                            //obstacles.get(i).setFill(Color.RED);
+                        }
+                    }
+                    if(!(perso1.collision)) perso1.moveDown();
+                    perso1.collision = false;
+                    perso1.hitbox.setY(perso1.hitbox.getY()-perso1.velocity);
+                }
+                if(left){
+                    perso1.hitbox.setX(perso1.hitbox.getX()-perso1.velocity);
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getObstacles().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
+                            //obstacles.get(i).setFill(Color.BLUE);
+                            if(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
+                                root.getChildren().clear();
+                                perso1.tp(830, perso1.posY);
+
+                                level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
+
+                                root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                            }
+                            perso1.collision = true; break;
+
+                        }
+                        else{
+                            //obstacles.get(i).setFill(Color.RED);
+                        }
+                    }
+                    if(!(perso1.collision)) perso1.moveLeft();
+                    perso1.collision = false;
+                    perso1.hitbox.setX(perso1.hitbox.getX()+perso1.velocity);
+                }
+                if(right){
+                    perso1.hitbox.setX(perso1.hitbox.getX()+perso1.velocity);
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getObstacles().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
+                            //obstacles.get(i).setFill(Color.BLUE);
+                            if(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
+                                root.getChildren().clear();
+
+                                perso1.tp(30, perso1.posY);
+
+                                level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
+
+                                root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                            }
+                            perso1.collision = true; break;
+
+                        }
+                        else{
+                            //obstacles.get(i).setFill(Color.RED);
+                        }
+                    }
+                    if(!(perso1.collision)) perso1.moveRight();
+                    perso1.collision = false;
+                    perso1.hitbox.setX(perso1.hitbox.getX()-perso1.velocity);
+                }
+
+                //Gestion collision avec les obstacles
 
                 //Réduction du rafraichissement du compteur fps
                 if((now - lastFPSTime)>(1e8)){
-                    label1.setText("FPS : "+fps);
-                    label2.setText("FPS : "+fps);
+                    label1.setText(""+level1.getCurrentMap());
                     lastFPSTime = now;
                 }
-/*
-                //Restriction déplacement joueur (ne peut pas sortir de l'ecran)
-                if(rectangleX>=scene1.getWidth()-rectangle1.getWidth()){
-                    rectangle1.relocate(scene1.getWidth()-rectangle1.getWidth(),rectangleY);
-                }
-                if(rectangleX<=0){
-                    rectangle1.relocate(0,rectangleY);
-                }
-                if(rectangleY>=scene1.getHeight()-rectangle1.getHeight()){
-                    rectangle1.relocate(rectangleX,scene1.getHeight()-rectangle1.getHeight());
-                }
-                if(rectangleY<=0){
-                    rectangle1.relocate(rectangleX,0);
-                }*/
             }
         };
 
         //Lancement de la Loop
         gameLoop.start();
+
     }
 
     //Actions après l'application
@@ -245,3 +321,4 @@ public class FirstApplication extends Application {
         System.out.println("After");
     }
 }
+
