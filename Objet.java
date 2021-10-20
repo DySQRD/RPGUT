@@ -1,4 +1,3 @@
-package projetpoo;
 public class Objet {
 private String id;
 private String name;

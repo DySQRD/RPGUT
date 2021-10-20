@@ -21,7 +21,7 @@ public class BD {
 	private Connection connexion;
 	private PreparedStatement preparedStatement;
 	/**
-	 * Dans connecter(), détermine s'il faut télécharger les données statiques.<br>
+	 * Dans telecharger(), détermine s'il faut télécharger les données statiques.<br>
 	 * Cela ne devrait arriver qu'une fois par lancement du programme.
 	 */
 	private static boolean dejaTelecharge = false;
@@ -31,20 +31,23 @@ public class BD {
 	 */
 	public BD() throws SQLException {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "joueur", "joueur");
+		//Eventuellement ajouter "?allowMultiQueries=true" s'il faut exécuter plusieurs commandes en un statement.
+		//Sinon voir si le "batching" résout ce problème de façon plus sécurisée.
 	}
 	
 	/**
 	 * 
-	 * @param pseudo
-	 * @param mdp
-	 * @throws JoueurIntrouvableException Si le pseudonyme n'existe pas dans la BD.
-	 * @throws SQLException S'il est impossible de se connecter a la BD.
-	 * @throws ImprevuDBError S'il y a plus d'un resultat pour le pseudonyme demande.
-	 * @throws MauvaisMDPException Si le mot de passe est incorrect.
+	 * @param 	pseudo
+	 * @param 	mdp
+	 * @return	l'id du Joueur correspondant
+	 * @throws 	JoueurIntrouvableException Si le pseudonyme n'existe pas dans la BD.
+	 * @throws 	SQLException S'il est impossible de se connecter a la BD.
+	 * @throws 	ImprevuDBError S'il y a plus d'un resultat pour le pseudonyme demande.
+	 * @throws 	MauvaisMDPException Si le mot de passe est incorrect.
 	 */
 	public int connecter(String pseudo, String mdp) throws JoueurIntrouvableException, ImprevuDBError, SQLException, MauvaisMDPException {
 		ResultSet rs = querir(""
-				+ "SELECT nom, mdp"
+				+ "SELECT id, nom, mdp"
 				+ "FROM `joueur`"
 				+ "WHERE `joueur`.`nom` = ? AND mdp = ?"
 		+ "", new String[]{pseudo, mdp});
@@ -69,7 +72,7 @@ public class BD {
 	}
 	
 	/**
-	 * Ajoute un pseudo et un mdp a la BD a condition que le pseudonyme ne soit pas deja utilisé.
+	 * Ajoute un pseudo et un mdp a la BD à condition que le pseudonyme ne soit pas deja utilisé.
 	 * 
 	 * @param pseudo
 	 * @param mdp
@@ -93,8 +96,15 @@ public class BD {
 		}
 	}
 	
-	public void desinscrire(Joueur joueur) {
+	public void desinscrire(int joueurId) throws SQLException {
 		//TODO retirer toutes les données relatives au joueur de la BD
+		
+		//Ca c'est ce qui est fait en dernier normalement
+		informer("DELETE FROM joueur WHERE id = ?",
+			new String[] {Integer.toString(joueurId)});
+	}
+	public void desinscrire(Joueur joueur) throws SQLException {
+		desinscrire(joueur.getId());
 	}
 	
 	/**
@@ -124,8 +134,9 @@ public class BD {
 	}
 	
 	/**
-	 * Télécharge toutes les données statiques de la BD pour les insérer dans des ArrayLists statiques.<br>
-	 * Cette version de la méthode n'a pas besoin d'être exécuté plus d'une fois par lancement du jeu.
+	 * Télécharge toutes les données statiques de la BD pour les insérer dans des ArrayLists statiques,<br>
+	 * sauf si cette méthode a déjà été appelée depuis le lancement du programme.<br>
+	 * Pas besoin de télécharger plusieurs fois les données qui ne changent pas.
 	 * @throws SQLException
 	 */
 	public void telecharge() throws SQLException {
@@ -170,10 +181,10 @@ public class BD {
 	/**
 	 * Permet d'exécuter une requête lisant la BD.<br>
 	 * Plus sécurisée car utilise PreparedStatement.
-	 * @param sql
-	 * @param valeurs
-	 * @return
-	 * @throws SQLException
+	 * @param 	sql				La requête à exécuter.
+	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
+	 * @return	La table correspondant à la requête demandée.
+	 * @throws 	SQLException
 	 */
 	private ResultSet querir(String sql, String[] valeurs) throws SQLException {
 		preparer(sql, valeurs);
@@ -183,10 +194,10 @@ public class BD {
 	/**
 	 * Permet d'exécuter une requête mettant à jour la BD.<br>
 	 * Plus sécurisée car utilise PreparedStatement.
-	 * @param sql
-	 * @param valeurs
-	 * @return
-	 * @throws SQLException
+	 * @param 	sql				La requête à exécuter.
+	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
+	 * @return	Le nombre de lignes affectées par la requête.
+	 * @throws 	SQLException
 	 */
 	private int informer(String sql, String[] valeurs) throws SQLException {
 		preparer(sql, valeurs);
