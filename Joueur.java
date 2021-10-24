@@ -6,22 +6,25 @@ public class Joueur {
 	private int id;
 	private int xp;
 	private HashMap<String, Integer> stats;
-	/*private int pv;
-	private int vitesse;
-	private int degat;*/
-	private ArrayList<Consommable> inventaire = new ArrayList<Consommable>();
-	private BD bd;
+	private ArrayList<Consommable> inventaire;
 
-	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse) {
+	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse, ArrayList<Consommable> inventaire) {
+		this.id = id;
 		this.pseudo = pseudo;
 		this.xp = xp;
+		this.stats = new HashMap<String, Integer>();
 		stats.put("pv", pv);
 		stats.put("attaque", attaque);
 		stats.put("vitesse", vitesse);
-		/*this.pv = pv;
-		this.vitesse = vitesse;
+		this.inventaire = inventaire;
+	}
+	
+	public Joueur(String pseudo, int id, int xp, HashMap<String, Integer> stats, ArrayList<Consommable> inventaire) {
+		this.id = id;
+		this.pseudo = pseudo;
 		this.xp = xp;
-		this.degat =degat ;*/
+		this.stats = stats;
+		this.inventaire = inventaire;
 	}
 	
 	
@@ -37,7 +40,7 @@ public class Joueur {
 		this.pseudo = pseudo;
 	}
 
-	public float getXp() {
+	public int getXp() {
 		return xp;
 	}
 	public void setXp(int xp) {
@@ -51,28 +54,6 @@ public class Joueur {
 	public void setStats(HashMap<String, Integer> stats) {
 		this.stats = stats;
 	}
-
-	/*
-
-	public int getPv() {
-		return pv;
-	}
-	public void setPv(int pv) {
-		this.pv = pv;
-	}
-	public int getVitesse() {
-		return vitesse;
-	}
-	public void setVitesse(int vitesse) {
-		this.vitesse = vitesse;
-	}
-	
-	public int getDegat() {
-		return degat;
-	}
-	public void setDegat(int degat) {
-		this.degat = degat;
-	}*/
 
 	public int getId() {
 		return id;
@@ -89,26 +70,19 @@ public class Joueur {
 	public void setInventaire(ArrayList<Consommable> inventaire) {
 		this.inventaire = inventaire;
 	}
-
-	public BD getBd() {
-		return bd;
-	}
-
-	public void setBd(BD bd) {
-		this.bd = bd;
-	}
-	
 	
 	
 	/*
 	 * Fonctions classiques
 	 */
 
+	@Override
 	public String toString() {
 		return 	" pseudo : " 	+ pseudo +
 				" xp : " 		+ xp +
 				" pv : " 		+ stats.get("pv") +
 				" vitesse : " 	+ stats.get("vitesse") +
-				" attaque : " 	+ stats.get("attaque");
+				" attaque : " 	+ stats.get("attaque") +
+				" objets : "	+ inventaire;
 	}
 }

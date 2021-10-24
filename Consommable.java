@@ -23,7 +23,7 @@ public class Consommable {
 	/**
 	 * Actions effectuées lors de l'utilisation de l'objet.
 	 */
-	private static ArrayList<ArrayList<Action>> actions;
+	//private static ArrayList<ArrayList<Action>> actions;
 	
 	Consommable(int id, int durabilite) {
 		this.id = id;
@@ -33,7 +33,7 @@ public class Consommable {
 	/**
 	 * Activer tous les effets de l'objet, puis décrémenter la durabilité.
 	 */
-	public void utiliser() {
+	/*public void utiliser() {
 		//Renvoyer les effets du consommable.
 		ArrayList<Action> actions = getActions().get(id);
 		
@@ -44,7 +44,7 @@ public class Consommable {
 		
 		//Décrémente la durabilité de l'objet de 1.
 		setDurabilite(getDurabilite() - 1);
-	}
+	}*/
 	
 	
 	
@@ -78,8 +78,8 @@ public class Consommable {
 	public static ArrayList<Integer> getDurabilites() {
 		return durabilites;
 	}
-	public static ArrayList<ArrayList<Action>> getActions() {
+	/*public static ArrayList<ArrayList<Action>> getActions() {
 		return actions;
-	}
+	}*/
 	
 }
