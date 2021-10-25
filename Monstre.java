@@ -8,19 +8,19 @@ public class Monstre {
 	private int pv;
 	private int niveau;
 	Object objet; //Objet que le mob peut drop
-	List<Object> capacitées = new ArrayList<Object>(); //Liste des capacité du mob
+	List<Object> capacitÃ©s = new ArrayList<Object>(); //Liste des capacitÃ©s du mob
 	
 	
 	
 
-	public Monstre(String type, String nom, int attaque, int pv, int niveau, Object objet, List<Object> capacitées) {
+	public Monstre(String type, String nom, int attaque, int pv, int niveau, Object objet, List<Object> capacitÃ©s) {
 		this.type = type;
 		this.nom = nom;
 		this.attaque = attaque;
 		this.pv = pv;
 		this.niveau = niveau;
 		this.objet = objet;
-		this.capacitées = capacitées;
+		this.capacitÃ©s = capacitÃ©s;
 	}
 
 	public int getPv() {
@@ -39,12 +39,12 @@ public class Monstre {
 		this.niveau = niveau;
 	}
 	
-	public List<Object> getCapacitées() {
-		return capacitées;
+	public List<Object> getCapacitÃ©s() {
+		return capacitÃ©s;
 	}
 
-	public void setCapacitées(List<Object> capacitées) {
-		this.capacitées = capacitées;
+	public void setCapacitÃ©s(List<Object> capacitÃ©s) {
+		this.capacitÃ©s = capacitÃ©s;
 	}
 
 	public String getType() {
@@ -79,15 +79,15 @@ public class Monstre {
 		this.objet = objet;
 	}
 	
-	public void addcapacitée(Object capa) {
-		capacitées.add(capa);
+	public void addCapacitÃ©(Object capa) {
+		capacitÃ©s.add(capa);
 	}
 	
-	public boolean dropObjet(int chance) { //Retourne si l'objet est laché ou non 
+	public boolean dropObjet(int chance) { //Retourne si l'objet est lachï¿½ ou non 
 		return (Math.random()*100<100);
 	}
 
-//	public void useCapacitée(int i) {    //Utilise la capacitée dans la liste 
-//		capacitées.get(i).activer()
+//	public void useCapacitï¿½e(int i) {    //Utilise la capacitï¿½e dans la liste 
+//		capacitï¿½es.get(i).activer()
 //	}
 }

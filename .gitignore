@@ -1,7 +1,6 @@
 /CRUD.class
 /Consommable.class
 /EFFET.class
-/Inventaire.class
 /Objet.class
 /RPGUTable.class
 /BD.class
@@ -24,3 +23,5 @@ Action.java
 EFFET.java
 Test.java
 Test.java
+/Monstre.class
+/Stats.class
