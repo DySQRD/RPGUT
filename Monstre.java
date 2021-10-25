@@ -7,13 +7,13 @@ public class Monstre {
 	private int attaque;
 	private int pv;
 	private int niveau;
-	Object objet; //Objet que le mob peut drop
-	List<Object> capacités = new ArrayList<Object>(); //Liste des capacités du mob
+	Consommable objet; //Objet que le mob peut drop
+	ArrayList<Consommable> capacités = new ArrayList<Consommable>(); //Liste des capacités du mob
 	
 	
 	
 
-	public Monstre(String type, String nom, int attaque, int pv, int niveau, Object objet, List<Object> capacités) {
+	public Monstre(String type, String nom, int attaque, int pv, int niveau, Consommable objet, ArrayList<Consommable> capacités) {
 		this.type = type;
 		this.nom = nom;
 		this.attaque = attaque;
@@ -39,11 +39,11 @@ public class Monstre {
 		this.niveau = niveau;
 	}
 	
-	public List<Object> getCapacités() {
+	public List<Consommable> getCapacités() {
 		return capacités;
 	}
 
-	public void setCapacités(List<Object> capacités) {
+	public void setCapacités(ArrayList<Consommable> capacités) {
 		this.capacités = capacités;
 	}
 
@@ -71,15 +71,15 @@ public class Monstre {
 		this.attaque = attaque;
 	}
 	
-	public Object getObjet() {
+	public Consommable getObjet() {
 		return objet;
 	}
 	
-	public void setObjet(Object objet) {
+	public void setObjet(Consommable objet) {
 		this.objet = objet;
 	}
 	
-	public void addCapacité(Object capa) {
+	public void addCapacité(Consommable capa) {
 		capacités.add(capa);
 	}
 	

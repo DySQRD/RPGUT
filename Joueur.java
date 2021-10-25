@@ -5,18 +5,18 @@ public class Joueur {
 	private String pseudo;
 	private int id;
 	private int xp;
-	private Stats stats;
-	private Inventaire inventaire;
+	private HashMap<String, Integer> stats;
+	private ArrayList<Consommable> inventaire;
 
-	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse, Inventaire inventaire) {
+	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse, ArrayList<Consommable> inventaire) {
 		this.id = id;
 		this.pseudo = pseudo;
 		this.xp = xp;
-		this.stats = new Stats(pv, attaque, vitesse);
+		this.stats = new HashMap<String, Integer>();
 		this.inventaire = inventaire;
 	}
 	
-	public Joueur(String pseudo, int id, int xp, Stats stats, Inventaire inventaire) {
+	public Joueur(String pseudo, int id, int xp, HashMap<String, Integer> stats, ArrayList<Consommable> inventaire) {
 		this.id = id;
 		this.pseudo = pseudo;
 		this.xp = xp;
@@ -48,7 +48,7 @@ public class Joueur {
 		return stats;
 	}
 
-	public void setStats(Stats stats) {
+	public void setStats(HashMap<String, Integer> stats) {
 		this.stats = stats;
 	}
 
@@ -64,7 +64,7 @@ public class Joueur {
 		return inventaire;
 	}
 
-	public void setInventaire(Inventaire inventaire) {
+	public void setInventaire(ArrayList<Consommable> inventaire) {
 		this.inventaire = inventaire;
 	}
 	
