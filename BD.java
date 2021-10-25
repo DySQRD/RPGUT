@@ -193,7 +193,7 @@ public class BD {
 		joueurTable.next();	//Peut pas utiliser les gets dans le return Joueur si on n'avance pas au premier tuple !
 		
 		ResultSet joueurConsommableTable = telecharger("joueur_consommable", joueurId);
-		Inventaire joueurInventaire = new Inventaire();
+		ArrayList<Consommable> joueurInventaire = new ArrayList<Consommable>();
 		while(joueurConsommableTable.next()) {
 			joueurInventaire.add(new Consommable(
 				joueurConsommableTable.getInt("consommable_id"),
@@ -241,7 +241,7 @@ public class BD {
 		//Correctif à venir.
 
 		connexion.setAutoCommit(false);
-		//...puis insérer les objets de l'Inventaire dans la BD.
+		//...puis insérer les objets de l'ArrayList<Consommable> dans la BD.
 		preparer("INSERT INTO joueur_consommable VALUES(?,?,?,?)");
 		ArrayList<Consommable> inventaire = joueur.getInventaire();
 		for(int i = 0; i < inventaire.size(); i++) {
