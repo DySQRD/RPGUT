@@ -25,3 +25,9 @@ Test.java
 /Monstre.class
 /Stats.class
 /Inventaire.class
+<<<<<<< Updated upstream
+=======
+/Entite.class
+.classpath
+>>>>>>> Stashed changes
+.classpath
