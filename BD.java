@@ -193,7 +193,7 @@ public class BD {
 		joueurTable.next();	//Peut pas utiliser les gets dans le return Joueur si on n'avance pas au premier tuple !
 		
 		ResultSet joueurConsommableTable = telecharger("joueur_consommable", joueurId);
-		Inventaire joueurInventaire = new Inventaire();
+		ArrayList<Consommable> joueurInventaire = new ArrayList<Consommable>();
 		while(joueurConsommableTable.next()) {
 			joueurInventaire.add(new Consommable(
 				joueurConsommableTable.getInt("consommable_id"),
