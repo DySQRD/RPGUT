@@ -22,6 +22,6 @@ public class Obstacle {
     public Obstacle(){}
     public void setHitbox(){
         this.hitbox = new Rectangle(x, y, width, height);
-        this.hitbox.setOpacity(0);
+        this.hitbox.setOpacity(.5);
     }
 }

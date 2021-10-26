@@ -9,12 +9,15 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 
 
 public class Map {
     private int spawnX;
     private int spawnY;
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
+    private ArrayList<Mob> mobs = new ArrayList<>();
 
     @Expose
     //Layers de la map (texture + objets)
@@ -111,5 +114,33 @@ public class Map {
     }
     public ArrayList<Obstacle> getObstacles(){
         return obstacles;
+    }
+
+    public void spawnMobs(int nbreMobs){
+        double spawnX;
+        double spawnY;
+        boolean collision = false;
+        for(int i=0; i<nbreMobs; i++) {
+            spawnX = Math.random() * width * tilewidth;
+            spawnY = Math.random() * height * tileheight;
+            this.mobs.add(new MathsMinion());
+            mobs.get(i).hitbox = new Rectangle(0, 0, mobs.get(i).imageV.getFitWidth(), mobs.get(i).imageV.getFitHeight());
+            mobs.get(i).tp(spawnX, spawnY);
+            do {
+                for (int j = 0; j < this.layers.get(1).objects.size(); j++) {
+                    if (mobs.get(i).hitbox.getBoundsInParent().intersects(layers.get(1).objects.get(j).hitbox.getBoundsInParent())) {
+                        spawnX = Math.random() * width * tilewidth;
+                        spawnY = Math.random() * height * tileheight;
+                        mobs.get(i).tp(spawnX, spawnY);
+                        collision = true;break;
+                    }
+                    else collision = false;
+                }
+            } while (collision == true);
+        }
+
+    }
+    public ArrayList<Mob> getMobs(){
+        return mobs;
     }
 }
