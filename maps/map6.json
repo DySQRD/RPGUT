@@ -20,15 +20,37 @@
          "name":"Calque d'Objets 1",
          "objects":[
                 {
-                 "height":577.716868348156,
-                 "id":1,
-                 "name":"hardstuck",
+                 "height":98,
+                 "id":2,
+                 "name":"sortie4",
                  "rotation":0,
-                 "type":"curse",
+                 "type":"sortie",
                  "visible":true,
-                 "width":894.311124070564,
+                 "width":12.1767021431696,
+                 "x":1.35296690479662,
+                 "y":350
+                }, 
+                {
+                 "height":123.119988336492,
+                 "id":3,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":58.1775769062546,
+                 "x":-1.35296690479662,
+                 "y":449.185012392477
+                }, 
+                {
+                 "height":154.238227146814,
+                 "id":4,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":58.1775769062546,
                  "x":0,
-                 "y":-1.35296690479662
+                 "y":194.827234290713
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -37,7 +59,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":2,
+ "nextobjectid":5,
  "orientation":"orthogonal",
  "renderorder":"left-up",
  "tiledversion":"1.7.2",

@@ -58,7 +58,7 @@ public class FirstApplication extends Application {
         window = stage;
 
         //Configuration fenêtre
-        window.setTitle("Teemo");
+        window.setTitle("Project Game");
         window.setWidth(900);
         window.setHeight(600);      // Taille des maps : 576 x 896  384x597 espaces 96x150
         window.setResizable(false);
@@ -99,6 +99,18 @@ public class FirstApplication extends Application {
                 .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map6.json")));
         Map map6 = gsonBuilder.fromJson(json, Map.class);
 
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map7.json")));
+        Map map7 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map8.json")));
+        Map map8 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map9.json")));
+        Map map9 = gsonBuilder.fromJson(json, Map.class);
+
 
 
         map1.addTileset(tileset1);
@@ -107,6 +119,9 @@ public class FirstApplication extends Application {
         map4.addTileset(tileset1);
         map5.addTileset(tileset1);
         map6.addTileset(tileset1);
+        map7.addTileset(tileset1);
+        map8.addTileset(tileset1);
+        map9.addTileset(tileset1);
 
 
         //Création du niveau
@@ -117,9 +132,12 @@ public class FirstApplication extends Application {
         level1.addMap(map4);
         level1.addMap(map5);
         level1.addMap(map6);
+        level1.addMap(map7);
+        level1.addMap(map8);
+        level1.addMap(map9);
         level1.loadLevel();
 
-        map2.spawnMobs(2);
+        map2.spawnMobs(10);
         map5.spawnMobs(20);
 
 
@@ -130,12 +148,12 @@ public class FirstApplication extends Application {
         GraphicsContext gc = canvasCombat.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
         gc.fillRect(150,96,597,384);
-        Label label2 = new Label("ECRAN DE COMBAT");
-        label2.setLayoutX(300);
+        Label label2 = new Label("(CECI EST UN ECRAN DE COMBAT)");
+        label2.setLayoutX(250);
         label2.setLayoutY(200);
         label2.setAlignment(Pos.CENTER);
         label2.setFont(Font.font("",FontWeight.BOLD, 22));
-        rootCombat.getChildren().addAll(canvasCombat, label2);
+
 
         //canvas -> root
         root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
@@ -143,6 +161,13 @@ public class FirstApplication extends Application {
         //Zones de texte
         Label label1 = new Label();     // Text
         label1.setTextFill(Color.BLUE);
+        label1.setFont(Font.font("",FontWeight.BOLD, 22));
+
+        Label label3 = new Label();     // Text
+        label3.setTextFill(Color.RED);
+        label3.setFont(Font.font("",FontWeight.BOLD, 22));
+        label3.setLayoutX(158);
+        label3.setLayoutY(103);
 
         Label mouseLocation = new Label();
         mouseLocation.setLayoutX(700);
@@ -157,6 +182,8 @@ public class FirstApplication extends Application {
 
         //Nodes -> root
         root.getChildren().addAll(perso1.imageV, label1, mouseLocation);
+
+        rootCombat.getChildren().addAll(canvasCombat, label2, label3);
 
         //Root -> scene
         Scene scene1 = new Scene(root);
@@ -174,9 +201,20 @@ public class FirstApplication extends Application {
 
         //Loop combat
         AnimationTimer combat = new AnimationTimer() {
+            private long delta = 0;
+            private long lastFrameTime=0;
+            private long fps;
+            private long lastFPSTime;
 
             @Override
-            public void handle(long l) {
+            public void handle(long now) {
+                delta = now - lastFrameTime;
+                lastFrameTime = now;
+                fps = (long) 1e9 / delta;
+                if((now - lastFPSTime)>(1e8)){
+                    label3.setText(""+fps);
+                    lastFPSTime = now;
+                }
             }
         };
 
@@ -340,7 +378,7 @@ public class FirstApplication extends Application {
 
                 //Réduction du rafraichissement du compteur fps
                 if((now - lastFPSTime)>(1e8)){
-                    label1.setText(""+level1.getCurrentMap());
+                    label1.setText(""+fps);
                     lastFPSTime = now;
                 }
             }
