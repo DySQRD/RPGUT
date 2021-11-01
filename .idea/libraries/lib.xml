@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="file://$USER_HOME$/Desktop/Marc/FAC/L2/Programmation Objet/PROJET/javafx-sdk-17.0.0.1/lib" />
+      <root url="file://$USER_HOME$/Desktop/Marc/FAC/L2/Programmation Objet/PROJET/gson-2.8.8" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$USER_HOME$/Desktop/Marc/FAC/L2/Programmation Objet/PROJET/javafx-sdk-17.0.0.1/lib" recursive="false" />
+  </library>
+</component>
