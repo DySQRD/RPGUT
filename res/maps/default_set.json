@@ -1,5 +1,5 @@
 { "columns":8,
- "image":"C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/tmw_desert_spacing.png",
+ "image":"../Images/tmw_desert_spacing.png",
  "imageheight":199,
  "imagewidth":265,
  "margin":1,

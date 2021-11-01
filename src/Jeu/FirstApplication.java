@@ -112,7 +112,6 @@ public class FirstApplication extends Application {
         Map map9 = gsonBuilder.fromJson(json, Map.class);
 
 
-
         map1.addTileset(tileset1);
         map2.addTileset(tileset1);
         map3.addTileset(tileset1);
@@ -153,7 +152,6 @@ public class FirstApplication extends Application {
         label2.setLayoutY(200);
         label2.setAlignment(Pos.CENTER);
         label2.setFont(Font.font("",FontWeight.BOLD, 22));
-
 
         //canvas -> root
         root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
@@ -198,7 +196,7 @@ public class FirstApplication extends Application {
                 mouseLocation.setText("x = " + mouseEvent.getSceneX() + ", y = "+mouseEvent.getSceneY());
             }
         });
-
+      
         //Loop combat
         AnimationTimer combat = new AnimationTimer() {
             private long delta = 0;
@@ -295,7 +293,6 @@ public class FirstApplication extends Application {
                             root.getChildren().add(rootCombat);
                             this.stop();
                             combat.start();
-
                         }
                     }
                     if(!(perso1.collision)) perso1.moveDown();
@@ -330,7 +327,6 @@ public class FirstApplication extends Application {
                             root.getChildren().add(rootCombat);
                             this.stop();
                             combat.start();
-
                         }
                     }
                     if(!(perso1.collision)) perso1.moveLeft();
@@ -366,7 +362,6 @@ public class FirstApplication extends Application {
                             root.getChildren().add(rootCombat);
                             this.stop();
                             combat.start();
-
                         }
                     }
                     if(!(perso1.collision)) perso1.moveRight();
@@ -386,7 +381,6 @@ public class FirstApplication extends Application {
 
         //Lancement de la Loop
         gameLoop.start();
-
 
 
         //Pression d'une touche sur la scene1

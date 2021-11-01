@@ -17,6 +17,4 @@ public class MathsMinion extends Mob{
         imageView.setFitHeight(25);
         super.imageV = imageView;
     }
-
-
 }
