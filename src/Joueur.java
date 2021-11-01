@@ -5,7 +5,7 @@ public class Joueur {
 	private String pseudo;
 	private int id;
 	private int xp;
-	private HashMap<String, Integer> stats;
+	private HashMap<String, Integer> stats = new HashMap<String, Integer>();
 	private ArrayList<Consommable> inventaire = new ArrayList<Consommable>();
 
 	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse) {

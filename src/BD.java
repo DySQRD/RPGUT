@@ -1,102 +1,99 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import Exceptions.JoueurAlreadyExistsException;
-import Exceptions.JoueurNotFoundException;
-import Exceptions.UnexpectedDBError;
-import Exceptions.WrongPasswordException;
+import Exceptions.ImprevuDBError;
 
 
 /**
- * Classe d'interaction avec la BD.
- * @author dydyt
+ * 	Classe d'interaction avec la BD. A utiliser comme suit :
+ * 	<ul>
+ * 		<li>Si l'utilisateur souhaite s'inscrire, utiliser BD.inscrire(String pseudo, String mdp).
+ * 		<li>Sinon, s'il souhaite se connecter, utiliser BD.identifier(String pseudo, String mdp).
+ * 		<li>Ces deux méthodes renvoient 1 s'il n'y a pas de problème.
+ * 		<li>Toutes les données nécessaires sont téléchargées et l'accès au jeu peut être accordé.
+ * 	</ul>
+ * 
+ * Plusieurs méthodes lancent SQLException.
+ * Quand cela arrive, il faut indiquer que la connexion à la BD n'a pu être établie ou a été perdue.
+ * @author Dylan Toledano
  *
  */
 public class BD {
-	//"connexion" en francais, ca permettra aussi de faire la distinction entre les methodes de JDBC et celles que je cree.
-	private Connection connexion;
-	private Statement statement;
-	
+	private static Connection connexion; 
+	//Eventuellement ajouter "?allowMultiQueries=true" s'il faut exécuter plusieurs commandes en un statement.
+	//Sinon voir si le "batching" résout ce problème de façon plus sécurisée.
+	private static PreparedStatement preparedStatement;
+	private static ResultSet joueurTable;
 	/**
-	 * @throws SQLException S'il est impossible de se connecter a la BD.
+	 * 	Le Joueur téléchargé suite à une connexion réussie à la BD.
 	 */
-	public BD() throws SQLException {
-		setConnexion(DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "joueur", "joueur"));
-		setStatement(connexion.createStatement());
-	}
+	private static Joueur joueur;
+	/**
+	 * Dans telecharger(), détermine s'il faut télécharger les données statiques.<br>
+	 * Cela ne devrait arriver qu'une fois par lancement du programme.
+	 */
+	private static boolean dejaTelecharge = false;
 	
 	/**
-	 * 
-	 * @param pseudo
+	 * Méthode à utiliser pour authentifier un joueur avant de le connecter.<br>
+	 * Vérifie que le pseudo existe et que le mdp correspond.
+	 * @param pseudo		
 	 * @param mdp
-	 * @throws JoueurNotFoundException Si le pseudonyme n'existe pas dans la BD.
-	 * @throws SQLException S'il est impossible de se connecter a la BD.
-	 * @throws UnexpectedDBError S'il y a plus d'un resultat pour le pseudonyme demande.
-	 * @throws WrongPasswordException Si le mot de passe est incorrect.
+	 * @return	<ul> 
+	 * 				<li>0 si le pseudo n'est pas dans la BD.
+	 * 				<li>-1 si le mdp ne correspond pas.
+	 * 				<li>1 sinon.
+	 * 			</ul>
+	 * @throws SQLException
+	 * @throws ImprevuDBError	Si le pseudo apparaît plusieurs fois dans la BD.
 	 */
-	public void connexion(String pseudo, String mdp) throws JoueurNotFoundException, UnexpectedDBError, SQLException, WrongPasswordException {
-		ResultSet rs = statement.executeQuery(""
-				+ "SELECT * FROM `joueur`"
-				+ "LEFT JOIN `joueur_role`"
-				+ "ON joueur.id = joueur_role.joueur_id"
-				+ "WHERE `joueur`.`nom` = '" + pseudo + "' AND mdp = '" + mdp + "'"
-		+ "");
-		
-		//S'il n'y a pas de joueur pour le pseudonyme donné...
-		if(!rs.next()) {
-			//On demandera de saisir le pseudo de nouveau
-			throw new JoueurNotFoundException();
-			
-		//S'il y a plus d'un resultat...
-		} else if(!rs.isLast()) {
-			//Une erreur qui n'est pas censée survenir.
-			throw new UnexpectedDBError();
-		/*Ici, une erreur, pas une exception, car on requiert qu'un humain aille inspecter la BD pour corriger le probleme,
-		prendre contact avec les joueurs concernes, et enfin modifier le code pour que cette erreur ne se reproduise plus.
-		Du cote de l'interface graphique, on indiquera au joueur qu'une erreur est survenue sans preciser laquelle,
-		que le service technique a ete prevenu et qu'il faudra essayer de se connecter de nouveau plus tard.*/
-		
-		//S'il y a un joueur mais que le mot de passe ne correspond pas...
-		} else if(!(rs.getString("mdp") == mdp)) {	
+	public static int identifier(String pseudo, String mdp) throws SQLException, ImprevuDBError {
+		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
+		if(!verifier(pseudo)) {	//S'il n'y a pas de joueur pour le pseudonyme donné...
+			return 0;	//On indiquera que le joueur demandé n'existe pas.
+		} else if(!joueurTable.isLast()) {
+			//S'il y a plus d'un resultat... (si le premier résultat n'est pas le dernier)
+			throw new ImprevuDBError();	//Une erreur qui n'est pas censée survenir.
+			/*Ici, une erreur, pas une exception, car on requiert qu'un humain aille inspecter la BD pour corriger le probleme,
+			prendre contact avec les joueurs concernes, et enfin modifier le code (ou plutôt la BD) pour que cette erreur ne se reproduise plus.
+			Du cote de l'interface graphique, on indiquera au joueur qu'une erreur est survenue sans preciser laquelle,
+			que le service technique a ete prevenu et qu'il faudra essayer de se connecter de nouveau plus tard.*/
+		} else if(!(joueurTable.getString("mdp") == mdp)) {	
 			//Sur l'interface, on demandera de saisir le mdp de nouveau.
-			throw new WrongPasswordException();
+			return -1;
 		} else {
-			int joueurId = rs.getInt("id");
-			
-			//Si le joueur est admin...
-			if(rs.getInt("role_id") == 1) {
-				//On se reconnecte avec les droits roots.
-				setConnexion(DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "root", "root"));
-				setStatement(connexion.createStatement());
-			}
-			downloadDatabase(joueurId);
+			return connecter();
 		}
 	}
-	
+
 	/**
-	 * Ajoute un pseudo et un mdp a la BD a condition que le pseudonyme ne soit pas deja utilisé.
+	 * Ajoute un pseudo et un mdp a la BD à condition que le pseudonyme ne soit pas deja utilisé.
 	 * 
-	 * @param pseudo
-	 * @param mdp
-	 * @throws JoueurAlreadyExistsException Si le pseudonyme est deja present dans la BD.
-	 * @throws SQLException S'il est impossible de se connecter a la BD.
+	 * @param 	pseudo
+	 * @param 	mdp
+	 * @return	0 si le pseudo existe déjà dans la BD<br>
+	 * 			-1 si le mdp ne correspond pas aux critères imposés<br>
+	 * 			Sinon l'id du nouveau joueur
+	 * @throws 	SQLException 	S'il est impossible de se connecter a la BD.
+	 * @throws 	ImprevuDBError 	
 	 */
-	public void inscription(String pseudo, String mdp) throws JoueurAlreadyExistsException, SQLException {
-		ResultSet res = statement.executeQuery(""
-			+ "SELECT nom "
-			+ "FROM joueur "
-			+ "WHERE nom = '" + pseudo + "'");
-		
-		if(res.next()) {									// S'il existe déjà un joueur avec ce pseudo...
-			throw new JoueurAlreadyExistsException();		// On empêche d'aller plus loin.
+	public static int inscrire(String pseudo, String mdp) throws SQLException {
+		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
+		if(verifier(pseudo)) {// S'il existe déjà un joueur avec ce pseudo...
+			return 0;
+		} else if(false) {//si mot de passe non conforme aux restrictions imposées...
+			return -1;	//pas encore rédigée
 		} else {
-			statement.executeUpdate(""
-				+ "INSERT INTO joueur(id, nom, mdp, xp)"
-				+ "VALUES(0,'" + pseudo + "','" + mdp + "', 0)");
+			informer(""
+				+ "INSERT INTO joueur(nom, mdp)"
+				+ "VALUES(?, ?)"
+			+ "", new String[]{pseudo, mdp});
+			return connecter();
 		}
 	}
 	
