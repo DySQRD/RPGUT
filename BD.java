@@ -12,40 +12,32 @@ import Exceptions.ImprevuDBError;
 /**
  * 	Classe d'interaction avec la BD. A utiliser comme suit :
  * 	<ul>
- * 		<li>Créer une instance de cette classe.
- * 		<li>Si l'utilisateur souhaite s'inscrire, utiliser instance.inscrire(String pseudo, String mdp).
- * 		<li>Sinon, s'il souhaite se connecter, utiliser instance.identifier(String pseudo, String mdp).
+ * 		<li>Si l'utilisateur souhaite s'inscrire, utiliser BD.inscrire(String pseudo, String mdp).
+ * 		<li>Sinon, s'il souhaite se connecter, utiliser BD.identifier(String pseudo, String mdp).
  * 		<li>Ces deux méthodes renvoient 1 s'il n'y a pas de problème.
  * 		<li>Toutes les données nécessaires sont téléchargées et l'accès au jeu peut être accordé.
  * 	</ul>
  * 
- * Nombres de méthodes lancent SQLException.
+ * Plusieurs méthodes lancent SQLException.
  * Quand cela arrive, il faut indiquer que la connexion à la BD n'a pu être établie ou a été perdue.
- * @author dydyt
+ * @author Dylan Toledano
  *
  */
 public class BD {
-	private Connection connexion;
-	private PreparedStatement preparedStatement;
-	private ResultSet joueurTable;
+	private static Connection connexion; 
+	//Eventuellement ajouter "?allowMultiQueries=true" s'il faut exécuter plusieurs commandes en un statement.
+	//Sinon voir si le "batching" résout ce problème de façon plus sécurisée.
+	private static PreparedStatement preparedStatement;
+	private static ResultSet joueurTable;
 	/**
 	 * 	Le Joueur téléchargé suite à une connexion réussie à la BD.
 	 */
-	private Joueur joueur;
+	private static Joueur joueur;
 	/**
 	 * Dans telecharger(), détermine s'il faut télécharger les données statiques.<br>
 	 * Cela ne devrait arriver qu'une fois par lancement du programme.
 	 */
 	private static boolean dejaTelecharge = false;
-	
-	/**
-	 * @throws SQLException S'il est impossible de se connecter a la BD.
-	 */
-	public BD() throws SQLException {
-		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "joueur", "joueur");
-		//Eventuellement ajouter "?allowMultiQueries=true" s'il faut exécuter plusieurs commandes en un statement.
-		//Sinon voir si le "batching" résout ce problème de façon plus sécurisée.
-	}
 	
 	/**
 	 * Méthode à utiliser pour authentifier un joueur avant de le connecter.<br>
@@ -60,7 +52,8 @@ public class BD {
 	 * @throws SQLException
 	 * @throws ImprevuDBError	Si le pseudo apparaît plusieurs fois dans la BD.
 	 */
-	public int identifier(String pseudo, String mdp) throws SQLException, ImprevuDBError {
+	public static int identifier(String pseudo, String mdp) throws SQLException, ImprevuDBError {
+		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
 		if(!verifier(pseudo)) {	//S'il n'y a pas de joueur pour le pseudonyme donné...
 			return 0;	//On indiquera que le joueur demandé n'existe pas.
 		} else if(!joueurTable.isLast()) {
@@ -77,6 +70,44 @@ public class BD {
 			return connecter();
 		}
 	}
+
+	/**
+	 * Ajoute un pseudo et un mdp a la BD à condition que le pseudonyme ne soit pas deja utilisé.
+	 * 
+	 * @param 	pseudo
+	 * @param 	mdp
+	 * @return	0 si le pseudo existe déjà dans la BD<br>
+	 * 			-1 si le mdp ne correspond pas aux critères imposés<br>
+	 * 			Sinon l'id du nouveau joueur
+	 * @throws 	SQLException 	S'il est impossible de se connecter a la BD.
+	 * @throws 	ImprevuDBError 	
+	 */
+	public static int inscrire(String pseudo, String mdp) throws SQLException {
+		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
+		if(verifier(pseudo)) {// S'il existe déjà un joueur avec ce pseudo...
+			return 0;
+		} else if(false) {//si mot de passe non conforme aux restrictions imposées...
+			return -1;	//pas encore rédigée
+		} else {
+			informer(""
+				+ "INSERT INTO joueur(nom, mdp)"
+				+ "VALUES(?, ?)"
+			+ "", new String[]{pseudo, mdp});
+			return connecter();
+		}
+	}
+	
+	/**
+	 * Retire toutes les données du Joueur de la BD.
+	 * @throws SQLException
+	 */
+	public static void desinscrire() throws SQLException {
+		//TODO retirer toutes les données relatives au joueur de la BD
+		
+		//Ca c'est ce qui est fait en dernier normalement
+		informer("DELETE FROM joueur WHERE id = ?",
+			new String[] {Integer.toString(joueur.getId())});
+	}
 	
 	/**
 	 * Tente de télécharger la table du joueur demandé.<br>
@@ -86,7 +117,7 @@ public class BD {
 	 * @return
 	 * @throws SQLException
 	 */
-	private boolean verifier(String pseudo) throws SQLException {
+	private static boolean verifier(String pseudo) throws SQLException {
 		joueurTable = querir(""
 				+ "SELECT id, nom, mdp"
 				+ "FROM `joueur`"
@@ -105,48 +136,12 @@ public class BD {
 	 * @throws 	SQLException S'il est impossible de se connecter a la BD.
 	 * @throws 	ImprevuDBError S'il y a plus d'un resultat pour le pseudonyme demande.
 	 */
-	private int connecter() throws SQLException {
+	private static int connecter() throws SQLException {
+		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "joueur", "joueur");
 		//Télécharge toutes les données pertinentes de la BD.
 		telecharger();
 		telecharger(joueurTable.getInt("id"));
 		return 1;
-	}
-	
-	/**
-	 * Ajoute un pseudo et un mdp a la BD à condition que le pseudonyme ne soit pas deja utilisé.
-	 * 
-	 * @param 	pseudo
-	 * @param 	mdp
-	 * @return	0 si le pseudo existe déjà dans la BD<br>
-	 * 			-1 si le mdp ne correspond pas aux critères imposés<br>
-	 * 			Sinon l'id du nouveau joueur
-	 * @throws 	SQLException 	S'il est impossible de se connecter a la BD.
-	 * @throws 	ImprevuDBError 	
-	 */
-	public int inscrire(String pseudo, String mdp) throws SQLException {
-		if(verifier(pseudo)) {// S'il existe déjà un joueur avec ce pseudo...
-			return 0;
-		} else if(false) {//si mot de passe non conforme aux restrictions imposées...
-			return -1;	//pas encore rédigée
-		} else {
-			informer(""
-				+ "INSERT INTO joueur(nom, mdp)"
-				+ "VALUES(?, ?)"
-			+ "", new String[]{pseudo, mdp});
-			return connecter();
-		}
-	}
-	
-	/**
-	 * Retire toutes les données du Joueur de la BD.
-	 * @throws SQLException
-	 */
-	public void desinscrire() throws SQLException {
-		//TODO retirer toutes les données relatives au joueur de la BD
-		
-		//Ca c'est ce qui est fait en dernier normalement
-		informer("DELETE FROM joueur WHERE id = ?",
-			new String[] {Integer.toString(joueur.getId())});
 	}
 	
 	/**
@@ -155,7 +150,7 @@ public class BD {
 	 * Pas besoin de télécharger plusieurs fois les données qui ne changent pas.
 	 * @throws SQLException
 	 */
-	private void telecharger() throws SQLException {
+	private static void telecharger() throws SQLException {
 		if(!dejaTelecharge) {
 			dejaTelecharge = !dejaTelecharge;
 			
@@ -179,7 +174,7 @@ public class BD {
 	 * @return L'integralite de la table demandée.
 	 * @throws SQLException
 	 */
-	private ResultSet telecharger(String table) throws SQLException {
+	private static ResultSet telecharger(String table) throws SQLException {
 		return querir("SELECT * FROM ?", new String[] {table});
 	}
 	
@@ -188,7 +183,7 @@ public class BD {
 	 * @param joueurId
 	 * @throws SQLException
 	 */
-	private void telecharger(int joueurId) throws SQLException {
+	private static void telecharger(int joueurId) throws SQLException {
 		joueurTable = telecharger("joueur", joueurId);
 		joueurTable.next();	//Peut pas utiliser les gets dans le return Joueur si on n'avance pas au premier tuple !
 		
@@ -202,13 +197,11 @@ public class BD {
 		}
 		
 		joueur = new Joueur(
-				joueurTable.getString("nom"),
 				joueurTable.getInt("id"),
 				joueurTable.getInt("xp"),
-				joueurTable.getInt("pv"),
-				joueurTable.getInt("attaque"),
-				joueurTable.getInt("vitesse"),
-				joueurInventaire);
+				new HashMap<String, Integer>(),
+				joueurInventaire,
+				joueurTable.getString("nom"));
 	}
 	
 	/** Télécharge les données d'une table correspondants à l'id du joueur donné.
@@ -217,7 +210,7 @@ public class BD {
 	 * @return 	L'intégralité de la table demandée uniquement avec les tuples du joueur demandé.
 	 * @throws 	SQLException
 	 */
-	private ResultSet telecharger(String table, int joueurId) throws SQLException {
+	private static ResultSet telecharger(String table, int joueurId) throws SQLException {
 		//setString ne doit pas être utilisé pour les noms de table et de colonne, car la méthode envoie en fait des Strings
 		//Si utilisé sur un nom de table -> erreur, un nom de table ne peut être un string.
 		//Sur colonne (dans WHERE par exemple) -> ça va du coup vérifier si un string existe est égal à un autre, pas ce qu'on veut.
@@ -229,7 +222,7 @@ public class BD {
 	 * Sauvegarde toutes les données du Joueur dans la BD.
 	 * @throws SQLException
 	 */
-	public void sauvegarder() throws SQLException {
+	public static void sauvegarder() throws SQLException {
 		HashMap<String, Integer> stats = joueur.getStats();
 		informer("UPDATE joueur SET xp = ?, pv = ?, attaque = ?, vitesse = ? WHERE id = ?",
 			new Object[] {joueur.getXp(), stats.get("pv"), stats.get("attaque"), stats.get("vitesse"), joueur.getId()});
@@ -241,7 +234,7 @@ public class BD {
 		//Correctif à venir.
 
 		connexion.setAutoCommit(false);
-		//...puis insérer les objets de l'Inventaire dans la BD.
+		//...puis insérer les objets de l'ArrayList<Consommable> dans la BD.
 		preparer("INSERT INTO joueur_consommable VALUES(?,?,?,?)");
 		ArrayList<Consommable> inventaire = joueur.getInventaire();
 		for(int i = 0; i < inventaire.size(); i++) {
@@ -262,7 +255,7 @@ public class BD {
 	 * @return	La table correspondant à la requête demandée.
 	 * @throws 	SQLException
 	 */
-	private ResultSet querir(String sql, String[] valeurs) throws SQLException {
+	private static ResultSet querir(String sql, String[] valeurs) throws SQLException {
 		preparer(sql, valeurs);
 		return preparedStatement.executeQuery();
 	}
@@ -275,7 +268,7 @@ public class BD {
 	 * @return	Le nombre de lignes affectées par la requête.
 	 * @throws 	SQLException
 	 */
-	private int informer(String sql, Object[] valeurs) throws SQLException {
+	private static int informer(String sql, Object[] valeurs) throws SQLException {
 		preparer(sql, valeurs);
 		return preparedStatement.executeUpdate();
 	}
@@ -286,7 +279,7 @@ public class BD {
 	 * @param sql
 	 * @throws SQLException
 	 */
-	private void preparer(String sql) throws SQLException {
+	private static void preparer(String sql) throws SQLException {
 		preparedStatement = connexion.prepareStatement(sql);
 	}
 	
@@ -295,7 +288,7 @@ public class BD {
 	 * @param valeurs
 	 * @throws SQLException
 	 */
-	private void preparer(Object[] valeurs) throws SQLException {
+	private static void preparer(Object[] valeurs) throws SQLException {
 		for(int i = 0; i < valeurs.length; i++) {
 			preparedStatement.setObject(i + 1, valeurs[i]);
 		}
@@ -307,7 +300,7 @@ public class BD {
 	 * @param valeurs
 	 * @throws SQLException
 	 */
-	private void preparer(String sql, Object[] valeurs) throws SQLException {
+	private static void preparer(String sql, Object[] valeurs) throws SQLException {
 		preparer(sql);
 		preparer(valeurs);
 	}
@@ -316,7 +309,7 @@ public class BD {
 	 * Getters et setters
 	 */
 	
-	public Joueur getJoueur() {
+	public static Joueur getJoueur() {
 		return joueur;
 	}
 	
