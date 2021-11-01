@@ -55,5 +55,4 @@ public class Personnage extends Entity{
         this.imageV.setY(y);
         this.hitbox.setY(y+20);
     }
-
 }

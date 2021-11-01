@@ -101,19 +101,72 @@ public class BD {
 	}
 	
 	/**
-	 * Enclenche toutes les méthodes "download".<br>
-	 * Càd, télécharge toutes les tables statiques ainsi que les données du joueur dont l'id est donnée.
-	 * @param joueurId
+	 * Retire toutes les données du Joueur de la BD.
 	 * @throws SQLException
 	 */
-	private void downloadDatabase(int joueurId) throws SQLException {
-		//Téléchargement des données du joueur
-		downloadConsommable(joueurId);
-		downloadJoueur(joueurId);
-		downloadJoueurConsommable(joueurId);
+	public static void desinscrire() throws SQLException {
+		//TODO retirer toutes les données relatives au joueur de la BD
 		
-		//Téléchargement des données statiques
-		downloadMob();
+		//Ca c'est ce qui est fait en dernier normalement
+		informer("DELETE FROM joueur WHERE id = ?",
+			new String[] {Integer.toString(joueur.getId())});
+	}
+	
+	/**
+	 * Tente de télécharger la table du joueur demandé.<br>
+	 * Renvoie s'il y a au moins une correspondance.
+	 * @param pseudo
+	 * @param mdp
+	 * @return
+	 * @throws SQLException
+	 */
+	private static boolean verifier(String pseudo) throws SQLException {
+		joueurTable = querir(""
+				+ "SELECT id, nom, mdp"
+				+ "FROM `joueur`"
+				+ "WHERE `joueur`.`nom` = ?"
+		+ "", new String[]{pseudo});
+		return joueurTable.next();
+	}
+	
+	/**
+	 * Télécharge toutes les données du jeu et celles du joueur demandé.
+	 * @param 	pseudo
+	 * @param 	mdp
+	 * @return	0 si le joueur est introuvable<br>
+	 * 			-1 si le mot de passe est incorrect<br>
+	 * 			sinon l'id du joueur correspondant
+	 * @throws 	SQLException S'il est impossible de se connecter a la BD.
+	 * @throws 	ImprevuDBError S'il y a plus d'un resultat pour le pseudonyme demande.
+	 */
+	private static int connecter() throws SQLException {
+		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "joueur", "joueur");
+		//Télécharge toutes les données pertinentes de la BD.
+		telecharger();
+		telecharger(joueurTable.getInt("id"));
+		return 1;
+	}
+	
+	/**
+	 * Télécharge toutes les données statiques de la BD pour les insérer dans des ArrayLists statiques,<br>
+	 * sauf si cette méthode a déjà été appelée depuis le lancement du programme.<br>
+	 * Pas besoin de télécharger plusieurs fois les données qui ne changent pas.
+	 * @throws SQLException
+	 */
+	private static void telecharger() throws SQLException {
+		if(!dejaTelecharge) {
+			dejaTelecharge = !dejaTelecharge;
+			
+			ResultSet consommableTable = telecharger("consommable");
+			
+			while(consommableTable.next()) {
+				int consommableId = consommableTable.getInt("id");
+				
+				Consommable.getNoms().add(consommableId, consommableTable.getString("nom"));
+				Consommable.getDurabilites().add(consommableId, consommableTable.getInt("durabilite"));
+				//Consommable.getActions().add(consommableId, Consommable.getActions().get(consommableId));
+			}
+		}
 	}
 	
 	/**
@@ -124,88 +177,143 @@ public class BD {
 	 * @return L'integralite de la table demandée.
 	 * @throws SQLException
 	 */
-	private ResultSet downloadTable(String table) throws SQLException {
-		return statement.executeQuery(""
-				+ "SELECT *"
-				+ "FROM `" + table + "`"
-			+ "");
+	private static ResultSet telecharger(String table) throws SQLException {
+		return querir("SELECT * FROM ?", new String[] {table});
 	}
 	
 	/**
-	 * Télécharge les données d'une table correspondants à l'id du joueur donné.
-	 * @param 	table		Le nom de la table à télécharger.
-	 * @param 	joueurId	L'id du joueur dans la BD dont il faut télécharger les données.
-	 * @return 	L'integralite de la table demandée uniquement avec les tuples du joueur demandé.
-	 * @throws 	SQLException
-	 */
-	private ResultSet downloadTable(String table, int joueurId) throws SQLException {
-		return statement.executeQuery(""
-				+ "SELECT *"
-				+ "FROM `" + table + "`"
-				+ "WHERE joueur_id = " + joueurId
-			+ "");
-	}
-	
-	
-	
-	/*
-	 * Téléchargement des tables STATIQUES de la BD dans des ArrayLists.
-	 */
-	
-	/**
-	 * Télécharge l'intégralité de la table Consommable<br>
-	 * et range ses données dans les ArrayLists de la classe Consommable.
+	 * Télécharge toutes les données du joueur.
+	 * @param joueurId
 	 * @throws SQLException
 	 */
-	private void downloadConsommable() throws SQLException {
-		ResultSet consommableTable = downloadTable("consommable");
+	private static void telecharger(int joueurId) throws SQLException {
+		joueurTable = telecharger("joueur", joueurId);
+		joueurTable.next();	//Peut pas utiliser les gets dans le return Joueur si on n'avance pas au premier tuple !
 		
-		//Tant qu'il reste une ligne à télécharger
-		while(consommableTable.next()) {
-			int consommableId = consommableTable.getInt("id");
-			
-			//Ajoute les attributs des objets dans les ArrayLists,
-			//dont les clès sont les ids des objets
-			Consommable.getNoms().add(consommableId, consommableTable.getString("nom"));
-			Consommable.getDurabilites().add(consommableId, consommableTable.getInt("durabilite"));
-			Consommable.getEffets().add(consommableId, Consommable.getEffets().get(consommableId));
+		ResultSet joueurConsommableTable = telecharger("joueur_consommable", joueurId);
+		ArrayList<Consommable> joueurInventaire = new ArrayList<Consommable>();
+		while(joueurConsommableTable.next()) {
+			joueurInventaire.add(new Consommable(
+				joueurConsommableTable.getInt("consommable_id"),
+				joueurConsommableTable.getInt("durabilite")
+			));
+		}
+		
+		joueur = new Joueur(
+				joueurTable.getInt("id"),
+				joueurTable.getInt("xp"),
+				new HashMap<String, Integer>(),
+				joueurInventaire,
+				joueurTable.getString("nom"));
+	}
+	
+	/** Télécharge les données d'une table correspondants à l'id du joueur donné.
+	 * @param 	table		Le nom de la table à télécharger.
+	 * @param 	joueurId	L'id du joueur dans la BD dont il faut télécharger les données.
+	 * @return 	L'intégralité de la table demandée uniquement avec les tuples du joueur demandé.
+	 * @throws 	SQLException
+	 */
+	private static ResultSet telecharger(String table, int joueurId) throws SQLException {
+		//setString ne doit pas être utilisé pour les noms de table et de colonne, car la méthode envoie en fait des Strings
+		//Si utilisé sur un nom de table -> erreur, un nom de table ne peut être un string.
+		//Sur colonne (dans WHERE par exemple) -> ça va du coup vérifier si un string existe est égal à un autre, pas ce qu'on veut.
+		String colonne = (table == "joueur") ? colonne = "id" : "joueur_id";
+		return querir("SELECT * FROM " + table + " WHERE " + colonne + " = ?", new String[] {Integer.toString(joueurId)});
+	}
+	
+	/**
+	 * Sauvegarde toutes les données du Joueur dans la BD.
+	 * @throws SQLException
+	 */
+	public static void sauvegarder() throws SQLException {
+		HashMap<String, Integer> stats = joueur.getStats();
+		informer("UPDATE joueur SET xp = ?, pv = ?, attaque = ?, vitesse = ? WHERE id = ?",
+			new Object[] {joueur.getXp(), stats.get("pv"), stats.get("attaque"), stats.get("vitesse"), joueur.getId()});
+		
+		//Supprimer tous les objets du joueur dans la BD...
+		informer("DELETE FROM joueur_consommable WHERE joueur_id = ?",
+			new Object[] {joueur.getId()});
+		//J'imagine qu'il y a bel et bien un risque de perte de données si la connexion est perdue entre temps.
+		//Correctif à venir.
+
+		connexion.setAutoCommit(false);
+		//...puis insérer les objets de l'ArrayList<Consommable> dans la BD.
+		preparer("INSERT INTO joueur_consommable VALUES(?,?,?,?)");
+		ArrayList<Consommable> inventaire = joueur.getInventaire();
+		for(int i = 0; i < inventaire.size(); i++) {
+			preparer(new Object[] {joueur.getId(), inventaire.get(i).getId(), inventaire.get(i).getDurabilite(), i});
+			preparedStatement.addBatch();
+			//System.out.println(preparedStatement);
+		}
+		preparedStatement.executeBatch();	//Exécute la requête
+		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
+		connexion.setAutoCommit(true);
+	}
+	
+	/**
+	 * Permet d'exécuter une requête lisant la BD.<br>
+	 * Plus sécurisée car utilise PreparedStatement.
+	 * @param 	sql				La requête à exécuter.
+	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
+	 * @return	La table correspondant à la requête demandée.
+	 * @throws 	SQLException
+	 */
+	private static ResultSet querir(String sql, String[] valeurs) throws SQLException {
+		preparer(sql, valeurs);
+		return preparedStatement.executeQuery();
+	}
+	
+	/**
+	 * Permet d'exécuter une requête mettant à jour la BD.<br>
+	 * Plus sécurisée car utilise PreparedStatement.
+	 * @param 	sql				La requête à exécuter.
+	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
+	 * @return	Le nombre de lignes affectées par la requête.
+	 * @throws 	SQLException
+	 */
+	private static int informer(String sql, Object[] valeurs) throws SQLException {
+		preparer(sql, valeurs);
+		return preparedStatement.executeUpdate();
+	}
+	
+	/**
+	 * Raccourci d'écriture pour :<br>
+	 * {@code preparedStatement = connexion.prepareStatement(sql);}
+	 * @param sql
+	 * @throws SQLException
+	 */
+	private static void preparer(String sql) throws SQLException {
+		preparedStatement = connexion.prepareStatement(sql);
+	}
+	
+	/**
+	 * Ajoute les éléments du tableau en paramètres de preparedStatement.
+	 * @param valeurs
+	 * @throws SQLException
+	 */
+	private static void preparer(Object[] valeurs) throws SQLException {
+		for(int i = 0; i < valeurs.length; i++) {
+			preparedStatement.setObject(i + 1, valeurs[i]);
 		}
 	}
 	
-	/*
-	 * Téléchargement des tables DYNAMIQUES de la BD.
+	/**
+	 * Prépare et remplit preparedStatement.
+	 * @param sql
+	 * @param valeurs
+	 * @throws SQLException
 	 */
-
-	public Joueur downloadJoueur(int joueurId) throws SQLException {
-		ResultSet joueur = downloadTable("joueur", joueurId);
-		return new Joueur(joueur.getString("nom"), joueur.getInt("id"), joueur.getInt("xp"), joueur.getInt("pv"), joueur.getInt("attaque"), joueur.getInt("vitesse"));
+	private static void preparer(String sql, Object[] valeurs) throws SQLException {
+		preparer(sql);
+		preparer(valeurs);
 	}
-	public void downloadJoueurConsommable(int joueurId) throws SQLException {
-		ResultSet joueurConsommable = downloadTable("joueur_consommable");
-		while(joueurConsommable.next()) {
-			
-		}
-	}
-	
-	
 	
 	/*
-	 * Getters et setters classiques.
+	 * Getters et setters
 	 */
 	
-	public Connection getConnexion() {
-		return connexion;
+	public static Joueur getJoueur() {
+		return joueur;
 	}
-	public void setConnexion(Connection connexion) {
-		this.connexion = connexion;
-	}
-
-	public Statement getStatement() {
-		return statement;
-	}
-	public void setStatement(Statement statement) {
-		this.statement = statement;
-	}
-	
 	
 }

@@ -93,7 +93,7 @@ public class FirstApplication extends Application {
         json = new String(Files.readAllBytes(FileSystems.getDefault()
                 .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map9.json")));
         Map map9 = gsonBuilder.fromJson(json, Map.class);
-
+      
         map1.addTileset(tileset1);
         map2.addTileset(tileset1);
         map3.addTileset(tileset1);
@@ -174,7 +174,6 @@ public class FirstApplication extends Application {
 
         //Lancement de la Loop
         gameLoop.start();
-
 
 
         //Pression d'une touche sur la scene1
