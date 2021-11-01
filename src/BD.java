@@ -200,8 +200,7 @@ public class BD {
 				joueurTable.getInt("id"),
 				joueurTable.getInt("xp"),
 				new HashMap<String, Integer>(),
-				joueurInventaire,
-				joueurTable.getString("nom"));
+				joueurInventaire);
 	}
 	
 	/** Télécharge les données d'une table correspondants à l'id du joueur donné.

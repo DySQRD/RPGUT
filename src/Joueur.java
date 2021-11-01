@@ -1,21 +1,19 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Joueur {
+public class Joueur extends Entite {
+
 	private String pseudo;
 	private int id;
 	private int xp;
 	private HashMap<String, Integer> stats = new HashMap<String, Integer>();
 	private ArrayList<Consommable> inventaire = new ArrayList<Consommable>();
 
-	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse) {
-		this.pseudo = pseudo;
-		this.xp = xp;
-		stats.put("pv", pv);
-		stats.put("attaque", attaque);
-		stats.put("vitesse", vitesse);
+	public Joueur(int id, int xp, HashMap<String, Integer> stats, ArrayList<Consommable> inventaire) {
+		super(id, xp, stats, inventaire);
+		// TODO Auto-generated constructor stub
 	}
-
+	
 	public String getPseudo() {
 		return pseudo;
 	}

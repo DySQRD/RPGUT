@@ -30,6 +30,24 @@ public class Consommable {
 		this.durabilite = durabilite;
 	}
 	
+	/**
+	 * Activer tous les effets de l'objet, puis décrémenter la durabilité.
+	 */
+	/*public void utiliser() {
+		//Renvoyer les effets du consommable.
+		ArrayList<Action> actions = getActions().get(id);
+		
+		//Activer tous les effets du consommable.
+		for(int i = 0; i < actions.size(); i++) {
+			actions.get(i).utiliser();
+		}
+		
+		//Décrémente la durabilité de l'objet de 1.
+		setDurabilite(getDurabilite() - 1);
+	}*/
+	
+	
+	
 	/*
 	 * Getters et setters des instances de consommables.
 	 */
@@ -60,8 +78,8 @@ public class Consommable {
 	public static ArrayList<Integer> getDurabilites() {
 		return durabilites;
 	}
-	public static ArrayList<ArrayList<EFFET>> getEffets() {
-		return effets;
-	}
+	/*public static ArrayList<ArrayList<Action>> getActions() {
+		return actions;
+	}*/
 	
 }
