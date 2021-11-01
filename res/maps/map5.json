@@ -20,13 +20,13 @@
          "name":"Calque d'Objets 1",
          "objects":[
                 {
-                 "height":450,
+                 "height":447.900957379599,
                  "id":1,
                  "name":"mur1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":12,
+                 "width":141.884822860475,
                  "x":0,
                  "y":0
                 }, 
@@ -40,50 +40,6 @@
                  "width":142,
                  "x":0,
                  "y":538
-                }, 
-                {
-                 "height":32,
-                 "id":4,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":123,
-                 "x":17,
-                 "y":0
-                }, 
-                {
-                 "height":250,
-                 "id":5,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":72,
-                 "x":69.0013121446275,
-                 "y":78
-                }, 
-                {
-                 "height":54,
-                 "id":6,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":74,
-                 "x":12,
-                 "y":396
-                }, 
-                {
-                 "height":243,
-                 "id":7,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":12,
-                 "x":130,
-                 "y":328
                 }, 
                 {
                  "height":350.418428342324,
@@ -180,12 +136,12 @@
                  "rotation":0,
                  "type":"sortie",
                  "visible":true,
-                 "width":100.11955095495,
-                 "x":461.361714535647,
+                 "width":100,
+                 "x":460,
                  "y":564.18719930019
                 }, 
                 {
-                 "height":97.4136171453565,
+                 "height":98,
                  "id":17,
                  "name":"sortie2",
                  "rotation":0,
@@ -193,7 +149,7 @@
                  "visible":true,
                  "width":8.11780142877967,
                  "x":886.193322641785,
-                 "y":351.771395247121
+                 "y":350
                 }, 
                 {
                  "height":6.76483452398309,

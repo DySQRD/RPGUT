@@ -12,28 +12,25 @@ import javafx.scene.shape.Rectangle;
 import java.awt.*;
 
 
-public class Personnage {
-    public double posX;
-    public double posY;
+public class Personnage extends Entity{
     public Image imageCharacter;
-    public ImageView imageV = null;
-    public int velocity = 5;
-    public Rectangle hitbox;
-    public boolean collision;
+    protected Mob mobVS;
 
 
-    public Personnage(double posX, double posY, String fileName){
-        this.posX = posX;
-        this.posY = posY;
+    public Personnage(double posX, double posY, int velocity, String fileName, Level currentLevel){
+        super.posX = posX;
+        super.posY = posY;
         this.imageCharacter = (new Image(fileName));
-        this.imageV = new ImageView();
-        this.imageV.setImage(this.imageCharacter);
-        this.imageV.setFitHeight(40);
-        this.imageV.setFitWidth(40);
-        this.imageV.setX(posX);
-        this.imageV.setY(posY);
-        this.hitbox = new Rectangle(posX+10, posY+20, 20, 18);
-        this.hitbox.setFill(Color.RED);
+        super.imageV = new ImageView();
+        super.imageV.setImage(this.imageCharacter);
+        super.imageV.setFitHeight(40);
+        super.imageV.setFitWidth(40);
+        super.imageV.setX(posX);
+        super.imageV.setY(posY);
+        super.hitbox = new Rectangle(posX+10, posY+20, 20, 18);
+        super.hitbox.setFill(Color.RED);
+        super.currentLevel = currentLevel;
+        super.velocity = velocity;
     }
 
     public void moveUp(){
@@ -59,9 +56,9 @@ public class Personnage {
     public void tp(double x, double y){
         this.posX = x;
         this.imageV.setX(x);
-        this.hitbox.setX(x);
+        this.hitbox.setX(x+10);
         this.posY = y;
         this.imageV.setY(y);
-        this.hitbox.setY(y);
+        this.hitbox.setY(y+20);
     }
 }

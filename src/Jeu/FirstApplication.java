@@ -6,6 +6,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -14,11 +15,15 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -35,6 +40,8 @@ import java.util.List;
 public class FirstApplication extends Application {
     // Variables représentant les touches du clavier
     private static boolean up, down, left,right;
+    private static boolean gamePause = false;
+    private static boolean combatPause = true;
 
     //Actions avant l'application
     @Override
@@ -51,9 +58,9 @@ public class FirstApplication extends Application {
         window = stage;
 
         //Configuration fenêtre
-        window.setTitle("Teemo");
+        window.setTitle("Project Game");
         window.setWidth(900);
-        window.setHeight(600);
+        window.setHeight(600);      // Taille des maps : 576 x 896  384x597 espaces 96x150
         window.setResizable(false);
 
 
@@ -92,6 +99,17 @@ public class FirstApplication extends Application {
                 .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map6.json")));
         Map map6 = gsonBuilder.fromJson(json, Map.class);
 
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map7.json")));
+        Map map7 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map8.json")));
+        Map map8 = gsonBuilder.fromJson(json, Map.class);
+
+        json = new String(Files.readAllBytes(FileSystems.getDefault()
+                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map9.json")));
+        Map map9 = gsonBuilder.fromJson(json, Map.class);
 
 
         map1.addTileset(tileset1);
@@ -100,6 +118,9 @@ public class FirstApplication extends Application {
         map4.addTileset(tileset1);
         map5.addTileset(tileset1);
         map6.addTileset(tileset1);
+        map7.addTileset(tileset1);
+        map8.addTileset(tileset1);
+        map9.addTileset(tileset1);
 
 
         //Création du niveau
@@ -110,12 +131,27 @@ public class FirstApplication extends Application {
         level1.addMap(map4);
         level1.addMap(map5);
         level1.addMap(map6);
+        level1.addMap(map7);
+        level1.addMap(map8);
+        level1.addMap(map9);
         level1.loadLevel();
+
+        map2.spawnMobs(10);
+        map5.spawnMobs(20);
 
 
         //Création des root (Layout manager)
         Group root = new Group();
-        Group root_bis = new Group();
+        Group rootCombat = new Group();
+        Canvas canvasCombat = new Canvas(900, 600);
+        GraphicsContext gc = canvasCombat.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
+        gc.fillRect(150,96,597,384);
+        Label label2 = new Label("(CECI EST UN ECRAN DE COMBAT)");
+        label2.setLayoutX(250);
+        label2.setLayoutY(200);
+        label2.setAlignment(Pos.CENTER);
+        label2.setFont(Font.font("",FontWeight.BOLD, 22));
 
         //canvas -> root
         root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
@@ -123,6 +159,13 @@ public class FirstApplication extends Application {
         //Zones de texte
         Label label1 = new Label();     // Text
         label1.setTextFill(Color.BLUE);
+        label1.setFont(Font.font("",FontWeight.BOLD, 22));
+
+        Label label3 = new Label();     // Text
+        label3.setTextFill(Color.RED);
+        label3.setFont(Font.font("",FontWeight.BOLD, 22));
+        label3.setLayoutX(158);
+        label3.setLayoutY(103);
 
         Label mouseLocation = new Label();
         mouseLocation.setLayoutX(700);
@@ -133,10 +176,12 @@ public class FirstApplication extends Application {
 
 
         //Personnages
-        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), "C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/teemo1.png");
+        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/teemo1.png", level1);
 
         //Nodes -> root
-        root.getChildren().addAll(perso1.imageV, perso1.hitbox, root_bis, label1, mouseLocation);
+        root.getChildren().addAll(perso1.imageV, label1, mouseLocation);
+
+        rootCombat.getChildren().addAll(canvasCombat, label2, label3);
 
         //Root -> scene
         Scene scene1 = new Scene(root);
@@ -151,36 +196,25 @@ public class FirstApplication extends Application {
                 mouseLocation.setText("x = " + mouseEvent.getSceneX() + ", y = "+mouseEvent.getSceneY());
             }
         });
+      
+        //Loop combat
+        AnimationTimer combat = new AnimationTimer() {
+            private long delta = 0;
+            private long lastFrameTime=0;
+            private long fps;
+            private long lastFPSTime;
 
-        //Pression d'une touche sur la scene1
-        scene1.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()){
-                    case UP : up=true; break;
-                    case DOWN : down=true; break;
-                    case LEFT : left=true; break;
-                    case RIGHT : right=true; break;
-                    case SPACE :
-                        System.out.println(""+level1.getCurrentMap());break;
+            public void handle(long now) {
+                delta = now - lastFrameTime;
+                lastFrameTime = now;
+                fps = (long) 1e9 / delta;
+                if((now - lastFPSTime)>(1e8)){
+                    label3.setText(""+fps);
+                    lastFPSTime = now;
                 }
             }
-        });
-
-        //Relâchement d'une touche sur la scene1
-        scene1.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()){
-                    case UP : up=false; break;
-                    case DOWN : down=false; break;
-                    case LEFT : left=false; break;
-                    case RIGHT : right=false; break;
-                }
-            }
-        });
-
-
+        };
 
 
         //Initialisation GameLoop
@@ -189,7 +223,6 @@ public class FirstApplication extends Application {
             private long lastFrameTime=0;
             private long fps;
             private long lastFPSTime;
-            double rectangleX, rectangleY;
 
             //GameLoop (60 fois par seconde)
             @Override
@@ -200,25 +233,31 @@ public class FirstApplication extends Application {
                 fps = (long) 1e9 / delta;
 
                 if(up){
-
                     perso1.hitbox.setY(perso1.hitbox.getY()-perso1.velocity);
                     for(int i=0; i<level1.getMap(level1.getCurrentMap()).getObstacles().size(); i++){
                         if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
                             //obstacles.get(i).setFill(Color.BLUE);
                             if(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
                                 root.getChildren().clear();
-
-                                perso1.tp(perso1.posX, 530);
-
+                                perso1.tp(perso1.posX, 525);
                                 level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
-
                                 root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                                for(int k=0; k<level1.getMap(level1.getCurrentMap()).getMobs().size(); k++){
+                                    root.getChildren().add(level1.getMap(level1.getCurrentMap()).getMobs().get(k).imageV);
+                                }
                             }
                             perso1.collision = true; break;
-
                         }
-                        else{
-                            //obstacles.get(i).setFill(Color.RED);
+                    }
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getMobs().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
+                            gamePause=true;
+                            combatPause=false;
+                            perso1.mobVS = level1.getMap(level1.getCurrentMap()).getMobs().get(i);
+                            root.getChildren().add(rootCombat);
+                            this.stop();
+                            combat.start();
+
                         }
                     }
                     if(!(perso1.collision)) perso1.moveUp();
@@ -238,12 +277,22 @@ public class FirstApplication extends Application {
                                 level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
 
                                 root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                                for(int k=0; k<level1.getMap(level1.getCurrentMap()).getMobs().size(); k++){
+                                    root.getChildren().add(level1.getMap(level1.getCurrentMap()).getMobs().get(k).imageV);
+                                }
                             }
                             perso1.collision = true; break;
 
                         }
-                        else{
-                            //obstacles.get(i).setFill(Color.RED);
+                    }
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getMobs().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
+                            gamePause=true;
+                            combatPause=false;
+                            perso1.mobVS = level1.getMap(level1.getCurrentMap()).getMobs().get(i);
+                            root.getChildren().add(rootCombat);
+                            this.stop();
+                            combat.start();
                         }
                     }
                     if(!(perso1.collision)) perso1.moveDown();
@@ -262,12 +311,22 @@ public class FirstApplication extends Application {
                                 level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
 
                                 root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                                for(int k=0; k<level1.getMap(level1.getCurrentMap()).getMobs().size(); k++){
+                                    root.getChildren().add(level1.getMap(level1.getCurrentMap()).getMobs().get(k).imageV);
+                                }
                             }
                             perso1.collision = true; break;
 
                         }
-                        else{
-                            //obstacles.get(i).setFill(Color.RED);
+                    }
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getMobs().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
+                            gamePause=true;
+                            combatPause=false;
+                            perso1.mobVS = level1.getMap(level1.getCurrentMap()).getMobs().get(i);
+                            root.getChildren().add(rootCombat);
+                            this.stop();
+                            combat.start();
                         }
                     }
                     if(!(perso1.collision)) perso1.moveLeft();
@@ -287,12 +346,22 @@ public class FirstApplication extends Application {
                                 level1.switchMap(level1.getMap(level1.getCurrentMap()).getObstacles().get(i).name);
 
                                 root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                                for(int k=0; k<level1.getMap(level1.getCurrentMap()).getMobs().size(); k++){
+                                    root.getChildren().add(level1.getMap(level1.getCurrentMap()).getMobs().get(k).imageV);
+                                }
                             }
                             perso1.collision = true; break;
 
                         }
-                        else{
-                            //obstacles.get(i).setFill(Color.RED);
+                    }
+                    for(int i=0; i<level1.getMap(level1.getCurrentMap()).getMobs().size(); i++){
+                        if(perso1.hitbox.getBoundsInParent().intersects(level1.getMap(level1.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
+                            gamePause=true;
+                            combatPause=false;
+                            perso1.mobVS = level1.getMap(level1.getCurrentMap()).getMobs().get(i);
+                            root.getChildren().add(rootCombat);
+                            this.stop();
+                            combat.start();
                         }
                     }
                     if(!(perso1.collision)) perso1.moveRight();
@@ -304,7 +373,7 @@ public class FirstApplication extends Application {
 
                 //Réduction du rafraichissement du compteur fps
                 if((now - lastFPSTime)>(1e8)){
-                    label1.setText(""+level1.getCurrentMap());
+                    label1.setText(""+fps);
                     lastFPSTime = now;
                 }
             }
@@ -313,7 +382,48 @@ public class FirstApplication extends Application {
         //Lancement de la Loop
         gameLoop.start();
 
+
+        //Pression d'une touche sur la scene1
+        scene1.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                switch (keyEvent.getCode()){
+                    case UP : up=true; break;
+                    case DOWN : down=true; break;
+                    case LEFT : left=true; break;
+                    case RIGHT : right=true; break;
+                    case SPACE : if (gamePause){
+                        gamePause = false;
+                        combatPause = true;
+                        level1.getMap(level1.getCurrentMap()).getMobs().remove(perso1.mobVS);
+                        root.getChildren().clear();
+                        root.getChildren().addAll(level1.getMap(level1.getCurrentMap()).getCanvas(), label1, mouseLocation, perso1.imageV);
+                        for(int k=0; k<level1.getMap(level1.getCurrentMap()).getMobs().size(); k++){
+                            root.getChildren().add(level1.getMap(level1.getCurrentMap()).getMobs().get(k).imageV);
+                        }
+
+                        combat.stop();
+                        gameLoop.start();
+                    }
+                }
+            }
+        });
+
+        //Relâchement d'une touche sur la scene1
+        scene1.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                switch (keyEvent.getCode()){
+                    case UP : up=false; break;
+                    case DOWN : down=false; break;
+                    case LEFT : left=false; break;
+                    case RIGHT : right=false; break;
+                }
+            }
+        });
     }
+
+
 
     //Actions après l'application
     @Override

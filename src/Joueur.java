@@ -1,13 +1,21 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Joueur extends Entite {
+public class Joueur {
 	private String pseudo;
-	
-	public Joueur(int id, int xp, HashMap<String, Integer> stats, ArrayList<Consommable> inventaire, String pseudo) {
-		super(id, xp, stats, inventaire);
+	private int id;
+	private int xp;
+	private HashMap<String, Integer> stats;
+	private ArrayList<Consommable> inventaire = new ArrayList<Consommable>();
+
+	public Joueur(String pseudo, int id, int xp, int pv, int attaque, int vitesse) {
 		this.pseudo = pseudo;
+		this.xp = xp;
+		stats.put("pv", pv);
+		stats.put("attaque", attaque);
+		stats.put("vitesse", vitesse);
 	}
+
 	public String getPseudo() {
 		return pseudo;
 	}

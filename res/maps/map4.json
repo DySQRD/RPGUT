@@ -132,8 +132,8 @@
  "tileheight":32,
  "tilesets":[
         {
-         "firstgid":1,
-         "source":"default_set.json"
+         "firstgid":65,
+         "source":"..\/..\/..\/..\/Desktop\/Marc\/FAC\/L2\/Programmation Objet\/PROJET\/tiled\/default_set.tsx"
         }],
  "tilewidth":32,
  "type":"map",
