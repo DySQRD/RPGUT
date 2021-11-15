@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Level {
     private String name;
     private ArrayList<Map>maps = new ArrayList<>();
-    private int currentMap = 0;
+    protected int currentMap = 0;
 
     public Level(String name){
         this.name = name;
