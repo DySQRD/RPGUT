@@ -93,7 +93,7 @@ public class FirstApplication extends Application {
         json = new String(Files.readAllBytes(FileSystems.getDefault()
                 .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map9.json")));
         Map map9 = gsonBuilder.fromJson(json, Map.class);
-      
+
         map1.addTileset(tileset1);
         map2.addTileset(tileset1);
         map3.addTileset(tileset1);
@@ -117,8 +117,8 @@ public class FirstApplication extends Application {
         level1.addMap(map9);
         level1.loadLevel();
 
-        map2.spawnMobs(10);
-        map5.spawnMobs(10);
+        map2.spawnMobs(10, "Maths", "Minion");
+        map5.spawnMobs(10, "Maths", "Minion");
 
 
         //Zones de texte
@@ -176,6 +176,7 @@ public class FirstApplication extends Application {
         gameLoop.start();
 
 
+
         //Pression d'une touche sur la scene1
         scene1.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -197,11 +198,14 @@ public class FirstApplication extends Application {
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorRight();break;
                     }
-                    case SPACE: if (loopManager.currentLoop instanceof GameLoop){}
+                    case ESCAPE: if (loopManager.currentLoop instanceof GameLoop){}
                         else if(loopManager.currentLoop instanceof CombatLoop){
-                            gameLoop.level.getMap(gameLoop.level.getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
-                            loopManager.game();
-                    }break;
+                            loopManager.combatLoop.escape();break;
+                    }
+                    case SPACE: if(loopManager.currentLoop instanceof GameLoop){}
+                        else if(loopManager.currentLoop instanceof CombatLoop){
+                        ((CombatLoop) loopManager.currentLoop).select();
+                    }
                 }
             }
         });
