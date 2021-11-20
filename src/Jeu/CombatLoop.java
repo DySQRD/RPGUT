@@ -21,7 +21,12 @@ public class CombatLoop extends AnimationTimer {
     protected int positionCursorAttaque = 0;
     protected int attaqueSelected = -1;
     protected boolean tourMob = false;
-    protected boolean dialogue = true;
+    protected boolean dialogue = false;
+    protected boolean dialogueStart = false;
+    protected boolean action = false;
+    protected boolean attaque = false;
+
+
     protected BorderPane combatPane = new BorderPane();
     protected GridPane actionSelection = new GridPane();
     protected GridPane attaqueSelection = new GridPane();
@@ -156,8 +161,13 @@ public class CombatLoop extends AnimationTimer {
         this.healthMob.setText("PV : " + gameLoop.perso.mobVS.actual_health);
         moveCursorAttaque(0);
         moveCursorAction(0);
-        this.actionSelected = -1;
-        combatPane.setBottom(actionSelection);
+        //this.actionSelected = -1;
+        this.dialogueStart = true;
+        this.action = false;
+        this.attaque = false;
+        this.dialogue = false;
+        this.dialogueText.setText(gameLoop.perso.mobVS.name+" sauvage apparaît !");
+        combatPane.setBottom(dialoguePane);
         if(!(gameLoop.root.getChildren().contains(combatPane))){
             this.gameLoop.root.getChildren().add(combatPane);
         }
@@ -176,7 +186,10 @@ public class CombatLoop extends AnimationTimer {
 
 
     public void moveCursorUp(){
-        if(actionSelected < 0){
+        if(dialogue){
+
+        }
+        else if(action){
             if(positionCursorAction == 2) {
                 moveCursorAction(0);
             }
@@ -184,13 +197,15 @@ public class CombatLoop extends AnimationTimer {
                 moveCursorAction(1);
             }
         }
-        else if(actionSelected == 0){
+        else if(attaque){
+
         }
-
-
     }
     public void moveCursorDown(){
-        if(actionSelected < 0){
+        if(dialogue){
+
+        }
+        else if(action){
             if(positionCursorAction == 0) {
                 moveCursorAction(2);
             }
@@ -198,12 +213,15 @@ public class CombatLoop extends AnimationTimer {
                 moveCursorAction(3);
             }
         }
-        else if(actionSelected == 0){
-        }
+        else if(attaque){
 
+        }
     }
     public void moveCursorLeft(){
-        if(actionSelected < 0 ){
+        if(dialogue){
+
+        }
+        else if(action){
             if(positionCursorAction == 1) {
                 moveCursorAction(0);
             }
@@ -211,15 +229,18 @@ public class CombatLoop extends AnimationTimer {
                 moveCursorAction(2);
             }
         }
-        else if(actionSelected == 0){
-            if(positionCursorAttaque ==1){
+        else if(attaque){
+            if(positionCursorAttaque == 1){
                 moveCursorAttaque(0);
             }
         }
     }
 
     public void moveCursorRight(){
-        if(actionSelected < 0){
+        if(dialogue){
+
+        }
+        else if(action){
             if(positionCursorAction == 0) {
                 moveCursorAction(1);
             }
@@ -227,7 +248,7 @@ public class CombatLoop extends AnimationTimer {
                 moveCursorAction(3);
             }
         }
-        else if(actionSelected == 0){
+        else if(attaque){
             if(positionCursorAttaque == 0) {
                 moveCursorAttaque(1);
             }
@@ -248,9 +269,29 @@ public class CombatLoop extends AnimationTimer {
     }
 
     public void select(){
-        if(actionSelected < 0){
+        if(dialogueStart){
+            if(tourMob){
+                this.dialogueStart=false;
+            }
+            else{
+                this.combatPane.setBottom(actionSelection);
+                this.action = true;
+            }
+        }
+        else if(dialogue){
+            if(tourMob){
+                this.dialogue = false;
+            }
+            else{
+                this.combatPane.setBottom(actionSelection);
+                this.dialogue = false;
+                this.action = true;
+            }
+        }
+        else if(action){
             if(positionCursorAction == 0){
-                this.actionSelected = 0;
+                this.action = false;
+                this.attaque = true;
                 combatPane.setBottom(attaqueSelection);
             }
             else if(positionCursorAction == 3){
@@ -259,10 +300,12 @@ public class CombatLoop extends AnimationTimer {
                 loopManager.game();
             }
         }
-        else if(actionSelected == 0){
+        else if(attaque){
             if(positionCursorAttaque == 0){
                 gameLoop.perso.attaque(gameLoop.perso.mobVS);
+                affiche("Vous infligez "+gameLoop.perso.actual_atk+" dégats !");
                 displayUpdate();
+                this.dialogue = true;
                 this.tourMob = true;
             }
             else if(positionCursorAttaque == 1){
@@ -272,11 +315,11 @@ public class CombatLoop extends AnimationTimer {
     }
 
     public void escape(){
-        if(actionSelected < 0){
+        if(action){
         }
-        else if(actionSelected == 0){
+        else if(attaque){
             moveCursorAttaque(0);
-            this.actionSelected = -1;
+            this.action = true;
             this.combatPane.setBottom(actionSelection);
         }
     }
@@ -299,18 +342,19 @@ public class CombatLoop extends AnimationTimer {
     public void affiche(String text){
         this.dialogueText.setText(text);
         this.combatPane.setBottom(dialoguePane);
-
     }
 
 
     @Override
     public void handle(long now) {
         if(tourMob){
-            gameLoop.perso.mobVS.attaque(gameLoop.perso);
-            displayUpdate();
-            //affiche(gameLoop.perso.mobVS.name + " vous inflige " + gameLoop.perso.mobVS.actual_atk + " dégats.");
-            dialogue = true;
-            tourMob = false;
+            if(!(dialogue || dialogueStart)){
+                gameLoop.perso.mobVS.attaque(gameLoop.perso);
+                displayUpdate();
+                affiche(gameLoop.perso.mobVS.name + " vous inflige " + gameLoop.perso.mobVS.actual_atk + " dégats.");
+                dialogue = true;
+                tourMob = false;
+            }
         }
         if(gameLoop.perso.mobVS.actual_health <= 0){
             gagne();

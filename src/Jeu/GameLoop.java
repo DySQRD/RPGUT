@@ -184,7 +184,6 @@ public class GameLoop extends AnimationTimer {
             }
         }
         checkCombatMob();
-        //METTRE LES COLLISIONS GROUPEES A LA FIN
     }
 
     public void checkCombatPerso(){

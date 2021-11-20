@@ -278,7 +278,9 @@
       <workItem from="1635682484415" duration="12448000" />
       <workItem from="1635757296576" duration="5192000" />
       <workItem from="1635765720487" duration="9275000" />
-      <workItem from="1636967812490" duration="384000" />
+      <workItem from="1636967812490" duration="3860000" />
+      <workItem from="1637070384399" duration="75000" />
+      <workItem from="1637389640712" duration="2540000" />
     </task>
     <servers />
   </component>
@@ -295,6 +297,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
@@ -329,26 +332,26 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="480" y="239" key="DetectedRootsChooserDialog/0.0.1366.728@0.0.1366.728" timestamp="1634527751481" />
-    <state x="389" y="105" key="FileChooserDialogImpl" timestamp="1635582423192">
+    <state x="389" y="105" key="FileChooserDialogImpl" timestamp="1637070467052">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="389" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1635582423192" />
-    <state width="1323" height="168" key="GridCell.Tab.0.bottom" timestamp="1635776216684">
+    <state x="389" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1637070467052" />
+    <state width="1323" height="120" key="GridCell.Tab.0.bottom" timestamp="1637392223822">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1635776216684" />
-    <state width="1323" height="168" key="GridCell.Tab.0.center" timestamp="1635776216683">
+    <state width="1323" height="120" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
+    <state width="1323" height="120" key="GridCell.Tab.0.center" timestamp="1637392223822">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1635776216683" />
-    <state width="1323" height="168" key="GridCell.Tab.0.left" timestamp="1635776216683">
+    <state width="1323" height="120" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
+    <state width="1323" height="120" key="GridCell.Tab.0.left" timestamp="1637392223822">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1635776216683" />
-    <state width="1323" height="168" key="GridCell.Tab.0.right" timestamp="1635776216683">
+    <state width="1323" height="120" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
+    <state width="1323" height="120" key="GridCell.Tab.0.right" timestamp="1637392223822">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1635776216683" />
+    <state width="1323" height="120" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
     <state width="1323" height="168" key="GridCell.Tab.1.bottom" timestamp="1635776216684">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -400,12 +403,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>41</line>
+          <line>59</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>86</line>
+          <line>135</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
