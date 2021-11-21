@@ -147,10 +147,10 @@ public class FirstApplication extends Application {
         //Configuration fenêtre
         window.setTitle("Project Game");
         window.setWidth(900);
-        window.setHeight(600);      // Taille des maps : 576 x 896  384x597 espaces 96x150
+        window.setHeight(600);      // Taille des maps : 576 x 896
         window.setResizable(false);
 
-        //Création des root (Layout manager) 576 x 896 // 144 x 224
+        //Création des root (Layout manager) 576 x 896
         Group root = new Group();
         root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
         root.getChildren().addAll(perso1.imageV, fps1, mouseLocation);
@@ -161,7 +161,7 @@ public class FirstApplication extends Application {
         window.setScene(scene1);
         window.show();
 
-        //Loop
+        //Loops
         GameLoop gameLoop = new GameLoop(perso1,level1,fps1, mouseLocation, root);
         LoopManager loopManager = new LoopManager(gameLoop, gameLoop.combatLoop);
 
@@ -172,7 +172,7 @@ public class FirstApplication extends Application {
             }
         });
 
-        //Lancement de la Loop
+        //Lancement de la Loop jeu
         gameLoop.start();
 
 

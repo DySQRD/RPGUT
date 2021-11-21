@@ -19,7 +19,6 @@ public class GameLoop extends AnimationTimer {
     protected LoopManager loopManager;
 
     protected boolean up, down, left, right;
-    protected boolean gamePause = false;
 
     protected double width, height;
 

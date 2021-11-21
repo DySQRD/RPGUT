@@ -110,7 +110,7 @@
     <property name="dynamic.classpath" value="false" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
@@ -281,6 +281,9 @@
       <workItem from="1636967812490" duration="3860000" />
       <workItem from="1637070384399" duration="75000" />
       <workItem from="1637389640712" duration="2540000" />
+      <workItem from="1637435584075" duration="2382000" />
+      <workItem from="1637481779761" duration="3798000" />
+      <workItem from="1637525747370" duration="727000" />
     </task>
     <servers />
   </component>
@@ -324,6 +327,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="513" y="75" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog/0.0.1366.728@0.0.1366.728" timestamp="1634527757197" />
+    <state x="466" y="258" width="433" height="217" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1637525859782">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="466" y="258" width="433" height="217" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1366.728@0.0.1366.728" timestamp="1637525859782" />
     <state x="413" y="111" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1634524130474">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -368,10 +375,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state width="1323" height="168" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1635776216684" />
-    <state x="163" y="0" key="SettingsEditor" timestamp="1635236481427">
+    <state x="163" y="0" key="SettingsEditor" timestamp="1637437097061">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="163" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1635236481427" />
+    <state x="163" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1637437097061" />
     <state width="691" height="372" key="XDebugger.FullValuePopup" timestamp="1634617604424">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -384,10 +391,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="413" y="125" key="extract.method.dialog/0.0.1366.728@0.0.1366.728" timestamp="1634540745850" />
-    <state x="274" y="0" key="new project wizard" timestamp="1634131367631">
+    <state x="274" y="0" key="new project wizard" timestamp="1637437079234">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="274" y="0" key="new project wizard/0.0.1366.728@0.0.1366.728" timestamp="1634131367631" />
+    <state x="274" y="0" key="new project wizard/0.0.1366.728@0.0.1366.728" timestamp="1637437079234" />
     <state x="339" y="162" key="run.anything.popup" timestamp="1633943395696">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -403,12 +410,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>59</line>
+          <line>73</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>135</line>
+          <line>150</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>

@@ -16,28 +16,40 @@ import javafx.scene.text.FontWeight;
 import java.util.ArrayList;
 
 public class CombatLoop extends AnimationTimer {
+    //Position du curseur (en haut à gauche = 0, en haut à droite = 1, ...)
     protected int positionCursorAction = 0;
-    protected int actionSelected = -1;
     protected int positionCursorAttaque = 0;
-    protected int attaqueSelected = -1;
+
+    //Cas
     protected boolean tourMob = false;
     protected boolean dialogue = false;
     protected boolean dialogueStart = false;
     protected boolean action = false;
     protected boolean attaque = false;
 
-
+    //Fenêtre de combat
     protected BorderPane combatPane = new BorderPane();
+
+    //Portion en bas du borderPane
     protected GridPane actionSelection = new GridPane();
     protected GridPane attaqueSelection = new GridPane();
     protected GridPane dialoguePane = new GridPane();
+
     protected Label dialogueText = new Label();
+
+    //Cases de sélection (exemple: Objets)
     protected ArrayList<HBox> hBoxAction = new ArrayList<>();
     protected ArrayList<HBox> hBoxAttaque = new ArrayList<>();
+
+    //Texte des cases
     protected ArrayList<Label> labelAction = new ArrayList<>();
     protected ArrayList<Label> labelAttaque = new ArrayList<>();
+
+    //Curseurs (des triangles)
     protected Polygon selectCursorAction = new Polygon();
     protected Polygon selectCursorAttaque = new Polygon();
+
+    //CSS des différents composants
     protected String hBoxCSS = ("-fx-padding: 10;" + "-fx-border-style: solid inside;"
             + "-fx-border-width: 2;" + "-fx-border-color: black;");
     protected String borderPaneCSS = ("-fx-background-color: white;");
@@ -46,16 +58,18 @@ public class CombatLoop extends AnimationTimer {
             "-fx-border-width: 2;" +
             "-fx-border-radius: 5;" +
             "-fx-border-color: black;");
+
     protected LoopManager loopManager;
     protected GameLoop gameLoop;
 
+    //Vie des protagonistes
     protected Label healthperso = new Label();
     protected Label healthMob = new Label();
 
 
     public CombatLoop(Double layoutX, Double layoutY,Double width, Double height, GameLoop gameLoop){
 
-        //BORDERPANE SETUP (ECRAN DE COMBAT)
+        //BORDERPANE SETUP (FENETRE DE COMBAT)
         this.gameLoop = gameLoop;
         this.combatPane.setPrefSize(width, height);
         this.combatPane.setLayoutX(layoutX);
@@ -75,7 +89,9 @@ public class CombatLoop extends AnimationTimer {
         this.attaqueSelection.setStyle(gridPaneCSS);
         this.attaqueSelection.getColumnConstraints().addAll(colonne1, colonne2);
 
-        this.dialoguePane.setStyle(gridPaneCSS);
+        dialoguePane.setStyle(gridPaneCSS);
+        dialoguePane.setAlignment(Pos.CENTER);
+        dialoguePane.getChildren().add(dialogueText);
 
         //HBOX SET UP (CASES DES MENUS)
         for(int i=0; i<4; i++){
@@ -96,7 +112,7 @@ public class CombatLoop extends AnimationTimer {
         }
 
 
-        //LABELS SETUP (TEXTES DES MENUS)
+        //LABELS SETUP
         this.labelAction.add(new Label("Attaque"));
         this.labelAction.add(new Label("Objets"));
         this.labelAction.add(new Label("Compétence"));
@@ -130,9 +146,8 @@ public class CombatLoop extends AnimationTimer {
             if(i==0) {hBoxAttaque.get(i).getChildren().addAll(selectCursorAttaque, labelAttaque.get(i));}
             else hBoxAttaque.get(i).getChildren().addAll(labelAttaque.get(i));
         }
-        dialoguePane.setAlignment(Pos.CENTER);
-        dialoguePane.getChildren().add(dialogueText);
 
+        //HBOX > GRIDPANE
         actionSelection.add(hBoxAction.get(0),0,0 );
         actionSelection.add(hBoxAction.get(1),1,0 );
         actionSelection.add(hBoxAction.get(2),0,1 );
@@ -141,11 +156,13 @@ public class CombatLoop extends AnimationTimer {
         attaqueSelection.add(hBoxAttaque.get(0), 0,0);
         attaqueSelection.add(hBoxAttaque.get(1), 1,0);
 
+        //POINTS DE VIE
         this.healthperso.setFont(Font.font("",FontWeight.BOLD, 22));
         this.healthMob.setFont(Font.font("",FontWeight.BOLD, 22));
         this.healthperso.setTextFill(Color.BLUE);
         this.healthMob.setTextFill(Color.RED);
 
+        //GRIDPANE + POINTS DE VIE > BORDERPANE
         this.combatPane.setBottom(actionSelection);
         this.combatPane.setLeft(healthperso);
         this.combatPane.setRight(healthMob);
@@ -156,6 +173,7 @@ public class CombatLoop extends AnimationTimer {
         this.loopManager.game();
     }
 
+    //Entrée en combat
     public void displayInit(){
         this.healthperso.setText("PV : " + gameLoop.perso.actual_health);
         this.healthMob.setText("PV : " + gameLoop.perso.mobVS.actual_health);
@@ -173,6 +191,7 @@ public class CombatLoop extends AnimationTimer {
         }
     }
 
+    //Update des points de vie
     public void displayUpdate(){
         this.healthperso.setText("PV : " + gameLoop.perso.actual_health);
         this.healthMob.setText("PV : " + gameLoop.perso.mobVS.actual_health);
@@ -180,11 +199,12 @@ public class CombatLoop extends AnimationTimer {
         this.gameLoop.root.getChildren().add(combatPane);
     }
 
+    //Retire la fenêtre de combat
     public void displayRemove(){
         this.gameLoop.root.getChildren().remove(combatPane);
     }
 
-
+    //Déplacement des curseurs
     public void moveCursorUp(){
         if(dialogue){
 
@@ -198,7 +218,6 @@ public class CombatLoop extends AnimationTimer {
             }
         }
         else if(attaque){
-
         }
     }
     public void moveCursorDown(){
@@ -214,7 +233,6 @@ public class CombatLoop extends AnimationTimer {
             }
         }
         else if(attaque){
-
         }
     }
     public void moveCursorLeft(){
@@ -255,6 +273,7 @@ public class CombatLoop extends AnimationTimer {
         }
     }
 
+    //affichage du curseur sur la nouvelle position (0 = en haut à gauche, 1 = en haut à droite, ...)
     public void moveCursorAction(int n){
         hBoxAction.get(positionCursorAction).getChildren().remove(selectCursorAction);
         hBoxAction.get(n).getChildren().clear();
@@ -268,6 +287,7 @@ public class CombatLoop extends AnimationTimer {
         this.positionCursorAttaque = n;
     }
 
+    //Gestion de la touche "ESPACE" selon le cas
     public void select(){
         if(dialogueStart){
             if(tourMob){
@@ -314,6 +334,7 @@ public class CombatLoop extends AnimationTimer {
 
     }
 
+    //Gestion de la touche "ECHAP" selon le cas
     public void escape(){
         if(action){
         }
@@ -324,6 +345,7 @@ public class CombatLoop extends AnimationTimer {
         }
     }
 
+    //Le joueur gagne le combat : gain xp + retire le mob + continue sur la fenêtre de jeu
     public void gagne(){
         System.out.println("Vous avez battu " + gameLoop.perso.mobVS.name +" "+ gameLoop.perso.mobVS.id);
         gameLoop.perso.giveXp();
@@ -331,20 +353,23 @@ public class CombatLoop extends AnimationTimer {
         loopManager.game();
     }
 
+    //Le joueur perd le combat : respawn sur la map du début (= 0) + points de vie / 2
     public void perd(){
         System.out.println("Vous avez été battu par " + gameLoop.perso.mobVS.name + " " + gameLoop.perso.mobVS.id);
         this.gameLoop.level.currentMap = 0;
         this.gameLoop.perso.tp(gameLoop.level.getMap(0).getSpawnX(), gameLoop.level.getMap(0).getSpawnY());
-        this.gameLoop.perso.actual_health = 50;
+        this.gameLoop.perso.actual_health = this.gameLoop.perso.actual_health_max/2;
         loopManager.game();
     }
 
+    //Affiche le texte dans le cadre dialogue
     public void affiche(String text){
         this.dialogueText.setText(text);
         this.combatPane.setBottom(dialoguePane);
     }
 
 
+    //Loop (animations + tour du mob)
     @Override
     public void handle(long now) {
         if(tourMob){
