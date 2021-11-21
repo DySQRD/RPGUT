@@ -14,6 +14,7 @@ public class Monstre extends Entite {
 		return (Math.random()*100<100);
 	}
 	//ajout d'une methode pour le drop des consomable a partir de l'invetaire 
+	//il reste la supression dans la base de donnée
 	public void removeOject(int id) {
         this.inventaire.removeIf(consommable -> consommable.getId().equals(id));
     }
