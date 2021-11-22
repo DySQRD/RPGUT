@@ -296,6 +296,7 @@ public class CombatLoop extends AnimationTimer {
             else{
                 this.combatPane.setBottom(actionSelection);
                 this.action = true;
+                this.dialogueStart = false;
             }
         }
         else if(dialogue){
@@ -327,6 +328,7 @@ public class CombatLoop extends AnimationTimer {
                 displayUpdate();
                 this.dialogue = true;
                 this.tourMob = true;
+                this.attaque = false;
             }
             else if(positionCursorAttaque == 1){
             }

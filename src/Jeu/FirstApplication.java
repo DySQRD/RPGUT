@@ -52,46 +52,46 @@ public class FirstApplication extends Application {
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
         String json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/default_set.json")));
+                .getPath("res/maps/default_set.json")));
         Tileset tileset1 = gsonBuilder.fromJson(json, Tileset.class);
 
         //Désérialisation des map
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map1.json")));
+                .getPath("res/maps/map1.json")));
         Map map1 = gsonBuilder.fromJson(json, Map.class);
         map1.setSpawnX(242);
         map1.setSpawnY(242);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map2.json")));
+                .getPath("res/maps/map2.json")));
         Map map2 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map3.json")));
+                .getPath("res/maps/map3.json")));
         Map map3 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map4.json")));
+                .getPath("res/maps/map4.json")));
         Map map4 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map5.json")));
+                .getPath("res/maps/map5.json")));
         Map map5 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map6.json")));
+                .getPath("res/maps/map6.json")));
         Map map6 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map7.json")));
+                .getPath("res/maps/map7.json")));
         Map map7 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map8.json")));
+                .getPath("res/maps/map8.json")));
         Map map8 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map9.json")));
+                .getPath("res/maps/map9.json")));
         Map map9 = gsonBuilder.fromJson(json, Map.class);
 
         map1.addTileset(tileset1);
