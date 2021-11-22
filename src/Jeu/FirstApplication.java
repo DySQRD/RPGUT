@@ -137,7 +137,7 @@ public class FirstApplication extends Application {
         mouseLocation.setFont(Font.font("",FontWeight.BOLD, 18));
 
         //Personnages
-        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/teemo1.png", level1);
+        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "res/Images/lucas.png", level1);
 
 
         // Création fenêtre

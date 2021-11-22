@@ -109,7 +109,7 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="dynamic.classpath" value="false" />
     <property name="extract.method.default.visibility" value="private" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../Génie Logiciel/TP/TP4_debugage/Genie_Log_TP4" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -283,7 +283,8 @@
       <workItem from="1637389640712" duration="2540000" />
       <workItem from="1637435584075" duration="2382000" />
       <workItem from="1637481779761" duration="3798000" />
-      <workItem from="1637525747370" duration="727000" />
+      <workItem from="1637525747370" duration="1368000" />
+      <workItem from="1637562069133" duration="4345000" />
     </task>
     <servers />
   </component>
@@ -339,26 +340,26 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="480" y="239" key="DetectedRootsChooserDialog/0.0.1366.728@0.0.1366.728" timestamp="1634527751481" />
-    <state x="389" y="105" key="FileChooserDialogImpl" timestamp="1637070467052">
+    <state x="389" y="105" key="FileChooserDialogImpl" timestamp="1637563526981">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="389" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1637070467052" />
-    <state width="1323" height="120" key="GridCell.Tab.0.bottom" timestamp="1637392223822">
+    <state x="389" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1637563526981" />
+    <state width="1323" height="120" key="GridCell.Tab.0.bottom" timestamp="1637566335733">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
-    <state width="1323" height="120" key="GridCell.Tab.0.center" timestamp="1637392223822">
+    <state width="1323" height="120" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1637566335733" />
+    <state width="1323" height="120" key="GridCell.Tab.0.center" timestamp="1637566335733">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
-    <state width="1323" height="120" key="GridCell.Tab.0.left" timestamp="1637392223822">
+    <state width="1323" height="120" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1637566335733" />
+    <state width="1323" height="120" key="GridCell.Tab.0.left" timestamp="1637566335732">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
-    <state width="1323" height="120" key="GridCell.Tab.0.right" timestamp="1637392223822">
+    <state width="1323" height="120" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1637566335732" />
+    <state width="1323" height="120" key="GridCell.Tab.0.right" timestamp="1637566335733">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1637392223822" />
+    <state width="1323" height="120" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1637566335733" />
     <state width="1323" height="168" key="GridCell.Tab.1.bottom" timestamp="1635776216684">
       <screen x="0" y="0" width="1366" height="728" />
     </state>

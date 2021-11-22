@@ -16,6 +16,7 @@ public abstract class Entity {
 
     //Hitbox représentée par un rectangle
     protected Rectangle hitbox;
+    protected int dxHitbox, dyHitbox;
 
     //Collision de l'hitbox avec une autre hitbox
     protected boolean collision;
