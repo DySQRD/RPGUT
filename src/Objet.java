@@ -1,59 +1,57 @@
-public class Objet {
-private String id;
-private String name;
-private int durabilite;
-private int level;
 
-int nombreobjet=0;
-	public Objet(String id, int durabilite) {
-		this.id=id;
-		this.durabilite=durabilite;
-		nombreobjet++;
-		
+public class Objet {
+	//Note à moi-même : pas besoin d'attribut nom puisqu'il est partagé par tous les Consommables de la même id.
+	//Peut changer si on donne la possibilité de personnaliser les noms.
+	/**
+	 * Identifiant de l'instance du consommable dans la BD.
+	 */
+	private int id;
+	private String nom;
+	/**
+	 * Nombre d'utilisations restantes de l'instance du consommable.
+	 */
+	private int durabilite;
+	
+	Objet(int id, String nom, int durabilite) {
+		this.id = id;
+		this.nom = nom;
+		this.durabilite = durabilite;
 	}
-	public String getId() {
+	
+	/**
+	 * Activer tous les effets de l'objet, puis décrémenter la durabilité.
+	 */
+	/*public void utiliser() {
+		//Renvoyer les effets du consommable.
+		ArrayList<Action> actions = getActions().get(id);
+		
+		//Activer tous les effets du consommable.
+		for(int i = 0; i < actions.size(); i++) {
+			actions.get(i).utiliser();
+		}
+		
+		//Décrémente la durabilité de l'objet de 1.
+		setDurabilite(getDurabilite() - 1);
+	}*/
+	
+	
+	
+	/*
+	 * Getters et setters des instances de consommables.
+	 */
+	
+	public int getId() {
 		return id;
 	}
-public void SetId(String id) {
-	this.id=id;
-}
-public String getName() {
-	return name;
-}
-public void setName(String name) {
-	this.name=name;
-}
-public int getDurabilite() {
-	return durabilite;
-}
-public void setDurabilite(int durabilite) {
-	this.durabilite=durabilite;
-}
-public int getlevel() {
-	return level;
-}
-public void setlevel(int level) {
-	this.level=level;
-}
-int max_level=10;
-public void increseLevel() {
-	if (level<max_level) {
-		level++;
+	public void setId(int id) {
+		this.id = id;
 	}
-	else {
-		System.out.println("level maximum atteint pour l'arme");
+
+	public int getDurabilite() {
+		return durabilite;
 	}
-}
-public void decreseLevl() {
-	if(level>0) {
-		level--;
+	public void setDurabilite(int durabilite) {
+		this.durabilite = durabilite;
 	}
-	else {
-		System.out.println("on ne peut decrementer le level");
-	} 
-}
-public String toString() {
-	return "objet de nom="+this.name+"et de level"+this.level+"et de durabilite"+
-this.durabilite;
-}
+	
 }

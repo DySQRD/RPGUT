@@ -7,10 +7,10 @@ public class Joueur extends Entite {
 	private int id;
 	private int xp;
 	private HashMap<String, Integer> stats = new HashMap<String, Integer>();
-	private ArrayList<Consommable> inventaire = new ArrayList<Consommable>();
+	private ArrayList<Objet> inventaire = new ArrayList<Objet>();
 
-	public Joueur(int id, int xp, HashMap<String, Integer> stats, ArrayList<Consommable> inventaire) {
-		super(id, xp, stats, inventaire);
+	public Joueur(int id, Stats stats, HashMap<Integer, Objet> joueurInventaire) {
+		super(id, stats, joueurInventaire);
 		// TODO Auto-generated constructor stub
 	}
 	
