@@ -7,6 +7,7 @@ public class Objet {
 	 */
 	private int id;
 	private String nom;
+	private String description;
 	/**
 	 * Nombre d'utilisations restantes de l'instance du consommable.
 	 */
