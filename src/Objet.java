@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 public class Objet {
 	//Note à moi-même : pas besoin d'attribut nom puisqu'il est partagé par tous les Consommables de la même id.
@@ -8,6 +9,7 @@ public class Objet {
 	private int id;
 	private String nom;
 	private String description;
+	private ArrayList<Action> actions;
 	/**
 	 * Nombre d'utilisations restantes de l'instance du consommable.
 	 */

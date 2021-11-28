@@ -126,13 +126,20 @@ public class BD {
 	}
 	
 	/**
-	 * Retire toutes les données du Joueur de la BD.
+	 * Retire toutes les données de la BD du Joueur dont l'ID est passée en argument.
 	 * @throws SQLException
 	 */
 	public static void desinscrire() throws SQLException {
+		desinscrire(joueur.getId());
+	}
+	
+	/**
+	 * Retire toutes les données de la BD du Joueur dont l'ID est passée en argument.
+	 * @throws SQLException
+	 */
+	public static void desinscrire(int id) throws SQLException {
 		BDebug("Début de la désinscription...");
 		//TODO retirer toutes les données relatives au joueur de la BD
-		int id = joueur.getId();
 
 		informer("DELETE FROM connexion WHERE joueur_id = ?", id);
 		informer("DELETE FROM completion WHERE joueur_id = ?", id);
