@@ -7,6 +7,7 @@ public class Stats extends HashMap<String, Integer> {
 		put("xp", stats[0]);
 		put("pv", stats[1]);
 		put("attaque", stats[2]);
+		put("defense", stats[3]);
 	}
 	
 	public static void main(String[] args) {

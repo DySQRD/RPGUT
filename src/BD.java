@@ -42,12 +42,17 @@ public class BD {
 	 * Tous les objets existants dans la BD.
 	 */
 	private static HashMap<Integer, Objet> OBJETS = new HashMap<Integer, Objet>();
-	private static ArrayList<Entite> ENTITES = new ArrayList<Entite>();
+	private static HashMap<Integer, Entite> ENTITES = new HashMap<Integer, Entite>();
 	private static HashMap<Integer, Stats> STATS = new HashMap<Integer, Stats>();
+	/**
+	 * Le premier Integer correspond à l'id de l'entite qui drop un objet.<br>
+	 * Le second est l'id de l'objet à CLONER depuis l'ArrayList OBJETS.
+	 */
 	private static HashMap<Integer, Integer> DROPS = new HashMap<Integer, Integer>();
 	
 	public static void main(String[] args) throws SQLException, ImprevuDBError {
-		BD.inscrire("jki","honnetementjsp");
+		BD.identifier("jki","honnetementjsp");
+		BD.desinscrire();
 	}
 	
 	/**
@@ -141,6 +146,11 @@ public class BD {
 		BDebug("Début de la désinscription...");
 		//TODO retirer toutes les données relatives au joueur de la BD
 
+		ResultSet spawnIdTable = querir("SELECT spawn_id FROM joueur WHERE id = ?", id);
+		spawnIdTable.next();
+		int spawnId = spawnIdTable.getInt("spawn_id");
+		informer("DELETE FROM stats WHERE id = (SELECT stats_id FROM spawn WHERE id = ?)", spawnId);
+		informer("DELETE FROM spawn WHERE id = (SELECT spawn_id FROM joueur WHERE id = ?)", id);
 		informer("DELETE FROM connexion WHERE joueur_id = ?", id);
 		informer("DELETE FROM completion WHERE joueur_id = ?", id);
 		informer("DELETE FROM victoire WHERE joueur_id = ?", id);

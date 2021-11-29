@@ -15,7 +15,7 @@ public class Objet {
 	 */
 	private int durabilite;
 	
-	Objet(int id, String nom, int durabilite) {
+	Objet(int id, String nom, int durabilite, Action ...actions) {
 		this.id = id;
 		this.nom = nom;
 		this.durabilite = durabilite;
