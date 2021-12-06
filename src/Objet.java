@@ -1,15 +1,13 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Objet {
-	//Note à moi-même : pas besoin d'attribut nom puisqu'il est partagé par tous les Consommables de la même id.
-	//Peut changer si on donne la possibilité de personnaliser les noms.
 	/**
 	 * Identifiant de l'instance du consommable dans la BD.
 	 */
 	private int id;
 	private String nom;
-	private String description;
-	private ArrayList<Action> actions;
+	private ArrayList<Action> actions = new ArrayList<Action>();
 	/**
 	 * Nombre d'utilisations restantes de l'instance du consommable.
 	 */
@@ -19,7 +17,42 @@ public class Objet {
 		this.id = id;
 		this.nom = nom;
 		this.durabilite = durabilite;
+		for(Action action : actions) this.actions.add(action);
 	}
+	
+	/**
+	 * Crée un objet basé sur les caractéristiques d'un objet de la BD.
+	 * @param id
+	 */
+	Objet(int id) {
+		Objet obj = BD.getObjets().get(id);
+		this.id = obj.getId();
+		this.nom = obj.getNom();
+		this.durabilite = obj.getDurabilite();
+		this.actions = obj.getActions();
+	}
+	
+	/**
+	 * Crée un objet aléatoire de la BD.
+	 */
+	Objet() {
+		this(randomId());
+	}
+	
+	/**
+	 * Renvoie une id d'un objet de la BD.<br>
+	 * Cette méthode est utilisée pour générer un objet aléatoire lors d'un drop par un mob.
+	 * @return	Une id d'un objet de la BD.
+	 */
+	public static int randomId() {
+		//Il n'y a pas moyen de récupérer une entrée aléatoirement depuis la HashMap...
+		//keySet renvoie donc toutes les ids mais en tant que Set, dont on ne peut extraire un objet.
+		//On transforme donc le Set en List, puis on choisit aléatoirement une id d'objet de la BD, qu'on renvoie.
+		ArrayList<Integer> ids = new ArrayList<Integer>(BD.getObjets().keySet());
+		return ids.get((int)Math.random() * ids.size());
+	}
+	
+	
 	
 	/**
 	 * Activer tous les effets de l'objet, puis décrémenter la durabilité.
@@ -55,6 +88,22 @@ public class Objet {
 	}
 	public void setDurabilite(int durabilite) {
 		this.durabilite = durabilite;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public ArrayList<Action> getActions() {
+		return actions;
+	}
+
+	public void setActions(ArrayList<Action> actions) {
+		this.actions = actions;
 	}
 	
 }
