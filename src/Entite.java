@@ -3,9 +3,9 @@ import java.util.HashMap;
 public abstract class Entite {
 	protected int id;
 	protected Stats stats;
-	protected HashMap<Integer, Objet> inventaire;
+	protected Inventaire inventaire;
 	
-	public Entite(int id, Stats stats, HashMap<Integer, Objet> inventaire) {
+	public Entite(int id, Stats stats, Inventaire inventaire) {
 		this.id = id;
 		this.stats = stats;
 		this.inventaire = inventaire;
@@ -30,11 +30,11 @@ public abstract class Entite {
 		this.id = id;
 	}
 
-	public HashMap<Integer, Objet> getInventaire() {
+	public Inventaire getInventaire() {
 		return inventaire;
 	}
 
-	public void setInventaire(HashMap<Integer, Objet> inventaire) {
+	public void setInventaire(Inventaire inventaire) {
 		this.inventaire = inventaire;
 	}
 	

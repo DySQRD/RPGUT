@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
 
@@ -49,11 +51,7 @@ public class BD {
 	 * Le second est l'id de l'objet à CLONER depuis l'ArrayList OBJETS.
 	 */
 	private static HashMap<Integer, Integer> DROPS = new HashMap<Integer, Integer>();
-	
-	public static void main(String[] args) throws SQLException, ImprevuDBError {
-		BD.identifier("jki","honnetementjsp");
-		BD.desinscrire();
-	}
+	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
 	
 	/**
 	 * Méthode à utiliser pour authentifier un joueur avant de le connecter.<br>
@@ -104,22 +102,32 @@ public class BD {
 	 */
 	public static int inscrire(String pseudo, String mdp) throws SQLException, ImprevuDBError {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
+		Pattern p = Pattern.compile("[a-zA-Z0-9]{1,30}");
 		if(verifier(pseudo)) {// S'il existe déjà un joueur avec ce pseudo...
 			BDebug("Le pseudo demandé est déjà pris ! Pseudo: ", pseudo);
 			return 0;
-		} else if(false) {//si mot de passe non conforme aux restrictions imposées...
-			BDebug("Mot de passe non conforme ! MDP: ", pseudo);
-			return -1;	//pas encore rédigée
+		} else if(!(p.matcher(mdp).matches() && p.matcher(pseudo).matches())) {//si mot de passe non conforme aux restrictions imposées...
+			BDebug("Pseudonyme ou mot de passe non conforme ! Pseudo: ", pseudo, " MDP: ", mdp,"\n"
+					+ "        Merci de n'utiliser que des chiffres et des lettres !");
+			return -1;
 		} else {
-			
+			//Création d'un tuple stats pour le nouveau joueur.
+			//Mettre les valeurs à NULL dans la requête indique de créer un tuple avec les valeurs de bases
+			//enregistrées dans la BD.
 			informer("INSERT INTO stats(id) VALUES(NULL)");
 			ResultSet statsIdTable = querir("SELECT MAX(id) id FROM stats");
+			//On récupère l'id du tuple inséré pour la mettre dans le tuple
+			//de la table spawn du joueur.
 			statsIdTable.next();
 			int statsId = statsIdTable.getInt("id");
+			
+			//Création d'un tuple spawn pour le nouveau joueur.
 			informer("INSERT INTO spawn(id, stats_id) VALUES(NULL, ?);", statsId);
 			ResultSet spawnIdTable = querir("SELECT MAX(id) id FROM spawn");
 			spawnIdTable.next();
 			int spawnId = spawnIdTable.getInt("id");
+			
+			
 			informer("INSERT INTO joueur(nom, mdp, spawn_id) VALUES(?, ?, ?)", pseudo, mdp, spawnId);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
@@ -172,11 +180,17 @@ public class BD {
 	 */
 	private static boolean verifier(String pseudo) throws SQLException {
 		BDebug("Vérification de la présence du pseudo ", pseudo, " dans la BD.");
-		joueurTable = querir(""
-				+ "SELECT * "
+		joueurTable = querir(
+				"SELECT * "
 				+ "FROM joueur "
-				+ "WHERE joueur.nom = ?"
-		+ "", pseudo);
+				+ "NATURAL JOIN "
+					+ "(SELECT id spawn_id, map_id, entite_id, x, y, stats_id "
+					+ "FROM spawn) sp "
+				+ "NATURAL JOIN "
+					+ "(SELECT id stats_id, xp, pv, attaque, defense "
+					+ "FROM stats) st "
+				+ "WHERE nom = ? "
+				, pseudo);
 		//next() renvoie true s'il y a au moins un résultat.
 		return joueurTable.next();
 	}
@@ -198,6 +212,7 @@ public class BD {
 		telecharger();
 		telecharger(joueurTable.getInt("id"));
 		BDebug("Connexion terminée !");
+		informer("INSERT INTO connexion(id, joueur_id) VALUES(?,?)", 0, joueur.id);
 		return 1;
 	}
 	
@@ -229,14 +244,15 @@ public class BD {
 				);
 			}
 			
-			//Télécharge les 
+			//Télécharge les stats du joueur.
 			while(statsTable.next()) {
 				STATS.put(
 					statsTable.getInt("id"),
 					new Stats(
 						statsTable.getInt("xp"),
 						statsTable.getInt("pv"),
-						statsTable.getInt("attaque")
+						statsTable.getInt("attaque"),
+						statsTable.getInt("defense")
 					)
 				);
 			}
@@ -314,7 +330,7 @@ public class BD {
 		}
 		
 		ResultSet inventaireTable = telecharger("inventaire", joueurId);
-		HashMap<Integer, Objet> joueurInventaire = new HashMap<Integer, Objet>();
+		Inventaire joueurInventaire = new Inventaire();
 		while(inventaireTable.next()) {
 			joueurInventaire.put(
 				inventaireTable.getInt("ordre"),
@@ -326,10 +342,9 @@ public class BD {
 		}
 		
 		
-		System.out.println(joueurTable.getInt("id"));
 		joueur = new Joueur(
 			joueurTable.getInt("id"),
-			new Stats(0, 0, 0),			//TODO Comment les stats sont-elles associées aux entités dans la BD ?
+			new Stats(0, 0, 0, 0),
 			joueurInventaire);
 	}
 	
@@ -359,24 +374,38 @@ public class BD {
 	 */
 	public static void sauvegarder() throws SQLException {
 		Stats stats = joueur.getStats();
-		informer("UPDATE joueur SET xp = ?, pv = ?, attaque = ?, vitesse = ? WHERE id = ?",
-			stats.get("xp"), stats.get("pv"), stats.get("attaque"), stats.get("vitesse"), joueur.getId());
+		informer("UPDATE stats SET xp = ?, pv = ?, attaque = ?, defense = ? WHERE id = ?",
+			stats.get("xp"),
+			stats.get("pv"),
+			stats.get("attaque"),
+			stats.get("defense"),
+			joueurTable.getInt("stats_id"));
 		
 		//Supprimer tous les objets du joueur dans la BD...
-		informer("DELETE FROM joueur_objet WHERE joueur_id = ?",
+		informer("DELETE FROM inventaire WHERE joueur_id = ?",
 			joueur.getId());
 		//J'imagine qu'il y a bel et bien un risque de perte de données si la connexion est perdue entre temps.
 		//Correctif à venir.
 
 		connexion.setAutoCommit(false);
-		//...puis insérer les objets de l'ArrayList<Objet> dans la BD.
-		preparer("INSERT INTO joueur_objet VALUES(?,?,?,?)");
-		HashMap<Integer, Objet> inventaire = joueur.getInventaire();
+		//...puis insérer les objets de l'Inventaire dans la BD.
+		preparer("INSERT INTO inventaire VALUES(?,?,?,?)");
+		Inventaire inventaire = joueur.getInventaire();
 		for(int i = 0; i < inventaire.size(); i++) {
-			preparer(joueur.getId(), inventaire.get(i).getId(), inventaire.get(i).getDurabilite(), i);
+			Objet objet = inventaire.get(i);
+			preparer(joueur.getId(), objet.getId(), objet.getDurabilite(), i);
 			preparedStatement.addBatch();
 		}
-		preparedStatement.executeBatch();	//Exécute la requête
+		preparedStatement.executeBatch();
+		
+		//Ajoute à la BD les ids des mobs vaincus depuis le dernier chargement de sauvegarde.
+		preparer("INSERT INTO victoire VALUES(?,?)");
+		for(int i = 0; i < vaincus.size(); i++) {
+			preparer(joueur.getId(), vaincus.get(i));
+			preparedStatement.addBatch();
+		}
+		preparedStatement.executeBatch();
+		vaincus.clear();	//On vide la liste pour que les mêmes mobs ne soient pas envoyés de nouveau.
 		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
 		connexion.setAutoCommit(true);
 	}
@@ -441,6 +470,15 @@ public class BD {
 		preparer(valeurs);
 	}
 	
+	/**
+	 * Ajoute l'id d'une instance de mob vaincue par le joueur
+	 * à la liste des mobs vaincus depuis le dernier chargement de sauvegarde.
+	 * @param mob_id
+	 */
+	public static void victoire(int mob_id) {
+		vaincus.add(mob_id);
+	}
+	
 	/*
 	 * Getters et setters
 	 */
@@ -474,6 +512,6 @@ public class BD {
 	 */
 	private static void BDebugRequete() {
 		String prepStr = preparedStatement.toString();	//PreparedStatement en String contient la requête qui sera envoyée.
-		BDebug("Requête: ", prepStr.substring(43, prepStr.length()));//Retire la partie inutile de prepStr
+		BDebug("Requête: ", prepStr.substring(43, prepStr.length()));//Retire la partie de prepStr qui n'est pas la requête
 	}
 }
