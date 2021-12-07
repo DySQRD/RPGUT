@@ -18,13 +18,14 @@ public class LoopManager {
 
     public void combat(){
         gameLoop.stop();
-        combatLoop.displayUpdate();
+        combatLoop.displayInit();
         combatLoop.start();
         this.currentLoop = combatLoop;
 
     }
     public void game(){
         combatLoop.stop();
+        combatLoop.displayRemove();
         gameLoop.displayUpdate();
         gameLoop.start();
         this.currentLoop = gameLoop;

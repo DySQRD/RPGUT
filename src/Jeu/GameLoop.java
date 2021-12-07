@@ -13,12 +13,12 @@ public class GameLoop extends AnimationTimer {
     protected Level level;
     protected Group root;
     protected Label fpsLabel;
+    protected Label hpLabel;
     protected Label mouseLocationLabel;
     protected CombatLoop combatLoop;
     protected LoopManager loopManager;
 
     protected boolean up, down, left, right;
-    protected boolean gamePause = false;
 
     protected double width, height;
 
@@ -56,22 +56,17 @@ public class GameLoop extends AnimationTimer {
             for(int i=0; i<level.getMap(level.getCurrentMap()).getObstacles().size(); i++){
                 if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
                     if(level.getMap(level.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
-                        perso.tp(perso.posX, 525);
+                        perso.tp(perso.posX, 500);
                         level.switchMap(level.getMap(level.getCurrentMap()).getObstacles().get(i).name);
                         this.displayUpdate();
                     }
                     perso.collision = true; break;
                 }
             }
-            for(int i=0; i<level.getMap(level.getCurrentMap()).getMobs().size(); i++){
-                if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
-                    perso.mobVS = level.getMap(level.getCurrentMap()).getMobs().get(i);
-                    this.enterCombat();
-                }
-            }
             if(!(perso.collision)) perso.moveUp();
             perso.collision = false;
             perso.hitbox.setY(perso.hitbox.getY()+perso.velocity);
+            checkCombatPerso();
         }
         if(down){
             perso.hitbox.setY(perso.hitbox.getY()+perso.velocity);
@@ -79,30 +74,18 @@ public class GameLoop extends AnimationTimer {
                 if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
                     //obstacles.get(i).setFill(Color.BLUE);
                     if(level.getMap(level.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
-                        root.getChildren().clear();
-
                         perso.tp(perso.posX, 30);
-
                         level.switchMap(level.getMap(level.getCurrentMap()).getObstacles().get(i).name);
-
-                        root.getChildren().addAll(level.getMap(level.getCurrentMap()).getCanvas(), fpsLabel, mouseLocationLabel, perso.imageV);
-                        for(int k=0; k<level.getMap(level.getCurrentMap()).getMobs().size(); k++){
-                            root.getChildren().add(level.getMap(level.getCurrentMap()).getMobs().get(k).imageV);
-                        }
+                        displayUpdate();
                     }
                     perso.collision = true; break;
 
                 }
             }
-            for(int i=0; i<level.getMap(level.getCurrentMap()).getMobs().size(); i++){
-                if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
-                    perso.mobVS = level.getMap(level.getCurrentMap()).getMobs().get(i);
-                    this.enterCombat();
-                }
-            }
             if(!(perso.collision)) perso.moveDown();
             perso.collision = false;
             perso.hitbox.setY(perso.hitbox.getY()-perso.velocity);
+            checkCombatPerso();
         }
 
         if(left){
@@ -110,29 +93,18 @@ public class GameLoop extends AnimationTimer {
             for(int i=0; i<level.getMap(level.getCurrentMap()).getObstacles().size(); i++){
                 if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
                     if(level.getMap(level.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
-                        root.getChildren().clear();
                         perso.tp(830, perso.posY);
-
                         level.switchMap(level.getMap(level.getCurrentMap()).getObstacles().get(i).name);
-
-                        root.getChildren().addAll(level.getMap(level.getCurrentMap()).getCanvas(), fpsLabel, mouseLocationLabel, perso.imageV);
-                        for(int k=0; k<level.getMap(level.getCurrentMap()).getMobs().size(); k++){
-                            root.getChildren().add(level.getMap(level.getCurrentMap()).getMobs().get(k).imageV);
-                        }
+                        displayUpdate();
                     }
                     perso.collision = true; break;
 
                 }
             }
-            for(int i=0; i<level.getMap(level.getCurrentMap()).getMobs().size(); i++){
-                if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
-                    perso.mobVS = level.getMap(level.getCurrentMap()).getMobs().get(i);
-                    this.enterCombat();
-                }
-            }
             if(!(perso.collision)) perso.moveLeft();
             perso.collision = false;
             perso.hitbox.setX(perso.hitbox.getX()+perso.velocity);
+            checkCombatPerso();
         }
 
         if(right){
@@ -141,30 +113,18 @@ public class GameLoop extends AnimationTimer {
                 if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
                     //obstacles.get(i).setFill(Color.BLUE);
                     if(level.getMap(level.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
-                        root.getChildren().clear();
-
                         perso.tp(30, perso.posY);
-
                         level.switchMap(level.getMap(level.getCurrentMap()).getObstacles().get(i).name);
-
-                        root.getChildren().addAll(level.getMap(level.getCurrentMap()).getCanvas(), fpsLabel, mouseLocationLabel, perso.imageV);
-                        for(int k=0; k<level.getMap(level.getCurrentMap()).getMobs().size(); k++){
-                            root.getChildren().add(level.getMap(level.getCurrentMap()).getMobs().get(k).imageV);
-                        }
+                        displayUpdate();
                     }
                     perso.collision = true; break;
 
                 }
             }
-            for(int i=0; i<level.getMap(level.getCurrentMap()).getMobs().size(); i++){
-                if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
-                    perso.mobVS = level.getMap(level.getCurrentMap()).getMobs().get(i);
-                    this.enterCombat();
-                }
-            }
             if(!(perso.collision)) perso.moveRight();
             perso.collision = false;
             perso.hitbox.setX(perso.hitbox.getX()-perso.velocity);
+            checkCombatPerso();
         }
 
         if((now - lastFPSTime)>(1e8)){
@@ -172,5 +132,76 @@ public class GameLoop extends AnimationTimer {
             lastFPSTime = now;
         }
 
+        for(int i=0; i<level.getMap(level.getCurrentMap()).getMobs().size(); i++){
+            int random = (int) (Math.random()*4);
+            Mob mob = level.getMap(level.getCurrentMap()).getMobs().get(i);
+            switch (random){
+                case 0 : mob.hitbox.setY(mob.hitbox.getY()-mob.velocity);
+                for(int k=0; k<level.getMap(level.getCurrentMap()).getObstacles().size(); k++){
+                    if((mob.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(k).hitbox.getBoundsInParent()))){
+                        mob.collision = true;
+                    }
+                }
+                mob.hitbox.setY(mob.hitbox.getY()+mob.velocity);
+                if(!(mob.collision)){
+                    mob.moveUp();
+                }
+                mob.collision = false;break;
+                case 1 : mob.hitbox.setY(mob.hitbox.getY()+mob.velocity);
+                    for(int k=0; k<level.getMap(level.getCurrentMap()).getObstacles().size(); k++){
+                        if((mob.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(k).hitbox.getBoundsInParent()))){
+                            mob.collision = true;
+                        }
+                    }
+                    mob.hitbox.setY(mob.hitbox.getY()-mob.velocity);
+                    if(!(mob.collision)){
+                        mob.moveDown();
+                    }
+                    mob.collision = false;break;
+                case 2 : mob.hitbox.setX(mob.hitbox.getX()-mob.velocity);
+                    for(int k=0; k<level.getMap(level.getCurrentMap()).getObstacles().size(); k++){
+                        if((mob.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(k).hitbox.getBoundsInParent()))){
+                            mob.collision = true;
+                        }
+                    }
+                    mob.hitbox.setX(mob.hitbox.getX()+mob.velocity);
+                    if(!(mob.collision)){
+                        mob.moveLeft();
+                    }
+                    mob.collision = false;break;
+                case 3 : mob.hitbox.setX(mob.hitbox.getX()+mob.velocity);
+                    for(int k=0; k<level.getMap(level.getCurrentMap()).getObstacles().size(); k++){
+                        if((mob.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(k).hitbox.getBoundsInParent()))){
+                            mob.collision = true;
+                        }
+                    }
+                    mob.hitbox.setX(mob.hitbox.getX()-mob.velocity);
+                    if(!(mob.collision)){
+                        mob.moveRight();
+                    }
+                    mob.collision = false;break;
+            }
+        }
+        checkCombatMob();
+    }
+
+    public void checkCombatPerso(){
+        for(int i=0; i<level.getMap(level.getCurrentMap()).getMobs().size(); i++){
+            if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
+                perso.mobVS = level.getMap(level.getCurrentMap()).getMobs().get(i);
+                loopManager.combatLoop.tourMob = false;
+                enterCombat();
+            }
+        }
+    }
+
+    public void checkCombatMob(){
+        for(int i=0; i<level.getMap(level.getCurrentMap()).getMobs().size(); i++){
+            if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
+                perso.mobVS = level.getMap(level.getCurrentMap()).getMobs().get(i);
+                loopManager.combatLoop.tourMob = true;
+                enterCombat();
+            }
+        }
     }
 }

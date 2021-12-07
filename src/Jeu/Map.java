@@ -114,14 +114,14 @@ public class Map {
         return obstacles;
     }
 
-    public void spawnMobs(int nbreMobs){
+    public void spawnMobs(int nbreMobs,String matiere,String type){
         double spawnX;
         double spawnY;
         boolean collision = false;
         for(int i=0; i<nbreMobs; i++) {
             spawnX = Math.random() * width * tilewidth;
             spawnY = Math.random() * height * tileheight;
-            this.mobs.add(new MathsMinion());
+            this.mobs.add(new Mob(matiere, type));
             mobs.get(i).hitbox = new Rectangle(0, 0, mobs.get(i).imageV.getFitWidth(), mobs.get(i).imageV.getFitHeight());
             mobs.get(i).tp(spawnX, spawnY);
             do {
