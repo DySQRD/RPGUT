@@ -331,6 +331,7 @@ public class BD {
 		
 		joueur = new Personnage(
 			joueurTable.getInt("id"),
+			joueurTable.getString("nom"),
 			new Stats(),
 			new Inventaire(telecharger("inventaire", joueurId)),
 			joueurTable.getInt("x"),
