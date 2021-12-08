@@ -23,8 +23,9 @@ public class Personnage extends Entity{
     protected final int HEALTH_PER_LVL = 10;
 
 
-    public Personnage(int joueur_id, Stats stats, Inventaire inventaire, double posX, double posY) {
-    	this.id = 1; //id du type de mob "Joueur" dans la BD
+    public Personnage(int joueur_id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
+    	super(1, nom, stats, inventaire, posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
+    	this.joueur_id = joueur_id;
         
         this.dxHitbox = 15;
         this.dyHitbox = 35;

@@ -10,6 +10,9 @@ public abstract class Entity {
 	//Id d'entité dans la BD
 	protected int id;
 	
+	//Nom de l'entité
+    protected String nom;
+	
     //Position à l'écran (0,0 = en haut à gauche)
     protected double posX, posY;
 
@@ -42,9 +45,10 @@ public abstract class Entity {
     protected int defense_bonus;
     protected int actual_defense;
     protected int lvl;
-
-    public Entity() {
-    	this.joueur_id = joueur_id;
+    
+    public Entity(int id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
+    	this.id = id;
+    	this.nom = nom;
         this.inventaire = inventaire;
         this.stats = stats;
         this.posX = posX;
