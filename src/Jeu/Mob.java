@@ -19,7 +19,7 @@ public class Mob extends Entity{
             case "Maths" : switch (mobType){
                 case "Minion" : {
                     this.name = "Méchante inconnue";
-                    this.imageMob = new Image("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/minions.png");
+                    this.imageMob = new Image("file:res/Images/minions.png");
                     ImageView imageView = new ImageView();
                     imageView.setImage(imageMob);
                     imageView.setFitWidth(25);

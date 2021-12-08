@@ -26,6 +26,7 @@ public abstract class Entity {
     protected int health_bonus_max;
     protected int actual_health_max;
     protected int actual_health;
+
     protected int atk_base;
     protected int atk_bonus;
     protected int actual_atk;
@@ -33,6 +34,7 @@ public abstract class Entity {
     protected int defense_bonus;
     protected int actual_defense;
     protected int lvl;
+    protected int totalXp;
 
     public Entity(){}
 

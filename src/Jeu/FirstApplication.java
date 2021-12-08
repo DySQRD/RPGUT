@@ -48,6 +48,19 @@ public class FirstApplication extends Application {
     //Lancement de l'application
     @Override
     public void start(Stage stage) throws Exception {
+
+        // Création fenêtre
+        Stage window = new Stage();
+        window = stage;
+
+        //Configuration fenêtre
+        window.setTitle("Project Game");
+        window.setWidth(900);
+        window.setHeight(600);      // Taille des maps : 576 x 896
+        window.setResizable(false);
+
+        Connexion connexion = new Connexion();
+
         //Désérialisation du tileset dans tileset1
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
@@ -140,15 +153,7 @@ public class FirstApplication extends Application {
         Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "res/Images/lucas.png", level1);
 
 
-        // Création fenêtre
-        Stage window = new Stage();
-        window = stage;
 
-        //Configuration fenêtre
-        window.setTitle("Project Game");
-        window.setWidth(900);
-        window.setHeight(600);      // Taille des maps : 576 x 896
-        window.setResizable(false);
 
         //Création des root (Layout manager) 576 x 896
         Group root = new Group();
@@ -163,7 +168,7 @@ public class FirstApplication extends Application {
 
         //Loops
         GameLoop gameLoop = new GameLoop(perso1,level1,fps1, mouseLocation, root);
-        LoopManager loopManager = new LoopManager(gameLoop, gameLoop.combatLoop);
+        LoopManager loopManager = new LoopManager(gameLoop, gameLoop.combatLoop, gameLoop.pauseLoop);
 
         scene1.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
@@ -198,9 +203,14 @@ public class FirstApplication extends Application {
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorRight();break;
                     }
-                    case ESCAPE: if (loopManager.currentLoop instanceof GameLoop){}
+                    case ESCAPE: if (loopManager.currentLoop instanceof GameLoop){
+                        loopManager.gameLoop.enterPause();
+                    }
                         else if(loopManager.currentLoop instanceof CombatLoop){
                             loopManager.combatLoop.escape();break;
+                    }
+                        else if(loopManager.currentLoop instanceof PauseLoop){
+                            loopManager.pauseLoop.escape();
                     }
                     case SPACE: if(loopManager.currentLoop instanceof GameLoop){}
                         else if(loopManager.currentLoop instanceof CombatLoop){
