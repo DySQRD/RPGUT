@@ -1,3 +1,4 @@
+package BD;
 import java.util.HashMap;
 
 public class Stats extends HashMap<String, Integer> {

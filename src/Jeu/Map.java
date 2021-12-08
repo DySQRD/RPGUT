@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.shape.Rectangle;
@@ -114,7 +115,7 @@ public class Map {
         return obstacles;
     }
 
-    public void spawnMobs(int nbreMobs,String matiere,String type){
+    public void spawnMobs(int nbreMobs,String matiere,String type) throws IOException{
         double spawnX;
         double spawnY;
         boolean collision = false;

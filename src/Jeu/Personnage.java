@@ -1,5 +1,7 @@
 package Jeu;
 
+import BD.Inventaire;
+import BD.Stats;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -9,7 +11,10 @@ import javafx.scene.shape.Rectangle;
 
 
 public class Personnage extends Entity{
-    public Image imageCharacter;
+	//Id du joueur
+	protected int joueur_id;
+	
+    public Image imageCharacter = (new Image("file:res/Images/lucas.png"));
     protected int u,d,l,r = 0;
     protected Mob mobVS;
     protected int totalXp = 0;
@@ -18,12 +23,11 @@ public class Personnage extends Entity{
     protected final int HEALTH_PER_LVL = 10;
 
 
-    public Personnage(double posX, double posY, int velocity, String fileName, Level currentLevel){
-        this.posX = posX;
-        this.posY = posY;
+    public Personnage(int joueur_id, Stats stats, Inventaire inventaire, double posX, double posY) {
+    	this.id = 1; //id du type de mob "Joueur" dans la BD
+        
         this.dxHitbox = 15;
         this.dyHitbox = 35;
-        this.imageCharacter = (new Image("file:"+fileName));
         this.imageV = new ImageView();
         this.imageV.setImage(this.imageCharacter);
         this.imageV.setImage(new WritableImage((PixelReader) this.imageCharacter.getPixelReader(),0,0,64,64));
@@ -31,7 +35,7 @@ public class Personnage extends Entity{
         this.imageV.setY(posY);
         this.hitbox = new Rectangle(posX+dxHitbox, posY+dyHitbox, 20, 20);
         this.hitbox.setFill(Color.RED);
-        this.velocity = velocity;
+        this.velocity = 5;
         this.health_base_max = 100;
         this.actual_health_max = health_base_max;
         this.actual_health = health_base_max;

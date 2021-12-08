@@ -1,3 +1,4 @@
+package BD;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,6 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
+import Jeu.Entity;
+import Jeu.Personnage;
 
 
 /**
@@ -35,7 +38,7 @@ public class BD {
 	/**
 	 * 	Le Joueur téléchargé suite à une connexion réussie à la BD.
 	 */
-	private static Joueur joueur;
+	private static Personnage joueur;
 	/**
 	 * Dans telecharger(), détermine s'il faut télécharger les données statiques.<br>
 	 * Cela ne devrait arriver qu'une fois par lancement du programme.
@@ -45,7 +48,7 @@ public class BD {
 	 * Tous les objets existants dans la BD.
 	 */
 	private static HashMap<Integer, Objet> OBJETS = new HashMap<Integer, Objet>();
-	private static HashMap<Integer, Entite> ENTITES = new HashMap<Integer, Entite>();
+	private static HashMap<Integer, HashMap<Integer, ArrayList<Entity>>> ENTITES = new HashMap<Integer, HashMap<Integer, ArrayList<Entity>>>();
 	private static HashMap<Integer, Stats> STATS = new HashMap<Integer, Stats>();
 	/**
 	 * Le premier Integer correspond à l'id de l'entite qui drop un objet.<br>
@@ -213,7 +216,7 @@ public class BD {
 		telecharger();
 		telecharger(joueurTable.getInt("id"));
 		BDebug("Connexion terminée !");
-		informer("INSERT INTO connexion(id, joueur_id) VALUES(?,?)", 0, joueur.id);
+		informer("INSERT INTO connexion(id, joueur_id) VALUES(?,?)", 0, joueur.getId());
 		return 1;
 	}
 	
@@ -325,9 +328,8 @@ public class BD {
 			+ "ON id != spawn_id "
 			+ "WHERE joueur_id = " + joueurId
 		);
-		
 		while(spawnTable.next()) {
-			
+			//ENTITES.get(spawnTable.getInt("niveau_id")).get(spawnTable.getInt("map_id")).add(new Entity());
 		}
 		
 		ResultSet inventaireTable = telecharger("inventaire", joueurId);
@@ -343,10 +345,12 @@ public class BD {
 		}
 		
 		
-		joueur = new Joueur(
+		joueur = new Personnage(
 			joueurTable.getInt("id"),
 			new Stats(0, 0, 0, 0),
-			joueurInventaire);
+			joueurInventaire,
+			joueurTable.getInt("x"),
+			joueurTable.getInt("y"));
 	}
 	
 	/** Télécharge les données d'une table correspondants à l'id du joueur donné.
@@ -402,7 +406,7 @@ public class BD {
 		//Ajoute à la BD les ids des mobs vaincus depuis le dernier chargement de sauvegarde.
 		preparer("INSERT INTO victoire VALUES(?,?)");
 		for(int i = 0; i < vaincus.size(); i++) {
-			preparer(joueur.getId(), vaincus.get(i));
+			preparer(joueur.getInventaire(), vaincus.get(i));
 			preparedStatement.addBatch();
 		}
 		preparedStatement.executeBatch();
@@ -484,7 +488,7 @@ public class BD {
 	 * Getters et setters
 	 */
 	
-	public static Joueur getJoueur() {
+	public static Personnage getPersonnage() {
 		return joueur;
 	}
 

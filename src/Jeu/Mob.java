@@ -1,6 +1,10 @@
 package Jeu;
 
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
@@ -12,14 +16,14 @@ public class Mob extends Entity{
     protected int id;
     protected int xpGiven;
 
-    public Mob(String matiere, String mobType){
+    public Mob(String matiere, String mobType) throws IOException{
         this.id = nbreMobs;
         nbreMobs++;
         switch(matiere){
             case "Maths" : switch (mobType){
                 case "Minion" : {
                     this.name = "Méchante inconnue";
-                    this.imageMob = new Image("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/minions.png");
+                    this.imageMob = new Image("file:res/Images/minions.png");
                     ImageView imageView = new ImageView();
                     imageView.setImage(imageMob);
                     imageView.setFitWidth(25);
