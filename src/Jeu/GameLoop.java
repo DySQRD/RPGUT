@@ -19,7 +19,6 @@ public class GameLoop extends AnimationTimer {
     protected LoopManager loopManager;
 
     protected boolean up, down, left, right;
-    protected boolean gamePause = false;
 
     protected double width, height;
 
@@ -57,7 +56,7 @@ public class GameLoop extends AnimationTimer {
             for(int i=0; i<level.getMap(level.getCurrentMap()).getObstacles().size(); i++){
                 if(perso.hitbox.getBoundsInParent().intersects(level.getMap(level.getCurrentMap()).getObstacles().get(i).hitbox.getBoundsInParent())){
                     if(level.getMap(level.getCurrentMap()).getObstacles().get(i).type.equals("sortie")){
-                        perso.tp(perso.posX, 525);
+                        perso.tp(perso.posX, 500);
                         level.switchMap(level.getMap(level.getCurrentMap()).getObstacles().get(i).name);
                         this.displayUpdate();
                     }
@@ -184,7 +183,6 @@ public class GameLoop extends AnimationTimer {
             }
         }
         checkCombatMob();
-        //METTRE LES COLLISIONS GROUPEES A LA FIN
     }
 
     public void checkCombatPerso(){

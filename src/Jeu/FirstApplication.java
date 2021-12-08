@@ -52,46 +52,46 @@ public class FirstApplication extends Application {
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
         String json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/default_set.json")));
+                .getPath("res/maps/default_set.json")));
         Tileset tileset1 = gsonBuilder.fromJson(json, Tileset.class);
 
         //Désérialisation des map
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map1.json")));
+                .getPath("res/maps/map1.json")));
         Map map1 = gsonBuilder.fromJson(json, Map.class);
         map1.setSpawnX(242);
         map1.setSpawnY(242);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map2.json")));
+                .getPath("res/maps/map2.json")));
         Map map2 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map3.json")));
+                .getPath("res/maps/map3.json")));
         Map map3 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map4.json")));
+                .getPath("res/maps/map4.json")));
         Map map4 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map5.json")));
+                .getPath("res/maps/map5.json")));
         Map map5 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map6.json")));
+                .getPath("res/maps/map6.json")));
         Map map6 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map7.json")));
+                .getPath("res/maps/map7.json")));
         Map map7 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map8.json")));
+                .getPath("res/maps/map8.json")));
         Map map8 = gsonBuilder.fromJson(json, Map.class);
 
         json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/maps/map9.json")));
+                .getPath("res/maps/map9.json")));
         Map map9 = gsonBuilder.fromJson(json, Map.class);
 
         map1.addTileset(tileset1);
@@ -137,7 +137,7 @@ public class FirstApplication extends Application {
         mouseLocation.setFont(Font.font("",FontWeight.BOLD, 18));
 
         //Personnages
-        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/teemo1.png", level1);
+        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "res/Images/lucas.png", level1);
 
 
         // Création fenêtre
@@ -147,10 +147,10 @@ public class FirstApplication extends Application {
         //Configuration fenêtre
         window.setTitle("Project Game");
         window.setWidth(900);
-        window.setHeight(600);      // Taille des maps : 576 x 896  384x597 espaces 96x150
+        window.setHeight(600);      // Taille des maps : 576 x 896
         window.setResizable(false);
 
-        //Création des root (Layout manager) 576 x 896 // 144 x 224
+        //Création des root (Layout manager) 576 x 896
         Group root = new Group();
         root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
         root.getChildren().addAll(perso1.imageV, fps1, mouseLocation);
@@ -161,7 +161,7 @@ public class FirstApplication extends Application {
         window.setScene(scene1);
         window.show();
 
-        //Loop
+        //Loops
         GameLoop gameLoop = new GameLoop(perso1,level1,fps1, mouseLocation, root);
         LoopManager loopManager = new LoopManager(gameLoop, gameLoop.combatLoop);
 
@@ -172,7 +172,7 @@ public class FirstApplication extends Application {
             }
         });
 
-        //Lancement de la Loop
+        //Lancement de la Loop jeu
         gameLoop.start();
 
 

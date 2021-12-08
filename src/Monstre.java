@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Monstre extends Entite {
@@ -81,8 +80,8 @@ public class Monstre extends Entite {
 		capacitées.add(capa);
 	}
 
-	public Monstre(int id, int xp, HashMap<String, Integer> stats, ArrayList<Consommable> inventaire, Consommable drop) {
-		super(id, xp, stats, inventaire);
+	public Monstre(int id, Stats stats, Inventaire inventaire, Objet drop) {
+		super(id, stats, inventaire);
 		this.drop = drop;
 		// TODO Auto-generated constructor stub
 	}
