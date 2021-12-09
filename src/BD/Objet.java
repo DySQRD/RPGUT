@@ -16,7 +16,6 @@ public class Objet {
 	
 	Objet(int id, String nom, int durabilite, Action ...actions) {
 		this.id = id;
-		this.nom = nom;
 		this.durabilite = durabilite;
 		for(Action action : actions) this.actions.add(action);
 	}
@@ -27,8 +26,8 @@ public class Objet {
 	 */
 	Objet(int id) {
 		Objet obj = BD.getObjets().get(id);
-		this.id = obj.getId();
 		this.nom = obj.getNom();
+		this.id = obj.getId();
 		this.durabilite = obj.getDurabilite();
 		this.actions = obj.getActions();
 	}

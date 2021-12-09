@@ -14,7 +14,7 @@ public class Inventaire extends HashMap<Integer, Objet> {
 	 * @param inventaireTable
 	 * @throws SQLException
 	 */
-	Inventaire(ResultSet inventaireTable) throws SQLException {
+	public Inventaire(ResultSet inventaireTable) throws SQLException {
 		while(inventaireTable.next()) {
 			this.put(
 				inventaireTable.getInt("ordre"),

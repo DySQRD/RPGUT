@@ -33,7 +33,18 @@ import Jeu.Personnage;
  */
 public class BD {
 	private static Connection connexion;
+	/**
+	 * L'objet contenant les requêtes SQL à envoyer.<br>
+	 * N'utilisant jamais plus de deux PreparedStatement en même temps, il est plus simple d'en avoir un
+	 * seul. Ainsi pas besoin d'instancier un nouveau à chaque fois.<br>
+	 * Le PreparedStatement aurait comme avantage, sur le Statement, d'être pré-compilé et de
+	 * nettoyer les chaînes de caractères passées en paramètres de sa méthode associée setString().
+	 */
 	private static PreparedStatement preparedStatement;
+	/**
+	 * Une fois un joueur connecté, ce ResultSet contient la ligne correspondante des tables joueur,
+	 * spawn et stats de la BD.
+	 */
 	private static ResultSet joueurTable;
 	/**
 	 * 	Le Joueur téléchargé suite à une connexion réussie à la BD.
@@ -50,16 +61,16 @@ public class BD {
 	private static HashMap<Integer, Objet> OBJETS = new HashMap<Integer, Objet>();
 	private static HashMap<Integer, HashMap<Integer, ArrayList<Entity>>> ENTITES = new HashMap<Integer, HashMap<Integer, ArrayList<Entity>>>();
 	private static HashMap<Integer, Stats> STATS = new HashMap<Integer, Stats>();
-	/**
-	 * Le premier Integer correspond à l'id de l'entité qui drop un objet.<br>
-	 * Le second est l'id de l'objet à CLONER depuis l'ArrayList OBJETS.
-	 */
-	private static HashMap<Integer, Integer> DROPS = new HashMap<Integer, Integer>();
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
+	
+	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
+		System.out.println(entreeSafe("Dylan"));
+		identifier("Dylan", "Toledano");
+	}
 	
 	/**
 	 * Méthode à utiliser pour authentifier un joueur avant de le connecter.<br>
@@ -77,7 +88,7 @@ public class BD {
 	 */
 	public static int identifier(String pseudo, String mdp) throws SQLException, ImprevuDBError, IOException {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
-		if(!verifier(pseudo) || entreeSafe(pseudo)) {	//S'il n'y a pas de joueur pour le pseudonyme donné...
+		if(!verifier(pseudo) || !entreeSafe(pseudo)) {	//S'il n'y a pas de joueur pour le pseudonyme donné...
 			BDebug("Le joueur n'existe pas dans la BD !");
 			return 0;	//On indiquera que le joueur demandé n'existe pas.
 		} else if(!joueurTable.isLast()) {
@@ -123,13 +134,13 @@ public class BD {
 			//Création d'un tuple stats pour le nouveau joueur.
 			//Mettre les valeurs à NULL dans la requête indique de créer un tuple avec les valeurs de bases
 			//enregistrées dans la BD.
-			informer("INSERT INTO stats(id) VALUES(NULL)");
+			informer("INSERT INTO stats(stats_id) VALUES(NULL)");
 			//On récupère l'id du tuple inséré pour la mettre dans le tuple
 			//de la table spawn du joueur.
 			int statsId = derniereId("stats");
 			
 			//Création d'un tuple spawn pour le nouveau joueur.
-			informer("INSERT INTO spawn(id, stats_id) VALUES(NULL, ?);", statsId);
+			informer("INSERT INTO spawn(spawn_id, stats_id) VALUES(NULL, ?);", statsId);
 			int spawnId = derniereId("spawn");
 			
 			
@@ -184,7 +195,7 @@ public class BD {
 		joueurTable = querir(
 				"SELECT * "
 				+ "FROM joueur "
-				+ "NATURAL JOIN spawn"
+				+ "NATURAL JOIN spawn "
 				+ "NATURAL JOIN stats "
 				+ "WHERE nom = ? "
 				, pseudo);
@@ -208,7 +219,7 @@ public class BD {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut?allowMultiQueries=true", "joueur", "joueur");
 		//Télécharge toutes les données pertinentes de la BD.
 		telecharger();
-		telecharger(joueurTable.getInt("id"));
+		telecharger(joueurTable.getInt("joueur_id"));
 		BDebug("Connexion terminée !");
 		informer("INSERT INTO connexion(id, joueur_id) VALUES(?,?)", 0, joueur.getId());
 		return 1;
@@ -227,7 +238,6 @@ public class BD {
 			ResultSet objetTable = telecharger("objet");
 			ResultSet statsTable = telecharger("stats");
 			ResultSet entiteTable = telecharger("entite");
-			ResultSet dropTable = telecharger("drop");
 			
 			while(objetTable.next()) {
 				int id = objetTable.getInt("id");
@@ -245,7 +255,7 @@ public class BD {
 			//Télécharge les stats du joueur.
 			while(statsTable.next()) {
 				STATS.put(
-					statsTable.getInt("id"),
+					statsTable.getInt("stats_id"),
 					new Stats(statsTable)
 				);
 			}
@@ -267,11 +277,6 @@ public class BD {
 					)
 				);
 			}*/
-			
-			//Tous les drops possibles des monstres.
-			while(dropTable.next()) {
-				DROPS.put(dropTable.getInt("mob_id"), dropTable.getInt("objet_id"));
-			}
 		}
 	}
 	
@@ -283,7 +288,7 @@ public class BD {
 	 * @return L'integralite de la table demandée.
 	 * @throws SQLException
 	 */
-	private static ResultSet telecharger(String table) throws SQLException {
+	public static ResultSet telecharger(String table) throws SQLException {
 		BDebug("Téléchargement de la table \"", table, "\"");
 		return querir(
 			"SELECT * "
@@ -302,40 +307,28 @@ public class BD {
 	 */
 	private static void telecharger(int joueurId) throws SQLException, IOException {
 		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurId));
-
-		/*ResultSet statsTable = querir(
-			"SELECT * "
-			+ "FROM stats "
-			+ "WHERE id != joueur.id"
-		);*/
 		
 		//Sélectionne tous les spawns que le joueur n'a pas encore vaincu.
 		//Pour rappel, la table victoire enregistre les spawns vaincus par les joueurs.
 		ResultSet spawnTable = querir(
 			"SELECT * "
-			+ "FROM spawn sp, stats st, victoire v "
+			+ "FROM joueur j, spawn sp, stats st, victoire v "
+			//Le spawn ne doit pas déjà avoir été vaincu.
 			+ "WHERE sp.spawn_id != v.spawn_id "
-			+ "AND stats.id = stats_id "
-			+ "AND joueur_id = " + joueurId
+			//On récupère évidemment les stats du spawn
+			+ "AND sp.stats_id = st.stats_id "
+			+ "AND v.joueur_id = " + joueurId
+			//Ces spawns ne peuvent être ceux d'autres joueurs.
+			//(les spawns des mobs et des joueurs sont enregistrés dans la même table !)
+			+ "AND j.spawn_id != v.spawn_id "
 		);
 		while(spawnTable.next()) {
-			ENTITES.get(spawnTable.getInt("niveau_id")).get(spawnTable.getInt("map_id")).add(new Mob(
-				spawnTable.getInt("spawn_id"),
-				"Test",
-				new Stats(spawnTable),
-				new Inventaire(),
-				spawnTable.getDouble("x"),
-				spawnTable.getDouble("y")
-			));
+			ENTITES.get(spawnTable.getInt("niveau_id")).get(spawnTable.getInt("map_id")).add(
+				new Mob(spawnTable)
+			);
 		}
 		
-		joueur = new Personnage(
-			joueurTable.getInt("id"),
-			joueurTable.getString("nom"),
-			new Stats(),
-			new Inventaire(telecharger("inventaire", joueurId)),
-			joueurTable.getInt("x"),
-			joueurTable.getInt("y"));
+		joueur = new Personnage(joueurTable);
 	}
 	
 	/** Télécharge les données d'une table correspondants à l'id du joueur donné.
@@ -344,8 +337,8 @@ public class BD {
 	 * @return 	L'intégralité de la table demandée uniquement avec les tuples du joueur demandé.
 	 * @throws 	SQLException
 	 */
-	private static ResultSet telecharger(String table, int joueurId) throws SQLException {
-		return querir("SELECT * FROM ? WHERE joueur_id = ?", table, joueurId);
+	public static ResultSet telecharger(String table, int joueurId) throws SQLException {
+		return querir("SELECT * FROM " + table + " WHERE joueur_id = ?", joueurId);
 	}
 	
 	/**
@@ -388,8 +381,7 @@ public class BD {
 	}
 
 	/**
-	 * Permet d'exécuter une requête lisant la BD.<br>
-	 * Plus sécurisée car utilise PreparedStatement.
+	 * Permet d'exécuter une requête lisant la BD.
 	 * @param 	sql				La requête à exécuter.
 	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
 	 * @return	La table correspondant à la requête demandée.
@@ -402,8 +394,7 @@ public class BD {
 	}
 	
 	/**
-	 * Permet d'exécuter une requête mettant à jour la BD.<br>
-	 * Plus sécurisée car utilise PreparedStatement.
+	 * Permet d'exécuter une requête mettant à jour la BD.
 	 * @param 	sql				La requête à exécuter.
 	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
 	 * @return	Le nombre de lignes affectées par la requête.
@@ -448,13 +439,15 @@ public class BD {
 	}
 	
 	/**
-	 * Récupère l'attribut id le plus élevé de la table dont le nom est passé en argument.
+	 * Récupère l'attribut id le plus élevé de la table dont le nom est passé en argument.<br>
+	 * Ne fonctionne pas avec les tables n'ayant pas de colonne dont le nom a la forme <nom de la table>_id.<br>
+	 * Elle n'est cependant jamais utilisée de cette manière.
 	 * @param table
 	 * @return
 	 * @throws SQLException 
 	 */
 	private static int derniereId(String tableName) throws SQLException {
-		ResultSet table = querir("SELECT MAX(id) id FROM ?", tableName);
+		ResultSet table = querir("SELECT MAX(" + tableName + "_id) " + tableName + "_id FROM " + tableName);
 		table.next();
 		return table.getInt(tableName + "_id");
 	}
@@ -466,22 +459,6 @@ public class BD {
 	 */
 	public static void victoire(int mob_id) {
 		vaincus.add(mob_id);
-	}
-	
-	/*
-	 * Getters et setters
-	 */
-	
-	public static Personnage getPersonnage() {
-		return joueur;
-	}
-
-	
-	/*
-	 * Getters pour les données STATIQUES de la BD.
-	 */
-	public static HashMap<Integer, Objet> getObjets() {
-		return OBJETS;
 	}
 
 	/**
@@ -510,6 +487,19 @@ public class BD {
 	 * @return true si la chaîne est conforme.
 	 */
 	private static boolean entreeSafe(String entree) {
+		BDebug("Vérification de la conformité de l'entrée: ", entree);
 		return safePattern.matcher(entree).matches();
+	}
+
+	/*
+	 * Getters et setters
+	 */
+	
+	public static Personnage getPersonnage() {
+		return joueur;
+	}
+
+	public static HashMap<Integer, Objet> getObjets() {
+		return OBJETS;
 	}
 }

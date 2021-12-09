@@ -4,6 +4,8 @@ package Jeu;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import BD.Inventaire;
 import BD.Stats;
@@ -19,6 +21,17 @@ public class Mob extends Entity{
     
     public Mob(int id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) throws IOException {
     	super(id, nom, stats, inventaire, posX, posY);
+    }
+    
+    public Mob(ResultSet table) throws IOException, SQLException {
+    	this(
+	    	table.getInt("spawn_id"),
+			"Test",
+			new Stats(table),
+			new Inventaire(),
+			table.getDouble("x"),
+			table.getDouble("y")
+		);
     }
     
     public Mob(String type) throws IOException {

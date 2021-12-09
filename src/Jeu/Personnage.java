@@ -1,5 +1,8 @@
 package Jeu;
 
+import java.sql.ResultSet;
+
+import BD.BD;
 import BD.Inventaire;
 import BD.Stats;
 import javafx.scene.image.Image;
@@ -10,11 +13,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 
-public class Personnage extends Entity{
+public class Personnage extends Entity {
 	//Id du joueur
 	protected int joueur_id;
 	
-    public Image imageCharacter = (new Image("file:res/Images/lucas.png"));
+    public Image imageCharacter = new Image("file:res/Images/lucas.png");
     protected int u,d,l,r = 0;
     protected Mob mobVS;
     protected int totalXp = 0;
@@ -22,6 +25,16 @@ public class Personnage extends Entity{
     protected final int DEFENSE_PER_LVL = 2;
     protected final int HEALTH_PER_LVL = 10;
 
+    public Personnage(ResultSet table) {
+    	this(
+			table.getInt("joueur_id"),
+			table.getString("nom"),
+			new Stats(),
+			new Inventaire(BD.telecharger("inventaire", table.getInt("joueur_id"))),
+			table.getInt("x"),
+			table.getInt("y"));
+    	);
+    }
 
     public Personnage(int joueur_id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
     	super(1, nom, stats, inventaire, posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
