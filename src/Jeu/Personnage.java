@@ -1,6 +1,7 @@
 package Jeu;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import BD.BD;
 import BD.Inventaire;
@@ -20,19 +21,18 @@ public class Personnage extends Entity {
     public Image imageCharacter = new Image("file:res/Images/lucas.png");
     protected int u,d,l,r = 0;
     protected Mob mobVS;
-    protected int totalXp = 0;
-    protected final int ATK_PER_LVL = 2;
-    protected final int DEFENSE_PER_LVL = 2;
-    protected final int HEALTH_PER_LVL = 10;
+    protected static final int ATK_PER_LVL = 2;
+    protected static final int DEFENSE_PER_LVL = 2;
+    protected static final int HEALTH_PER_LVL = 10;
 
-    public Personnage(ResultSet table) {
+    public Personnage(ResultSet table) throws SQLException {
     	this(
 			table.getInt("joueur_id"),
 			table.getString("nom"),
 			new Stats(),
 			new Inventaire(BD.telecharger("inventaire", table.getInt("joueur_id"))),
 			table.getInt("x"),
-			table.getInt("y"));
+			table.getInt("y")
     	);
     }
 

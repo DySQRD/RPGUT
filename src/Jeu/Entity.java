@@ -45,6 +45,7 @@ public abstract class Entity {
     protected int defense_bonus;
     protected int actual_defense;
     protected int lvl;
+    protected int totalXp = 0;
     
     public Entity(int id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
     	this.id = id;

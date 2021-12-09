@@ -221,7 +221,7 @@ public class BD {
 		telecharger();
 		telecharger(joueurTable.getInt("joueur_id"));
 		BDebug("Connexion terminée !");
-		informer("INSERT INTO connexion(id, joueur_id) VALUES(?,?)", 0, joueur.getId());
+		informer("INSERT INTO connexion(joueur_id) VALUES(?)", joueur.getId());
 		return 1;
 	}
 	
@@ -320,7 +320,7 @@ public class BD {
 			+ "AND v.joueur_id = " + joueurId
 			//Ces spawns ne peuvent être ceux d'autres joueurs.
 			//(les spawns des mobs et des joueurs sont enregistrés dans la même table !)
-			+ "AND j.spawn_id != v.spawn_id "
+			+ " AND j.spawn_id != v.spawn_id "
 		);
 		while(spawnTable.next()) {
 			ENTITES.get(spawnTable.getInt("niveau_id")).get(spawnTable.getInt("map_id")).add(

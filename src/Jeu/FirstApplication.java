@@ -2,6 +2,8 @@ package Jeu;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import BD.BD;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
@@ -50,6 +52,7 @@ public class FirstApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         //Désérialisation du tileset dans tileset1
+        BD.identifier("Dylan", "Toledano");
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
         String json = new String(Files.readAllBytes(FileSystems.getDefault()
@@ -96,7 +99,7 @@ public class FirstApplication extends Application {
         //Personnages
         //TODO A remplacer par le personnage téléchargé avec :
         //Personnage perso1 = BD.getPersonnage();
-        Personnage perso1 = new Personnage(0, json, null, null, 242, 242);
+        Personnage perso1 = BD.getPersonnage();
 
 
         // Création fenêtre
