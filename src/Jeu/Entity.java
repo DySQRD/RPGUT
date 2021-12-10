@@ -38,6 +38,7 @@ public abstract class Entity {
     protected int health_bonus_max;
     protected int actual_health_max;
     protected int actual_health;
+
     protected int atk_base;
     protected int atk_bonus;
     protected int actual_atk;
