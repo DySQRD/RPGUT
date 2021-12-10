@@ -40,7 +40,7 @@ public class BD {
 	 */
 	private static PreparedStatement preparedStatement;
 	/**
-	 * Une fois un personnage connecté, ce ResultSet contient la ligne correspondante des tables joueur,
+	 * Une fois un joueur connecté, ce ResultSet contient la ligne correspondante des tables joueur,
 	 * entite et stats de la BD.
 	 */
 	private static ResultSet joueurTable;
@@ -49,16 +49,20 @@ public class BD {
 	 */
 	private static Personnage personnage;
 	/**
-	 * Dans telecharger(), détermine s'il faut télécharger les données statiques.<br>
+	 * Dans telecharger(), détermine s'il faut télécharger les collections statiques.<br>
 	 * Cela ne devrait arriver qu'une fois par lancement du programme.
 	 */
 	private static boolean dejaTelecharge = false;
 	/**
-	 * Tous les types d'objets existants dans la BD.
+	 * Tous les types d'objets existants dans la BD.<br>
+	 * Collection statique, çad dont les données sont communes à tous les joueurs
+	 * et qui n'est pas téléchargée de nouveau à chaque connexion.
 	 */
 	private static HashMap<Integer, ObjetType> objetTypes = new HashMap<Integer, ObjetType>();
 	/**
-	 * Tous les types d'entites existants dans la BD.
+	 * Tous les types d'entites existants dans la BD.<br>
+	 * Collection statique, çad dont les données sont communes à tous les joueurs
+	 * et qui n'est pas téléchargée de nouveau à chaque connexion.
 	 */
 	private static HashMap<Integer, EntiteType> entiteTypes = new HashMap<Integer, EntiteType>();
 	/**
@@ -66,7 +70,8 @@ public class BD {
 	 */
 	private static HashMap<Integer, Entity> entites = new HashMap<Integer, Entity>();
 	/**
-	 * Entités vaincues depuis la dernière sauvegarde.
+	 * Enregistre les entités vaincues depuis la dernière sauvegarder().<br>
+	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
 	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
 	/**
@@ -406,11 +411,14 @@ public class BD {
 	
 	/**
 	 * Ajoute l'id d'une instance de mob vaincue par le joueur
-	 * à la liste des mobs vaincus depuis le dernier chargement de sauvegarde.
+	 * à la liste des mobs vaincus depuis le dernier chargement de sauvegarde.<br>
+	 * Supprime également le mob en question des entités téléchargées
+	 * parce qu'on est jamais trop sûrs.
 	 * @param mob_id
 	 */
 	public static void victoire(int entite_id) {
 		vaincus.add(entite_id);
+		entites.remove(entite_id);
 		//TODO remove mob de la liste d'entités chargées
 	}
 
