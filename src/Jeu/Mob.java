@@ -37,6 +37,7 @@ public class Mob extends Entity{
     public Mob(String type) throws IOException {
     	this(0, "Méchante Equation", new Stats(), new Inventaire(), 0, 0);
         nbreMobs++;
+
     	switch (type) {
         case "Minion" : {
             this.imageMob = new Image("file:res/Images/Minion.png");
