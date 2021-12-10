@@ -32,7 +32,8 @@ public class GameLoop extends AnimationTimer {
         this.height = level.getMap(level.getCurrentMap()).getCanvas().getHeight();
         this.mouseLocationLabel = mouseLocationLabel;
         this.combatLoop = new CombatLoop(width/8, height/8, width*3/4, height*3/4, this);
-        this.pauseLoop = new PauseLoop(this);
+        this.pauseLoop = new PauseLoop(width, height, this);
+        pauseLoop.loopManager = loopManager;
     }
 
     public void displayUpdate(){

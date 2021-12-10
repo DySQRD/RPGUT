@@ -5,18 +5,33 @@ import javafx.animation.AnimationTimer;
 import java.util.ArrayList;
 
 public class LoopManager {
+    protected Connexion connexion;
     protected GameLoop gameLoop;
     protected CombatLoop combatLoop;
     protected PauseLoop pauseLoop;
     protected AnimationTimer currentLoop;
-    public LoopManager(GameLoop gameLoop, CombatLoop combatLoop, PauseLoop pauseLoop){
+    public LoopManager(Connexion connexion){
+        this.connexion = connexion;
+        this.currentLoop = connexion;
+    }
+
+    public void addGame(GameLoop gameLoop){
         this.gameLoop = gameLoop;
-        this.combatLoop = combatLoop;
-        this.pauseLoop = pauseLoop;
+        this.combatLoop = gameLoop.combatLoop;
+        this.pauseLoop = gameLoop.pauseLoop;
         gameLoop.loopManager = this;
         combatLoop.loopManager = this;
         pauseLoop.loopManager = this;
-        this.currentLoop = gameLoop;
+    }
+
+    public void connexion(){
+        if(currentLoop instanceof PauseLoop){
+            pauseLoop.stop();
+            pauseLoop.displayRemove();
+            //Se déconnecter de la BDD
+            connexion.displayUpdate();
+            this.currentLoop = connexion;
+        }
     }
 
     public void combat(){
@@ -27,11 +42,29 @@ public class LoopManager {
 
     }
     public void game(){
-        combatLoop.stop();
-        combatLoop.displayRemove();
-        gameLoop.displayUpdate();
-        gameLoop.start();
-        this.currentLoop = gameLoop;
+        if (currentLoop instanceof CombatLoop) {
+            combatLoop.stop();
+            combatLoop.displayRemove();
+            gameLoop.displayUpdate();
+            gameLoop.start();
+            this.currentLoop = gameLoop;
+        }
+        else if(currentLoop instanceof PauseLoop){
+            pauseLoop.stop();
+            pauseLoop.displayRemove();
+            gameLoop.displayUpdate();
+            gameLoop.start();
+            this.currentLoop = gameLoop;
+        }
+        else if(currentLoop instanceof Connexion){
+            connexion.stop();
+            connexion.displayRemove();
+            //Se connecter à la BDD
+            gameLoop.displayUpdate();
+            gameLoop.start();
+            this.currentLoop = gameLoop;
+        }
+
     }
     public void pause(){
         gameLoop.stop();

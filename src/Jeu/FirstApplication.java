@@ -59,7 +59,16 @@ public class FirstApplication extends Application {
         window.setHeight(600);      // Taille des maps : 576 x 896
         window.setResizable(false);
 
-        Connexion connexion = new Connexion();
+        Group root = new Group();
+        Scene scene1 = new Scene(root);
+
+        //Scene -> stage et affichage stage
+        window.setScene(scene1);
+        window.show();
+
+        Connexion connexion = new Connexion(root);
+        LoopManager loopManager = new LoopManager(connexion);
+        connexion.displayUpdate();
 
         //Désérialisation du tileset dans tileset1
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -156,19 +165,21 @@ public class FirstApplication extends Application {
 
 
         //Création des root (Layout manager) 576 x 896
-        Group root = new Group();
-        root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
-        root.getChildren().addAll(perso1.imageV, fps1, mouseLocation);
+        /*root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
+        root.getChildren().addAll(perso1.imageV, fps1, mouseLocation);*/
         //Root -> scene
-        Scene scene1 = new Scene(root);
 
-        //Scene -> stage et affichage stage
-        window.setScene(scene1);
-        window.show();
 
         //Loops
         GameLoop gameLoop = new GameLoop(perso1,level1,fps1, mouseLocation, root);
-        LoopManager loopManager = new LoopManager(gameLoop, gameLoop.combatLoop, gameLoop.pauseLoop);
+        loopManager.addGame(gameLoop);
+
+        connexion.validate.setOnAction(action -> {
+            System.out.println(connexion.unField.getText());
+            System.out.println(connexion.pField.getText());
+            loopManager.game();
+        });
+
 
         scene1.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
@@ -178,7 +189,7 @@ public class FirstApplication extends Application {
         });
 
         //Lancement de la Loop jeu
-        gameLoop.start();
+        //gameLoop.start();
 
 
 
@@ -191,30 +202,45 @@ public class FirstApplication extends Application {
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorUp();break;
                     }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        loopManager.pauseLoop.moveCursorUp();break;
+                    }
                     case DOWN : if(loopManager.currentLoop instanceof GameLoop){gameLoop.down=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorDown();break;
+                    }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        loopManager.pauseLoop.moveCursorDown();break;
                     }
                     case LEFT : if(loopManager.currentLoop instanceof GameLoop){gameLoop.left=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorLeft();break;
                     }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        break;
+                    }
                     case RIGHT : if(loopManager.currentLoop instanceof GameLoop){gameLoop.right=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorRight();break;
                     }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        break;
+                    }
                     case ESCAPE: if (loopManager.currentLoop instanceof GameLoop){
-                        loopManager.gameLoop.enterPause();
+                        loopManager.gameLoop.enterPause();break;
+                    }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        loopManager.pauseLoop.escape();break;
                     }
                         else if(loopManager.currentLoop instanceof CombatLoop){
                             loopManager.combatLoop.escape();break;
                     }
-                        else if(loopManager.currentLoop instanceof PauseLoop){
-                            loopManager.pauseLoop.escape();
-                    }
                     case SPACE: if(loopManager.currentLoop instanceof GameLoop){}
                         else if(loopManager.currentLoop instanceof CombatLoop){
-                        ((CombatLoop) loopManager.currentLoop).select();
+                            loopManager.combatLoop.select();break;
+                        }
+                        else if(loopManager.currentLoop instanceof PauseLoop){
+                            loopManager.pauseLoop.select();
                     }
                 }
             }
