@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
+import Jeu.Entity;
 import Jeu.Personnage;
 
 
@@ -44,7 +45,7 @@ public class BD {
 	 */
 	private static ResultSet joueurTable;
 	/**
-	 * 	Le Joueur téléchargé suite à une connexion réussie à la BD.
+	 * 	Le joueur téléchargé suite à une connexion réussie à la BD.
 	 */
 	private static Personnage personnage;
 	/**
@@ -53,10 +54,20 @@ public class BD {
 	 */
 	private static boolean dejaTelecharge = false;
 	/**
-	 * Tous les objets existants dans la BD.
+	 * Tous les types d'objets existants dans la BD.
 	 */
 	private static HashMap<Integer, ObjetType> objetTypes = new HashMap<Integer, ObjetType>();
+	/**
+	 * Tous les types d'entites existants dans la BD.
+	 */
 	private static HashMap<Integer, EntiteType> entiteTypes = new HashMap<Integer, EntiteType>();
+	/**
+	 * Toutes les entités non encore vaincues par le joueur.
+	 */
+	private static HashMap<Integer, Entity> entites = new HashMap<Integer, Entity>();
+	/**
+	 * Entités vaincues depuis la dernière sauvegarde.
+	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
@@ -150,11 +161,11 @@ public class BD {
 	}
 	
 	/**
-	 * Retire toutes les données de la BD du Joueur dont l'ID est passée en argument.
+	 * Retire toutes les données de la BD du joueur connecté, puis le déconnecte.
 	 * @throws SQLException
 	 */
 	@SuppressWarnings("unused")
-	private static void desinscrire() throws SQLException {
+	public static void desinscrire() throws SQLException {
 		BDebug("Début de la désinscription...");
 		int joueurId = joueurTable.getInt("joueur_id");
 
@@ -169,6 +180,7 @@ public class BD {
 		informer("DELETE FROM joueur WHERE id = ?", joueurId);
 		
 		BDebug("Désinscription complète !");
+		deconnecter();
 	}
 	
 	/**
@@ -203,7 +215,7 @@ public class BD {
 	 * @throws IOException 
 	 * @throws 	ImprevuDBError S'il y a plus d'un resultat pour le pseudonyme demande.
 	 */
-	private static int connecter() throws SQLException, IOException {
+	public static int connecter() throws SQLException, IOException {
 		BDebug("Connexion en cours...");
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut?allowMultiQueries=true", "joueur", "joueur");
 		//Télécharge toutes les données pertinentes de la BD.
@@ -211,6 +223,21 @@ public class BD {
 		BDebug("Connexion terminée !");
 		informer("INSERT INTO connexion(joueur_id) VALUES(?)", personnage.getJoueurId());
 		return 1;
+	}
+	
+	/**
+	 * Supprime du programme les données propres au joueur connecté,<br>
+	 * puis diminue les privilèges (DELETE et UPDATE).<br>
+	 * Cette méthode ne sauvegarde PAS automatiquement, il faut le faire avant !!!
+	 * @throws SQLException
+	 */
+	public static void deconnecter() throws SQLException {
+		BDebug("Déconnexion en cours...");
+		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
+		personnage = null;
+		vaincus.clear();
+		entites.clear();
+		BDebug("Déconnexion terminée !");
 	}
 	
 	/**
@@ -226,63 +253,16 @@ public class BD {
 		if(!dejaTelecharge) {
 			dejaTelecharge = !dejaTelecharge;
 
-			ResultSet entiteTypeTable = querir("SELECT * FROM entite_type NATURAL JOIN stats");
-			ResultSet objetTypeTable = telecharger("objet_type");
+			BDebug("Téléchargement des données statiques de la BD.");
+			EntiteType.telecharger();
+			ObjetType.telecharger();
 			
-			while(entiteTypeTable.next()) {
-				int entiteType = entiteTypeTable.getInt("entite_type_id");
-				
-				entiteTypes.put(
-					entiteType,
-					new EntiteType(
-						entiteType,
-						entiteTypeTable.getString("nom"),
-						new Stats(
-							entiteTypeTable.getInt("pv_max"),
-							entiteTypeTable.getInt("attaque"),
-							entiteTypeTable.getInt("defense")
-						),
-						entiteTypeTable.getInt("xp_loot")
-					)
-				);
-			}
-			
-			while(objetTypeTable.next()) {
-				int objetTypeId = objetTypeTable.getInt("objet_type_id");
-				
-				objetTypes.put(
-					objetTypeId,
-					new ObjetType(
-						objetTypeId,
-						objetTypeTable.getString("nom"),
-						objetTypeTable.getInt("durabilite")
-					)
-				);
-			}
 		}
+		
 		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurId));
 		
-		/*
-		//Sélectionne toutes les entites que le joueur n'a pas encore vaincues.
-		//Pour rappel, la table victoire enregistre les entités vaincues par les joueurs.
-		ResultSet entiteTable = querir(
-			"SELECT * "
-			+ "FROM joueur j, entite e, victoire v "
-			//L'entité ne doit pas déjà avoir été vaincue.
-			+ "WHERE e.entite_id != v.entite_id "
-			+ "AND v.joueur_id = " + joueurId
-			//Ces entités ne peuvent être celles d'autres joueurs.
-			//(les entités mobs et joueurs sont enregistrées dans la même table !)
-			+ " AND v.entite_id NOT IN ("
-				+ "SELECT entite_id "
-				+ "FROM joueur j "
-			+ ")"
-		);
-		while(entiteTable.next()) {
-			getEntiteTypes().put(entiteTable.getInt("entite_id"), new EntiteType(entiteTable));
-		}
+		Entity.telecharger();
 		
-	*/
 		personnage = new Personnage();
 		
 	}

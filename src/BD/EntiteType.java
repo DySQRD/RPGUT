@@ -21,4 +21,25 @@ public class EntiteType {
 		this(table.getInt("entite_type_id"), table.getString("nom"), new Stats(table), table.getInt("xp_loot"));
 	}
 	
+	public static void telecharger() throws SQLException {
+		ResultSet entiteTypeTable = BD.querir("SELECT * FROM entite_type NATURAL JOIN stats");
+		while(entiteTypeTable.next()) {
+			int entiteType = entiteTypeTable.getInt("entite_type_id");
+			
+			BD.getEntiteTypes().put(
+				entiteType,
+				new EntiteType(
+					entiteType,
+					entiteTypeTable.getString("nom"),
+					new Stats(
+						entiteTypeTable.getInt("pv_max"),
+						entiteTypeTable.getInt("attaque"),
+						entiteTypeTable.getInt("defense")
+					),
+					entiteTypeTable.getInt("xp_loot")
+				)
+			);
+		}
+	}
+	
 }
