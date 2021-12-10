@@ -15,6 +15,8 @@ import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
 
+import BD.BD;
+
 public class CombatLoop extends AnimationTimer {
     //Position du curseur (en haut à gauche = 0, en haut à droite = 1, ...)
     protected int positionCursorAction = 0;
@@ -175,8 +177,8 @@ public class CombatLoop extends AnimationTimer {
 
     //Entrée en combat
     public void displayInit(){
-        this.healthperso.setText("PV : " + gameLoop.perso.actual_health);
-        this.healthMob.setText("PV : " + gameLoop.perso.mobVS.actual_health);
+        this.healthperso.setText("PV : " + gameLoop.perso.getPV());
+        this.healthMob.setText("PV : " + gameLoop.perso.mobVS.getPV());
         moveCursorAttaque(0);
         moveCursorAction(0);
         //this.actionSelected = -1;
@@ -184,7 +186,7 @@ public class CombatLoop extends AnimationTimer {
         this.action = false;
         this.attaque = false;
         this.dialogue = false;
-        this.dialogueText.setText(gameLoop.perso.mobVS.name+" sauvage apparaît !");
+        this.dialogueText.setText(gameLoop.perso.mobVS.getNom()+" sauvage apparaît !");
         combatPane.setBottom(dialoguePane);
         if(!(gameLoop.root.getChildren().contains(combatPane))){
             this.gameLoop.root.getChildren().add(combatPane);
@@ -193,8 +195,8 @@ public class CombatLoop extends AnimationTimer {
 
     //Update des points de vie
     public void displayUpdate(){
-        this.healthperso.setText("PV : " + gameLoop.perso.actual_health);
-        this.healthMob.setText("PV : " + gameLoop.perso.mobVS.actual_health);
+        this.healthperso.setText("PV : " + gameLoop.perso.getPV());
+        this.healthMob.setText("PV : " + gameLoop.perso.mobVS.getPV());
         this.gameLoop.root.getChildren().remove(combatPane);
         this.gameLoop.root.getChildren().add(combatPane);
     }
@@ -324,7 +326,7 @@ public class CombatLoop extends AnimationTimer {
         else if(attaque){
             if(positionCursorAttaque == 0){
                 gameLoop.perso.attaque(gameLoop.perso.mobVS);
-                affiche("Vous infligez "+gameLoop.perso.actual_atk+" dégats !");
+                affiche("Vous infligez "+gameLoop.perso.getActualStat("attaque")+" dégats !");
                 displayUpdate();
                 this.dialogue = true;
                 this.tourMob = true;
@@ -349,7 +351,8 @@ public class CombatLoop extends AnimationTimer {
 
     //Le joueur gagne le combat : gain xp + retire le mob + continue sur la fenêtre de jeu
     public void gagne(){
-        System.out.println("Vous avez battu " + gameLoop.perso.mobVS.name +" "+ gameLoop.perso.mobVS.id);
+        System.out.println("Vous avez battu " + gameLoop.perso.mobVS.getNom() +" "+ gameLoop.perso.mobVS.entiteId);
+        BD.victoire(gameLoop.perso.mobVS.entiteId);
         gameLoop.perso.giveXp();
         gameLoop.level.getMap(gameLoop.level.getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
         loopManager.game();
@@ -357,10 +360,11 @@ public class CombatLoop extends AnimationTimer {
 
     //Le joueur perd le combat : respawn sur la map du début (= 0) + points de vie / 2
     public void perd(){
-        System.out.println("Vous avez été battu par " + gameLoop.perso.mobVS.name + " " + gameLoop.perso.mobVS.id);
+        System.out.println("Vous avez été battu par " + gameLoop.perso.mobVS.getNom() + " " + gameLoop.perso.mobVS.entiteId);
+        gameLoop.perso.mobVS.fullPV();
         this.gameLoop.level.currentMap = 0;
         this.gameLoop.perso.tp(gameLoop.level.getMap(0).getSpawnX(), gameLoop.level.getMap(0).getSpawnY());
-        this.gameLoop.perso.actual_health = this.gameLoop.perso.actual_health_max/2;
+        this.gameLoop.perso.setPV(this.gameLoop.perso.stats.get("pv_max")/2);
         loopManager.game();
     }
 
@@ -378,15 +382,15 @@ public class CombatLoop extends AnimationTimer {
             if(!(dialogue || dialogueStart)){
                 gameLoop.perso.mobVS.attaque(gameLoop.perso);
                 displayUpdate();
-                affiche(gameLoop.perso.mobVS.name + " vous inflige " + gameLoop.perso.mobVS.actual_atk + " dégats.");
+                affiche(gameLoop.perso.mobVS.getNom() + " vous inflige " + gameLoop.perso.mobVS.getActualStat("attaque") + " dégats.");
                 dialogue = true;
                 tourMob = false;
             }
         }
-        if(gameLoop.perso.mobVS.actual_health <= 0){
+        if(gameLoop.perso.mobVS.getPV() <= 0){
             gagne();
         }
-        if(gameLoop.perso.actual_health <= 0){
+        if(gameLoop.perso.getPV() <= 0){
             perd();
         }
 

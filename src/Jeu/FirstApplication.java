@@ -2,40 +2,23 @@ package Jeu;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import javafx.animation.AnimationTimer;
+
+import BD.BD;
 import javafx.application.Application;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class FirstApplication extends Application {
 
@@ -48,7 +31,30 @@ public class FirstApplication extends Application {
     //Lancement de l'application
     @Override
     public void start(Stage stage) throws Exception {
+
+        // Création fenêtre
+        Stage window = new Stage();
+        window = stage;
+
+        //Configuration fenêtre
+        window.setTitle("Project Game");
+        window.setWidth(900);
+        window.setHeight(600);      // Taille des maps : 576 x 896
+        window.setResizable(false);
+
+        Group root = new Group();
+        Scene scene1 = new Scene(root);
+
+        //Scene -> stage et affichage stage
+        window.setScene(scene1);
+        window.show();
+
+        Connexion connexion = new Connexion(root);
+        LoopManager loopManager = new LoopManager(connexion);
+        connexion.displayUpdate();
+
         //Désérialisation du tileset dans tileset1
+        BD.identifier("Dylan", "Toledano");
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
         String json = new String(Files.readAllBytes(FileSystems.getDefault()
@@ -56,69 +62,25 @@ public class FirstApplication extends Application {
         Tileset tileset1 = gsonBuilder.fromJson(json, Tileset.class);
 
         //Désérialisation des map
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map1.json")));
-        Map map1 = gsonBuilder.fromJson(json, Map.class);
-        map1.setSpawnX(242);
-        map1.setSpawnY(242);
 
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map2.json")));
-        Map map2 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map3.json")));
-        Map map3 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map4.json")));
-        Map map4 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map5.json")));
-        Map map5 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map6.json")));
-        Map map6 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map7.json")));
-        Map map7 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map8.json")));
-        Map map8 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map9.json")));
-        Map map9 = gsonBuilder.fromJson(json, Map.class);
-
-        map1.addTileset(tileset1);
-        map2.addTileset(tileset1);
-        map3.addTileset(tileset1);
-        map4.addTileset(tileset1);
-        map5.addTileset(tileset1);
-        map6.addTileset(tileset1);
-        map7.addTileset(tileset1);
-        map8.addTileset(tileset1);
-        map9.addTileset(tileset1);
-
+        HashMap<Integer, Map> maps = new HashMap<Integer, Map>();
         //Création du niveau
         Level level1 = new Level("Level 1");
-        level1.addMap(map1);
-        level1.addMap(map2);
-        level1.addMap(map3);
-        level1.addMap(map4);
-        level1.addMap(map5);
-        level1.addMap(map6);
-        level1.addMap(map7);
-        level1.addMap(map8);
-        level1.addMap(map9);
+        
+        for(int i = 1; i <= 9; i++) {
+        	json = new String(Files.readAllBytes(FileSystems.getDefault()
+                    .getPath("res/maps/map" + i + ".json")));
+            maps.put(i, gsonBuilder.fromJson(json, Map.class));
+            maps.get(i).addTileset(tileset1);
+            level1.addMap(maps.get(i));
+        }
+
+        maps.get(1).setSpawnX(242);
+        maps.get(1).setSpawnY(242);
         level1.loadLevel();
 
-        map2.spawnMobs(10, "Maths", "Minion");
-        map5.spawnMobs(10, "Maths", "Minion");
+        maps.get(2).spawnMobs(10, "Maths", "Minion");
+        maps.get(5).spawnMobs(10, "Maths", "Minion");
 
 
         //Zones de texte
@@ -137,33 +99,29 @@ public class FirstApplication extends Application {
         mouseLocation.setFont(Font.font("",FontWeight.BOLD, 18));
 
         //Personnages
-        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "res/Images/lucas.png", level1);
+        //TODO A remplacer par le personnage téléchargé avec :
+        //Personnage perso1 = BD.getPersonnage();
+        Personnage perso1 = BD.getPersonnage();
 
 
-        // Création fenêtre
-        Stage window = new Stage();
-        window = stage;
 
-        //Configuration fenêtre
-        window.setTitle("Project Game");
-        window.setWidth(900);
-        window.setHeight(600);      // Taille des maps : 576 x 896
-        window.setResizable(false);
 
         //Création des root (Layout manager) 576 x 896
-        Group root = new Group();
-        root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
-        root.getChildren().addAll(perso1.imageV, fps1, mouseLocation);
+        /*root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
+        root.getChildren().addAll(perso1.imageV, fps1, mouseLocation);*/
         //Root -> scene
-        Scene scene1 = new Scene(root);
 
-        //Scene -> stage et affichage stage
-        window.setScene(scene1);
-        window.show();
 
         //Loops
         GameLoop gameLoop = new GameLoop(perso1,level1,fps1, mouseLocation, root);
-        LoopManager loopManager = new LoopManager(gameLoop, gameLoop.combatLoop);
+        loopManager.addGame(gameLoop);
+
+        connexion.validate.setOnAction(action -> {
+            System.out.println(connexion.unField.getText());
+            System.out.println(connexion.pField.getText());
+            loopManager.game();
+        });
+
 
         scene1.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
@@ -173,7 +131,7 @@ public class FirstApplication extends Application {
         });
 
         //Lancement de la Loop jeu
-        gameLoop.start();
+        //gameLoop.start();
 
 
 
@@ -186,25 +144,45 @@ public class FirstApplication extends Application {
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorUp();break;
                     }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        loopManager.pauseLoop.moveCursorUp();break;
+                    }
                     case DOWN : if(loopManager.currentLoop instanceof GameLoop){gameLoop.down=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorDown();break;
+                    }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        loopManager.pauseLoop.moveCursorDown();break;
                     }
                     case LEFT : if(loopManager.currentLoop instanceof GameLoop){gameLoop.left=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorLeft();break;
                     }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        break;
+                    }
                     case RIGHT : if(loopManager.currentLoop instanceof GameLoop){gameLoop.right=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorRight();break;
                     }
-                    case ESCAPE: if (loopManager.currentLoop instanceof GameLoop){}
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        break;
+                    }
+                    case ESCAPE: if (loopManager.currentLoop instanceof GameLoop){
+                        loopManager.gameLoop.enterPause();break;
+                    }
+                    else if(loopManager.currentLoop instanceof PauseLoop){
+                        loopManager.pauseLoop.escape();break;
+                    }
                         else if(loopManager.currentLoop instanceof CombatLoop){
                             loopManager.combatLoop.escape();break;
                     }
                     case SPACE: if(loopManager.currentLoop instanceof GameLoop){}
                         else if(loopManager.currentLoop instanceof CombatLoop){
-                        ((CombatLoop) loopManager.currentLoop).select();
+                            loopManager.combatLoop.select();break;
+                        }
+                        else if(loopManager.currentLoop instanceof PauseLoop){
+                            loopManager.pauseLoop.select();
                     }
                 }
             }

@@ -1,53 +1,40 @@
 package Jeu;
 
 
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import BD.BD;
+import BD.Stats;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
 
 public class Mob extends Entity{
     protected Image imageMob;
     protected static int nbreMobs = 0;
-    protected String name;
-    protected int id;
-    protected int xpGiven;
-
-    public Mob(String matiere, String mobType){
-        this.id = nbreMobs;
+    
+    public Mob(int entiteId, int entiteTypeId, double posX, double posY) throws IOException {
+    	super(entiteId, entiteTypeId, posX, posY);
         nbreMobs++;
-        switch(matiere){
-            case "Maths" : switch (mobType){
-                case "Minion" : {
-                    this.name = "Méchante inconnue";
-                    this.imageMob = new Image("C:/Users/marc_/IdeaProjects/Le_jeu_test/src/Images/minions.png");
-                    ImageView imageView = new ImageView();
-                    imageView.setImage(imageMob);
-                    imageView.setFitWidth(25);
-                    imageView.setFitHeight(25);
-                    this.imageV = imageView;
-                    this.health_base_max = 25;
-                    this.actual_health_max = health_base_max;
-                    this.actual_health = actual_health_max;
-                    this.atk_base = 2;
-                    this.actual_atk = atk_base;
-                    this.defense_base = 2;
-                    this.actual_defense = defense_base;
-                    this.velocity = 7;
-                    this.xpGiven = 4;
-                    this.lvl = 1;break;
-                }
-                case "boss" : {
-
-                }
-            }
-
-            case "Logique" :
-
-
-
-
-
-        }
+    	this.imageMob = new Image("file:res/Images/" + this.getNom() + ".png");
+        imageV = new ImageView();
+        imageV.setImage(imageMob);
+        imageV.setFitWidth(25);
+        imageV.setFitHeight(25);
+        System.out.println(BD.getEntiteTypes().get(entiteTypeId).stats.get("pv_max"));
+        this.setPV(BD.getEntiteTypes().get(entiteTypeId).stats.get("pv_max"));
+        this.velocity = 7;
+        this.lvl = 1;
+    }
+    
+    public Mob(ResultSet table) throws IOException, SQLException {
+    	this(
+	    	table.getInt("entite_id"),
+	    	table.getInt("entite_type_id"),
+			table.getDouble("x"),
+			table.getDouble("y")
+		);
     }
 
     public void tp(double x, double y){
@@ -78,5 +65,13 @@ public class Mob extends Entity{
         this.posX += this.velocity;
         this.imageV.setX(this.posX);
         this.hitbox.setX(posX);
+    }
+    
+    public String getNom() {
+    	return getEntiteType().nom;
+    }
+    
+    public Stats getStats() {
+    	return getEntiteType().stats;
     }
 }
