@@ -1,11 +1,12 @@
-public class Objet {
+package BD;
+public class Objet_old {
 private String id;
 private String name;
 private int durabilite;
 private int level;
 
 int nombreobjet=0;
-	public Objet(String id, int durabilite) {
+	public Objet_old(String id, int durabilite) {
 		this.id=id;
 		this.durabilite=durabilite;
 		nombreobjet++;

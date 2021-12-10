@@ -1,5 +1,11 @@
 package Jeu;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import BD.BD;
+import BD.Inventaire;
+import BD.Stats;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -8,22 +14,34 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 
-public class Personnage extends Entity{
-    public Image imageCharacter;
+public class Personnage extends Entity {
+	//Id du joueur
+	protected int joueur_id;
+	
+    public Image imageCharacter = new Image("file:res/Images/lucas.png");
     protected int u,d,l,r = 0;
     protected Mob mobVS;
-    protected int totalXp = 0;
-    protected final int ATK_PER_LVL = 2;
-    protected final int DEFENSE_PER_LVL = 2;
-    protected final int HEALTH_PER_LVL = 10;
+    protected static final int ATK_PER_LVL = 2;
+    protected static final int DEFENSE_PER_LVL = 2;
+    protected static final int HEALTH_PER_LVL = 10;
 
+    public Personnage(ResultSet table) throws SQLException {
+    	this(
+			table.getInt("joueur_id"),
+			table.getString("nom"),
+			new Stats(),
+			new Inventaire(BD.telecharger("objet", table.getInt("joueur_id"))),
+			table.getInt("x"),
+			table.getInt("y")
+    	);
+    }
 
-    public Personnage(double posX, double posY, int velocity, String fileName, Level currentLevel){
-        this.posX = posX;
-        this.posY = posY;
+    public Personnage(int joueur_id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
+    	super(1, nom, stats, inventaire, posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
+    	this.joueur_id = joueur_id;
+        
         this.dxHitbox = 15;
         this.dyHitbox = 35;
-        this.imageCharacter = (new Image("file:"+fileName));
         this.imageV = new ImageView();
         this.imageV.setImage(this.imageCharacter);
         this.imageV.setImage(new WritableImage((PixelReader) this.imageCharacter.getPixelReader(),0,0,64,64));
@@ -31,7 +49,7 @@ public class Personnage extends Entity{
         this.imageV.setY(posY);
         this.hitbox = new Rectangle(posX+dxHitbox, posY+dyHitbox, 20, 20);
         this.hitbox.setFill(Color.RED);
-        this.velocity = velocity;
+        this.velocity = 5;
         this.health_base_max = 100;
         this.actual_health_max = health_base_max;
         this.actual_health = health_base_max;

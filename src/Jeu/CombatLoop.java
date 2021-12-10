@@ -184,7 +184,7 @@ public class CombatLoop extends AnimationTimer {
         this.action = false;
         this.attaque = false;
         this.dialogue = false;
-        this.dialogueText.setText(gameLoop.perso.mobVS.name+" sauvage apparaît !");
+        this.dialogueText.setText(gameLoop.perso.mobVS.nom+" sauvage apparaît !");
         combatPane.setBottom(dialoguePane);
         if(!(gameLoop.root.getChildren().contains(combatPane))){
             this.gameLoop.root.getChildren().add(combatPane);
@@ -349,7 +349,7 @@ public class CombatLoop extends AnimationTimer {
 
     //Le joueur gagne le combat : gain xp + retire le mob + continue sur la fenêtre de jeu
     public void gagne(){
-        System.out.println("Vous avez battu " + gameLoop.perso.mobVS.name +" "+ gameLoop.perso.mobVS.id);
+        System.out.println("Vous avez battu " + gameLoop.perso.mobVS.nom +" "+ gameLoop.perso.mobVS.id);
         gameLoop.perso.giveXp();
         gameLoop.level.getMap(gameLoop.level.getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
         loopManager.game();
@@ -357,7 +357,7 @@ public class CombatLoop extends AnimationTimer {
 
     //Le joueur perd le combat : respawn sur la map du début (= 0) + points de vie / 2
     public void perd(){
-        System.out.println("Vous avez été battu par " + gameLoop.perso.mobVS.name + " " + gameLoop.perso.mobVS.id);
+        System.out.println("Vous avez été battu par " + gameLoop.perso.mobVS.nom + " " + gameLoop.perso.mobVS.id);
         this.gameLoop.level.currentMap = 0;
         this.gameLoop.perso.tp(gameLoop.level.getMap(0).getSpawnX(), gameLoop.level.getMap(0).getSpawnY());
         this.gameLoop.perso.actual_health = this.gameLoop.perso.actual_health_max/2;
@@ -378,7 +378,7 @@ public class CombatLoop extends AnimationTimer {
             if(!(dialogue || dialogueStart)){
                 gameLoop.perso.mobVS.attaque(gameLoop.perso);
                 displayUpdate();
-                affiche(gameLoop.perso.mobVS.name + " vous inflige " + gameLoop.perso.mobVS.actual_atk + " dégats.");
+                affiche(gameLoop.perso.mobVS.nom + " vous inflige " + gameLoop.perso.mobVS.actual_atk + " dégats.");
                 dialogue = true;
                 tourMob = false;
             }

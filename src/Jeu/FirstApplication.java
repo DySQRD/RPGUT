@@ -2,6 +2,8 @@ package Jeu;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import BD.BD;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
@@ -35,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FirstApplication extends Application {
@@ -71,6 +74,7 @@ public class FirstApplication extends Application {
         connexion.displayUpdate();
 
         //Désérialisation du tileset dans tileset1
+        BD.identifier("Dylan", "Toledano");
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
         String json = new String(Files.readAllBytes(FileSystems.getDefault()
@@ -78,69 +82,25 @@ public class FirstApplication extends Application {
         Tileset tileset1 = gsonBuilder.fromJson(json, Tileset.class);
 
         //Désérialisation des map
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map1.json")));
-        Map map1 = gsonBuilder.fromJson(json, Map.class);
-        map1.setSpawnX(242);
-        map1.setSpawnY(242);
 
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map2.json")));
-        Map map2 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map3.json")));
-        Map map3 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map4.json")));
-        Map map4 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map5.json")));
-        Map map5 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map6.json")));
-        Map map6 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map7.json")));
-        Map map7 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map8.json")));
-        Map map8 = gsonBuilder.fromJson(json, Map.class);
-
-        json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/map9.json")));
-        Map map9 = gsonBuilder.fromJson(json, Map.class);
-
-        map1.addTileset(tileset1);
-        map2.addTileset(tileset1);
-        map3.addTileset(tileset1);
-        map4.addTileset(tileset1);
-        map5.addTileset(tileset1);
-        map6.addTileset(tileset1);
-        map7.addTileset(tileset1);
-        map8.addTileset(tileset1);
-        map9.addTileset(tileset1);
-
+        HashMap<Integer, Map> maps = new HashMap<Integer, Map>();
         //Création du niveau
         Level level1 = new Level("Level 1");
-        level1.addMap(map1);
-        level1.addMap(map2);
-        level1.addMap(map3);
-        level1.addMap(map4);
-        level1.addMap(map5);
-        level1.addMap(map6);
-        level1.addMap(map7);
-        level1.addMap(map8);
-        level1.addMap(map9);
+        
+        for(int i = 1; i <= 9; i++) {
+        	json = new String(Files.readAllBytes(FileSystems.getDefault()
+                    .getPath("res/maps/map" + i + ".json")));
+            maps.put(i, gsonBuilder.fromJson(json, Map.class));
+            maps.get(i).addTileset(tileset1);
+            level1.addMap(maps.get(i));
+        }
+
+        maps.get(1).setSpawnX(242);
+        maps.get(1).setSpawnY(242);
         level1.loadLevel();
 
-        map2.spawnMobs(10, "Maths", "Minion");
-        map5.spawnMobs(10, "Maths", "Minion");
+        maps.get(2).spawnMobs(10, "Maths", "Minion");
+        maps.get(5).spawnMobs(10, "Maths", "Minion");
 
 
         //Zones de texte
@@ -159,7 +119,9 @@ public class FirstApplication extends Application {
         mouseLocation.setFont(Font.font("",FontWeight.BOLD, 18));
 
         //Personnages
-        Personnage perso1 = new Personnage(map1.getSpawnX(), map1.getSpawnY(), 5, "res/Images/lucas.png", level1);
+        //TODO A remplacer par le personnage téléchargé avec :
+        //Personnage perso1 = BD.getPersonnage();
+        Personnage perso1 = BD.getPersonnage();
 
 
 

@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.shape.Rectangle;
@@ -114,14 +115,14 @@ public class Map {
         return obstacles;
     }
 
-    public void spawnMobs(int nbreMobs,String matiere,String type){
+    public void spawnMobs(int nbreMobs,String matiere,String type) throws IOException{
         double spawnX;
         double spawnY;
         boolean collision = false;
         for(int i=0; i<nbreMobs; i++) {
             spawnX = Math.random() * width * tilewidth;
             spawnY = Math.random() * height * tileheight;
-            this.mobs.add(new Mob(matiere, type));
+            this.mobs.add(new Mob("Minion"));
             mobs.get(i).hitbox = new Rectangle(0, 0, mobs.get(i).imageV.getFitWidth(), mobs.get(i).imageV.getFitHeight());
             mobs.get(i).tp(spawnX, spawnY);
             do {
