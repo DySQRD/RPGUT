@@ -109,8 +109,8 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="dynamic.classpath" value="false" />
     <property name="extract.method.default.visibility" value="private" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../Génie Logiciel/TP/TP4_debugage/Genie_Log_TP4" />
-    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../mysql-connector-java-8.0.26.jar" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
@@ -340,26 +340,26 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="480" y="239" key="DetectedRootsChooserDialog/0.0.1366.728@0.0.1366.728" timestamp="1634527751481" />
-    <state x="389" y="105" key="FileChooserDialogImpl" timestamp="1637563526981">
+    <state x="389" y="105" key="FileChooserDialogImpl" timestamp="1639139861435">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="389" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1637563526981" />
-    <state width="1323" height="120" key="GridCell.Tab.0.bottom" timestamp="1637575375825">
+    <state x="389" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1639139861435" />
+    <state width="1323" height="120" key="GridCell.Tab.0.bottom" timestamp="1639140151044">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1637575375825" />
-    <state width="1323" height="120" key="GridCell.Tab.0.center" timestamp="1637575375825">
+    <state width="1323" height="120" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1639140151044" />
+    <state width="1323" height="120" key="GridCell.Tab.0.center" timestamp="1639140151044">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1637575375825" />
-    <state width="1323" height="120" key="GridCell.Tab.0.left" timestamp="1637575375824">
+    <state width="1323" height="120" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1639140151044" />
+    <state width="1323" height="120" key="GridCell.Tab.0.left" timestamp="1639140151044">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1637575375824" />
-    <state width="1323" height="120" key="GridCell.Tab.0.right" timestamp="1637575375825">
+    <state width="1323" height="120" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1639140151044" />
+    <state width="1323" height="120" key="GridCell.Tab.0.right" timestamp="1639140151044">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1637575375825" />
+    <state width="1323" height="120" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1639140151044" />
     <state width="1323" height="168" key="GridCell.Tab.1.bottom" timestamp="1637574736239">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -376,10 +376,10 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state width="1323" height="168" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1637574736239" />
-    <state x="163" y="0" key="SettingsEditor" timestamp="1637437097061">
+    <state x="163" y="0" key="SettingsEditor" timestamp="1639139868747">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="163" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1637437097061" />
+    <state x="163" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1639139868747" />
     <state width="691" height="372" key="XDebugger.FullValuePopup" timestamp="1634617604424">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -406,18 +406,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Jeu/FirstApplication.java</url>
-          <line>161</line>
+          <line>99</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>73</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>150</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Jeu/Tileset.java</url>
@@ -426,7 +416,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Jeu/FirstApplication.java</url>
-          <line>82</line>
+          <line>62</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
