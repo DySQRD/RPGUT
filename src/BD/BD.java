@@ -471,4 +471,15 @@ public class BD {
 	public static HashMap<Integer, Objet> getObjets() {
 		return OBJETS;
 	}
+	
+	public static void creerMob(int niveau, int map, double x, double y) throws SQLException {
+		informer("INSERT INTO stats(stats_id) VALUES(NULL)");
+		int statsId = derniereId("stats");
+		informer("INSERT INTO entite(entite_id, niveau_id, map_id, stats_id) VALUES(NULL, ?, ?, ?);", niveau, map, statsId);
+		int entiteId = derniereId("entite");
+			
+		BDebug(
+				"StatsID: ", Integer.toString(statsId),
+				"entiteId: ", Integer.toString(entiteId));
+	}
 }
