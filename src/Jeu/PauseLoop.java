@@ -22,7 +22,7 @@ public class PauseLoop extends AnimationTimer {
     protected String labelCSS = "-fx-padding: 5px; -fx-border-color: rgba(0,0,0,0); -fx-border-width: 3px; -fx-border-style: solid;";
     protected String selectedLabelCSS = "-fx-padding: 5px; -fx-border-color: black; -fx-border-width: 3px; -fx-min-width: 350px; -fx-alignment: center; -fx-background-color: rgba(100,100,100, 0.3); -fx-border-radius: 30px;";
     protected Label statsLabel = new Label("Stats");
-    protected Label inventaireLabel = new Label("Iventaire");
+    protected Label inventaireLabel = new Label("Inventaire");
     protected Label saveLabel = new Label("Sauvegarder");
     protected Label menuLabel = new Label("Menu de connexion");
     protected Label backLabel = new Label("Retour");
