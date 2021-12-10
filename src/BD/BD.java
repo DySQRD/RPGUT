@@ -472,8 +472,11 @@ public class BD {
 		return OBJETS;
 	}
 	
-	public static void creerMob(int niveau, int map, double x, double y) throws SQLException {
-		informer("INSERT INTO stats(stats_id) VALUES(NULL)");
+	public static void creerMob(int niveau, int map, double x, double y, Stats stats) throws SQLException {
+		informer("INSERT INTO stats(stats_id, pv, attaque, defense) VALUES(NULL, ?, ?, ?)",
+			stats.get("pv"),
+			stats.get("attaque"),
+			stats.get("defense"));
 		int statsId = derniereId("stats");
 		informer("INSERT INTO entite(entite_id, niveau_id, map_id, stats_id) VALUES(NULL, ?, ?, ?);", niveau, map, statsId);
 		int entiteId = derniereId("entite");
