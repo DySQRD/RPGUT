@@ -43,7 +43,7 @@ public class BD {
 	private static PreparedStatement preparedStatement;
 	/**
 	 * Une fois un joueur connecté, ce ResultSet contient la ligne correspondante des tables joueur,
-	 * spawn et stats de la BD.
+	 * entite et stats de la BD.
 	 */
 	private static ResultSet joueurTable;
 	/**
@@ -60,7 +60,6 @@ public class BD {
 	 */
 	private static HashMap<Integer, Objet> OBJETS = new HashMap<Integer, Objet>();
 	private static HashMap<Integer, HashMap<Integer, ArrayList<Entity>>> ENTITES = new HashMap<Integer, HashMap<Integer, ArrayList<Entity>>>();
-	private static HashMap<Integer, Stats> STATS = new HashMap<Integer, Stats>();
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
@@ -68,8 +67,7 @@ public class BD {
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
 	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
-		System.out.println(entreeSafe("Dylan"));
-		identifier("Dylan", "Toledano");
+		identifier("Marc", "Sanchez");
 	}
 	
 	/**
@@ -136,20 +134,20 @@ public class BD {
 			//enregistrées dans la BD.
 			informer("INSERT INTO stats(stats_id) VALUES(NULL)");
 			//On récupère l'id du tuple inséré pour la mettre dans le tuple
-			//de la table spawn du joueur.
+			//de la table entite du joueur.
 			int statsId = derniereId("stats");
 			
-			//Création d'un tuple spawn pour le nouveau joueur.
-			informer("INSERT INTO spawn(spawn_id, stats_id) VALUES(NULL, ?);", statsId);
-			int spawnId = derniereId("spawn");
+			//Création d'un tuple entite pour le nouveau joueur.
+			informer("INSERT INTO entite(entite_id, stats_id) VALUES(NULL, ?);", statsId);
+			int entiteId = derniereId("entite");
 			
 			
-			informer("INSERT INTO joueur(nom, mdp, spawn_id) VALUES(?, ?, ?)", pseudo, mdp, spawnId);
+			informer("INSERT INTO joueur(nom, mdp, entite_id) VALUES(?, ?, ?)", pseudo, mdp, entiteId);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
 					"MDP: ", mdp,
 					"StatsID: ", Integer.toString(statsId),
-					"SpawnId: ", Integer.toString(spawnId));
+					"entiteId: ", Integer.toString(entiteId));
 			return identifier(pseudo, mdp);
 		}
 	}
@@ -170,11 +168,11 @@ public class BD {
 		BDebug("Début de la désinscription...");
 
 		informer("DELETE FROM stats WHERE stats_id = ?", joueurTable.getInt("stats_id"));
-		informer("DELETE FROM spawn WHERE spawn_id = ?", joueurTable.getInt("spawn_id"));
+		informer("DELETE FROM entite WHERE entite_id = ?", joueurTable.getInt("entite_id"));
 		informer("DELETE FROM connexion WHERE joueur_id = ?", id);
 		informer("DELETE FROM completion WHERE joueur_id = ?", id);
 		informer("DELETE FROM victoire WHERE joueur_id = ?", id);
-		informer("DELETE FROM inventaire WHERE joueur_id = ?", id);
+		informer("DELETE FROM objet WHERE joueur_id = ?", id);
 		//Le joueur est supprimé en dernier sinon SQL va se plaindre
 		//que des tuples d'autres tables pointent vers une ID joueur non existante.
 		informer("DELETE FROM joueur WHERE id = ?", id);
@@ -195,7 +193,7 @@ public class BD {
 		joueurTable = querir(
 				"SELECT * "
 				+ "FROM joueur "
-				+ "NATURAL JOIN spawn "
+				+ "NATURAL JOIN entite "
 				+ "NATURAL JOIN stats "
 				+ "WHERE nom = ? "
 				, pseudo);
@@ -219,65 +217,9 @@ public class BD {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut?allowMultiQueries=true", "joueur", "joueur");
 		//Télécharge toutes les données pertinentes de la BD.
 		telecharger();
-		telecharger(joueurTable.getInt("joueur_id"));
 		BDebug("Connexion terminée !");
 		informer("INSERT INTO connexion(joueur_id) VALUES(?)", joueur.getId());
 		return 1;
-	}
-	
-	/**
-	 * Télécharge toutes les données statiques de la BD pour les insérer dans des ArrayLists statiques,<br>
-	 * sauf si cette méthode a déjà été appelée depuis le lancement du programme.<br>
-	 * Pas besoin de télécharger plusieurs fois les données qui ne changent pas.
-	 * @throws SQLException
-	 */
-	private static void telecharger() throws SQLException {
-		if(!dejaTelecharge) {
-			dejaTelecharge = !dejaTelecharge;
-
-			ResultSet objetTable = telecharger("objet");
-			ResultSet statsTable = telecharger("stats");
-			ResultSet entiteTable = telecharger("entite");
-			
-			while(objetTable.next()) {
-				int id = objetTable.getInt("id");
-				
-				OBJETS.put(
-					id,
-					new Objet(
-						id,
-						objetTable.getString("nom"),
-						objetTable.getInt("durabilite")
-					)
-				);
-			}
-			
-			//Télécharge les stats du joueur.
-			while(statsTable.next()) {
-				STATS.put(
-					statsTable.getInt("stats_id"),
-					new Stats(statsTable)
-				);
-			}
-			
-			/*while(entiteTable.next()) {
-				int id = entiteTable.getInt("id");
-				String nom = entiteTable.getString("nom");
-				HashMap<String, Integer> stats = STATS.get(id);
-				ArrayList<Objet> inventaire = new ArrayList<Objet>();
-				entiteTable.getInt("stats_id");
-				
-				BD.ENTITES.add(
-					id,
-					new Entite(
-						id,
-						nom,
-						stats,
-						inventaire
-					)
-				);
-			}*/
-		}
 	}
 	
 	/**
@@ -300,31 +242,52 @@ public class BD {
 	}
 	
 	/**
-	 * Télécharge toutes les données du joueur.
+	 * Télécharge toutes les données de la BD nécessaires au fonctionnement du jeu,<br>
+	 * sauf si cette méthode a déjà été appelée depuis le lancement du programme.<br>
+	 * Pas besoin de télécharger plusieurs fois les données statiques.
 	 * @param joueurId
 	 * @throws SQLException
 	 * @throws IOException 
 	 */
-	private static void telecharger(int joueurId) throws SQLException, IOException {
+	private static void telecharger() throws SQLException, IOException {
+		int joueurId = joueurTable.getInt("joueur_id");
+		if(!dejaTelecharge) {
+			dejaTelecharge = !dejaTelecharge;
+
+			ResultSet objetTypeTable = telecharger("objet_type");
+			
+			while(objetTypeTable.next()) {
+				int id = objetTypeTable.getInt("id");
+				
+				OBJETS.put(
+					id,
+					new Objet(
+						id,
+						objetTypeTable.getString("nom"),
+						objetTypeTable.getInt("durabilite")
+					)
+				);
+			}
+		}
 		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurId));
 		
-		//Sélectionne tous les spawns que le joueur n'a pas encore vaincu.
-		//Pour rappel, la table victoire enregistre les spawns vaincus par les joueurs.
-		ResultSet spawnTable = querir(
+		//Sélectionne tous les entites que le joueur n'a pas encore vaincu.
+		//Pour rappel, la table victoire enregistre les entites vaincus par les joueurs.
+		ResultSet entiteTable = querir(
 			"SELECT * "
-			+ "FROM joueur j, spawn sp, stats st, victoire v "
-			//Le spawn ne doit pas déjà avoir été vaincu.
-			+ "WHERE sp.spawn_id != v.spawn_id "
-			//On récupère évidemment les stats du spawn
+			+ "FROM joueur j, entite sp, stats st, victoire v "
+			//L'entité ne doit pas déjà avoir été vaincue.
+			+ "WHERE sp.entite_id != v.entite_id "
+			//On récupère évidemment les stats de l'entité
 			+ "AND sp.stats_id = st.stats_id "
 			+ "AND v.joueur_id = " + joueurId
-			//Ces spawns ne peuvent être ceux d'autres joueurs.
-			//(les spawns des mobs et des joueurs sont enregistrés dans la même table !)
-			+ " AND j.spawn_id != v.spawn_id "
+			//Ces entités ne peuvent être celles d'autres joueurs.
+			//(les entités mobs et joueurs sont enregistrées dans la même table !)
+			+ " AND j.entite_id != v.entite_id "
 		);
-		while(spawnTable.next()) {
-			ENTITES.get(spawnTable.getInt("niveau_id")).get(spawnTable.getInt("map_id")).add(
-				new Mob(spawnTable)
+		while(entiteTable.next()) {
+			ENTITES.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).add(
+				new Mob(entiteTable)
 			);
 		}
 		
@@ -346,24 +309,30 @@ public class BD {
 	 * @throws SQLException
 	 */
 	public static void sauvegarder() throws SQLException {
+		
+		int stats_id = joueurTable.getInt("stats_id");
+		
+		informer("UPDATE entite SET xp = ?, x = ?, y = ?", joueur.getTotalXp(), joueur.getPosX(), joueur.getPosY());
+		
 		Stats stats = joueur.getStats();
-		informer("UPDATE stats SET xp = ?, pv = ?, attaque = ?, defense = ? WHERE id = ?",
-			stats.get("xp"),
+		informer("UPDATE stats pv = ?, attaque = ?, defense = ? WHERE id = ?",
 			stats.get("pv"),
 			stats.get("attaque"),
 			stats.get("defense"),
-			joueurTable.getInt("stats_id"));
+			stats_id
+		);
 		
 		//Supprimer tous les objets du joueur dans la BD...
-		informer("DELETE FROM inventaire WHERE joueur_id = ?", joueur.getId());
+		informer("DELETE FROM objet WHERE joueur_id = ?", joueur.getId());
 
 		connexion.setAutoCommit(false);
 		//...puis insérer les objets de l'Inventaire dans la BD.
-		preparer("INSERT INTO inventaire VALUES(?,?,?,?)");
+		preparer("INSERT INTO objet VALUES(?,?,?,?)");
 		Inventaire inventaire = joueur.getInventaire();
-		for(int i = 0; i < inventaire.size(); i++) {
-			Objet objet = inventaire.get(i);
-			preparer(joueur.getId(), objet.getId(), objet.getDurabilite(), i);
+		Set<Integer> cles = inventaire.keySet();
+		for(Integer cle : cles) {
+			Objet objet = inventaire.get(cle);
+			preparer(joueur.getId(), objet.getId(), objet.getDurabilite(), cle);
 			preparedStatement.addBatch();
 		}
 		preparedStatement.executeBatch();
@@ -457,8 +426,8 @@ public class BD {
 	 * à la liste des mobs vaincus depuis le dernier chargement de sauvegarde.
 	 * @param mob_id
 	 */
-	public static void victoire(int mob_id) {
-		vaincus.add(mob_id);
+	public static void victoire(int entite_id) {
+		vaincus.add(entite_id);
 	}
 
 	/**

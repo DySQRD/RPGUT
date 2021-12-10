@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Stats extends HashMap<String, Integer> {
 	private static final long serialVersionUID = 8435193944096939444L;
-	private static String[] statsOrdre = {"xp", "pv", "attaque", "defense"};
+	private static String[] statsOrdre = {"pv", "attaque", "defense"};
 	
 	/**
 	 * Construit les stats à partir d'un ResultSet ayant les mêmes attributs que la table stats de la BD.

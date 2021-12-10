@@ -46,8 +46,8 @@ public abstract class Entity {
     protected int actual_defense;
     protected int lvl;
     protected int totalXp = 0;
-    
-    public Entity(int id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
+
+	public Entity(int id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
     	this.id = id;
     	this.nom = nom;
         this.inventaire = inventaire;
@@ -242,6 +242,14 @@ public abstract class Entity {
 
 	public void setStats(Stats stats) {
 		this.stats = stats;
+	}
+    
+    public int getTotalXp() {
+		return totalXp;
+	}
+
+	public void setTotalXp(int totalXp) {
+		this.totalXp = totalXp;
 	}
     
 	
