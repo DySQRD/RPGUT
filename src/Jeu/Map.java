@@ -122,7 +122,7 @@ public class Map {
         for(int i=0; i<nbreMobs; i++) {
             spawnX = Math.random() * width * tilewidth;
             spawnY = Math.random() * height * tileheight;
-            this.mobs.add(new Mob("Minion"));
+            this.mobs.add(new Mob(2, 2, 200, 200));
             mobs.get(i).hitbox = new Rectangle(0, 0, mobs.get(i).imageV.getFitWidth(), mobs.get(i).imageV.getFitHeight());
             mobs.get(i).tp(spawnX, spawnY);
             do {

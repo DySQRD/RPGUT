@@ -4,9 +4,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public class Inventaire extends HashMap<Integer, Objet> {
-	
-	public Inventaire() {
-		super();
+	private static final long serialVersionUID = 7469243752520600817L;
+
+	public Inventaire(int joueurId) throws SQLException {
+		this(BD.querir("SELECT * FROM objet WHERE joueur_id = ?", joueurId));
 	}
 	
 	/**
@@ -19,8 +20,7 @@ public class Inventaire extends HashMap<Integer, Objet> {
 			this.put(
 				inventaireTable.getInt("ordre"),
 				new Objet(
-					inventaireTable.getInt("objet_id"),
-					inventaireTable.getString("nom"),
+					inventaireTable.getInt("objet_type_id"),
 					inventaireTable.getInt("durabilite")
 			));
 		}

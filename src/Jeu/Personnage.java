@@ -1,6 +1,5 @@
 package Jeu;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import BD.BD;
@@ -16,29 +15,43 @@ import javafx.scene.shape.Rectangle;
 
 public class Personnage extends Entity {
 	//Id du joueur
-	protected int joueur_id;
+	protected final int joueurId;
+	protected final String nom;
+    
+    //Inventaire et Stats de l'entité
+    protected Inventaire inventaire;
+    protected Stats stats;
+    protected Stats statsBonus;
 	
     public Image imageCharacter = new Image("file:res/Images/lucas.png");
-    protected int u,d,l,r = 0;
+    protected int u,d,l,r,xp = 0;
     protected Mob mobVS;
     protected static final int ATK_PER_LVL = 2;
     protected static final int DEFENSE_PER_LVL = 2;
     protected static final int HEALTH_PER_LVL = 10;
 
-    public Personnage(ResultSet table) throws SQLException {
+    public Personnage() throws SQLException {
     	this(
-			table.getInt("joueur_id"),
-			table.getString("nom"),
-			new Stats(),
-			new Inventaire(BD.telecharger("objet", table.getInt("joueur_id"))),
-			table.getInt("x"),
-			table.getInt("y")
+			BD.getJoueurTable().getInt("joueur_id"),
+			BD.getJoueurTable().getInt("entite_id"),
+			BD.getJoueurTable().getString("nom"),
+			BD.getJoueurTable().getInt("xp"),
+			BD.getJoueurTable().getInt("pv"),
+			new Stats(BD.getJoueurTable()),
+			new Inventaire(BD.getJoueurTable().getInt("joueur_id")),
+			BD.getJoueurTable().getInt("x"),
+			BD.getJoueurTable().getInt("y")
     	);
     }
 
-    public Personnage(int joueur_id, String nom, Stats stats, Inventaire inventaire, double posX, double posY) {
-    	super(1, nom, stats, inventaire, posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
-    	this.joueur_id = joueur_id;
+    public Personnage(int joueurId, int entiteId, String nom, int xp, int PV, Stats stats, Inventaire inventaire, double posX, double posY) {
+    	super(entiteId, 1, posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
+    	this.joueurId = joueurId;
+    	this.nom = nom;
+    	this.xp = xp;
+    	this.PV = PV;
+    	this.stats = stats;
+    	this.inventaire = inventaire;
         
         this.dxHitbox = 15;
         this.dyHitbox = 35;
@@ -50,23 +63,17 @@ public class Personnage extends Entity {
         this.hitbox = new Rectangle(posX+dxHitbox, posY+dyHitbox, 20, 20);
         this.hitbox.setFill(Color.RED);
         this.velocity = 5;
-        this.health_base_max = 100;
-        this.actual_health_max = health_base_max;
-        this.actual_health = health_base_max;
-        this.atk_base = 5;
-        this.actual_atk = atk_base;
-        this.defense_base = 5;
-        this.actual_defense = defense_base;
+        this.setPV(stats.get("pv_max"));
         this.lvl = 1;
     }
 
     public void giveXp(){
         float ratio = (float)mobVS.lvl/(float)lvl;
         int lvlAfter;
-        int xpReceived = (int) (mobVS.xpGiven * ratio + 1);
-        this.totalXp+= xpReceived;
+        int xpReceived = (int) (mobVS.getXpLoot() * ratio + 1);
+        this.xp+= xpReceived;
         System.out.println("Vous avez gagné " + xpReceived + " xp.");
-        lvlAfter = (int)(Math.log(totalXp)/Math.log(2) - 1);
+        lvlAfter = (int)(Math.log(xp)/Math.log(2) - 1);
         if(lvlAfter > lvl){
             lvlUp(lvlAfter);
         }
@@ -113,23 +120,43 @@ public class Personnage extends Entity {
         this.imageV.setY(y);
         this.hitbox.setY(y+dyHitbox);
     }
+    
     public void lvlUp(int lvlAfter){
         System.out.println("Vous êtes monté lvl " + lvlAfter + ".");
         this.lvl = lvlAfter;
-        updateStats();
-        fullHealth();
-        System.out.println("Attaque : " + (actual_atk));
-        System.out.println("Défense : " + (actual_defense));
-        System.out.println("Health :" + (actual_health_max));
+        fullPV();
+        //Augmente toutes les stats suite au passage de niveau
+        for(String stat : Stats.statsOrdre) stats.put(stat, stats.get(stat) + statsPerLevel.get(stat));
+        System.out.println("Attaque : " + (stats.get("attaque")));
+        System.out.println("Défense : " + (stats.get("defense")));
+        System.out.println("PV :" + (stats.get("pv_max")));
+    }
+    
+    /*
+     * Getters et setters
+     */
+
+	public int getJoueurId() {
+		return joueurId;
+	}
+    
+    public String getNom() {
+    	return nom;
     }
 
-    public void fullHealth(){
-        this.actual_health = (actual_health_max);
+	public int getXp() {
+		return xp;
+	}
+	
+    public Inventaire getInventaire() {
+    	return inventaire;
     }
 
-    public void updateStats(){
-        this.actual_atk = atk_base + ((lvl -1) * ATK_PER_LVL) + atk_bonus;
-        this.actual_defense = defense_base + ((lvl-1) * DEFENSE_PER_LVL) + defense_bonus;
-        this.actual_health_max = health_base_max + ((lvl -1) * HEALTH_PER_LVL) + health_bonus_max;
-    }
+	public Stats getStats() {
+		return stats;
+	}
+    
+    
+    
+    
 }
