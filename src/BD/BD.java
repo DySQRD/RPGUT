@@ -74,9 +74,9 @@ public class BD {
 	 */
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
-	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
+	/*public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
 		identifier("Marc", "Sanchez");
-	}
+	}*/
 	
 	/**
 	 * Méthode à utiliser pour authentifier un joueur avant de le connecter.<br>
@@ -146,11 +146,10 @@ public class BD {
 			int statsId = derniereId("stats");
 			
 			//Création d'un tuple entite pour le nouveau joueur.
-			informer("INSERT INTO entite(entite_id, stats_id) VALUES(NULL, ?);", statsId);
 			int entiteId = derniereId("entite");
 			
 			
-			informer("INSERT INTO joueur(nom, mdp, entite_id) VALUES(?, ?, ?)", pseudo, mdp, entiteId);
+			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id) VALUES(?, ?, ?, ?)", pseudo, mdp, entiteId, statsId);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
 					"MDP: ", mdp,

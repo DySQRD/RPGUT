@@ -1,27 +1,17 @@
 package Jeu;
 
 import Exceptions.ImprevuDBError;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import BD.BD;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class FirstApplication extends Application {
 
