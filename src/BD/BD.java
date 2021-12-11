@@ -151,11 +151,11 @@ public class BD {
 			int statsId = derniereId("stats");
 			
 			//Création d'un tuple entite pour le nouveau joueur.
-			informer("INSERT INTO entite(entite_id, stats_id) VALUES(NULL, ?);", statsId);
+			informer("INSERT INTO entite(entite_id) VALUES(NULL);");
 			int entiteId = derniereId("entite");
 			
 			
-			informer("INSERT INTO joueur(nom, mdp, entite_id) VALUES(?, ?, ?)", pseudo, mdp, entiteId);
+			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id) VALUES(?, ?, ?, ?)", pseudo, mdp, entiteId, statsId);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
 					"MDP: ", mdp,
