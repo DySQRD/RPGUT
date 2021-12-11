@@ -38,7 +38,7 @@ public class Personnage extends Entity {
 			BD.getJoueurTable().getInt("xp"),
 			BD.getJoueurTable().getInt("pv"),
 			new Stats(BD.getJoueurTable()),
-			new Inventaire(BD.getJoueurTable().getInt("joueur_id")),
+			new Inventaire(),
 			BD.getJoueurTable().getInt("x"),
 			BD.getJoueurTable().getInt("y")
     	);
