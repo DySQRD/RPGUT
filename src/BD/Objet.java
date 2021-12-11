@@ -1,20 +1,19 @@
 package BD;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Objet {
 	/**
 	 * Identifiant définissant le type d'objet.
 	 */
-	public final int objetTypeId;
+	public final ObjetType objetType;
 	/**
 	 * Nombre d'utilisations restantes.
 	 */
 	private int durabilite;
 	
-	Objet(int objetTypeId, int durabilite) {
-		this.objetTypeId = objetTypeId;
-		this.durabilite = durabilite;
+	Objet(ObjetType objetType) {
+		this.objetType = objetType;
+		this.durabilite = objetType.durabiliteMax;
 	}
 	
 	/**
@@ -22,9 +21,7 @@ public class Objet {
 	 * @param id
 	 */
 	Objet(int objetTypeId) {
-		ObjetType objetType = BD.getObjetTypes().get(objetTypeId);
-		this.objetTypeId = objetType.objetTypeId;
-		this.durabilite = objetType.durabilite;
+		this(BD.getObjetTypes().get(objetTypeId));
 	}
 	
 	/**
@@ -52,16 +49,37 @@ public class Objet {
 	/*
 	 * Getters et setters
 	 */
+	
+	public int getDurabiliteMax() {
+		return objetType.durabiliteMax;
+	}
 
 	public int getDurabilite() {
 		return durabilite;
 	}
+	
+	/**
+	 * Si l'argument est inférieur à 0, la durabilité devient 0.<br>
+	 * Si l'argument est supérieur à la durabilité maximale de l'objet, la durabilité devient la durabilité maximale.
+	 * @param durabilite
+	 */
 	public void setDurabilite(int durabilite) {
-		this.durabilite = durabilite;
+		if(durabilite < 0) this.durabilite = 0;
+		else if(durabilite > objetType.durabiliteMax) this.durabilite = objetType.durabiliteMax;
+		else this.durabilite = durabilite;
+	}
+	
+	/**
+	 * Un raccourci d'écriture pour simuler += tout en conservant l'encapsulation.
+	 * @param ajustement	La valeur à ajouter à durabilite.
+	 * @see	setDurabilite
+	 */
+	public void ajusterDurabilite(int ajustement) {
+		setDurabilite(getDurabilite() + ajustement);
 	}
 
 	public String getNom() {
-		return BD.getObjetTypes().get(objetTypeId).nom;
+		return objetType.nom;
 	}
 	
 }

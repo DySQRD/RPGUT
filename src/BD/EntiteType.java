@@ -9,7 +9,7 @@ public class EntiteType {
 	public final Stats stats;
 	public final int xpLoot;
 	
-	public EntiteType(int entiteTypeId, String nom, Stats stats, int xpLoot) {
+	EntiteType(int entiteTypeId, String nom, Stats stats, int xpLoot) {
 		super();
 		this.entiteTypeId = entiteTypeId;
 		this.nom = nom;
@@ -17,11 +17,11 @@ public class EntiteType {
 		this.xpLoot = xpLoot;
 	}
 
-	public EntiteType(ResultSet table) throws SQLException {
+	EntiteType(ResultSet table) throws SQLException {
 		this(table.getInt("entite_type_id"), table.getString("nom"), new Stats(table), table.getInt("xp_loot"));
 	}
 	
-	public static void telecharger() throws SQLException {
+	static void telecharger() throws SQLException {
 		ResultSet entiteTypeTable = BD.querir("SELECT * FROM entite_type NATURAL JOIN stats");
 		while(entiteTypeTable.next()) {
 			int entiteType = entiteTypeTable.getInt("entite_type_id");

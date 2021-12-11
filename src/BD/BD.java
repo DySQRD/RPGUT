@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
 import Jeu.Entity;
+import Jeu.Mob;
 import Jeu.Personnage;
 
 
@@ -40,7 +41,7 @@ public class BD {
 	 */
 	private static PreparedStatement preparedStatement;
 	/**
-	 * Une fois un personnage connecté, ce ResultSet contient la ligne correspondante des tables joueur,
+	 * Une fois un joueur connecté, ce ResultSet contient la ligne correspondante des tables joueur,
 	 * entite et stats de la BD.
 	 */
 	private static ResultSet joueurTable;
@@ -49,34 +50,40 @@ public class BD {
 	 */
 	private static Personnage personnage;
 	/**
-	 * Dans telecharger(), détermine s'il faut télécharger les données statiques.<br>
+	 * Dans telecharger(), détermine s'il faut télécharger les collections statiques.<br>
 	 * Cela ne devrait arriver qu'une fois par lancement du programme.
 	 */
 	private static boolean dejaTelecharge = false;
 	/**
-	 * Tous les types d'objets existants dans la BD.
+	 * Tous les types d'objets existants dans la BD.<br>
+	 * Collection statique, çad dont les données sont communes à tous les joueurs
+	 * et qui n'est pas téléchargée de nouveau à chaque connexion.
 	 */
 	private static HashMap<Integer, ObjetType> objetTypes = new HashMap<Integer, ObjetType>();
 	/**
-	 * Tous les types d'entites existants dans la BD.
+	 * Tous les types d'entites existants dans la BD.<br>
+	 * Collection statique, çad dont les données sont communes à tous les joueurs
+	 * et qui n'est pas téléchargée de nouveau à chaque connexion.
 	 */
 	private static HashMap<Integer, EntiteType> entiteTypes = new HashMap<Integer, EntiteType>();
 	/**
 	 * Toutes les entités non encore vaincues par le joueur.
 	 */
-	private static HashMap<Integer, Entity> entites = new HashMap<Integer, Entity>();
+	private static HashMap<Integer, HashMap<Integer, HashMap<Integer, Entity>>> entites = new HashMap<Integer, HashMap<Integer, HashMap<Integer, Entity>>>();
 	/**
-	 * Entités vaincues depuis la dernière sauvegarde.
+	 * Enregistre les entités vaincues depuis la dernière sauvegarder().<br>
+	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
 	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
+	private static HashMap<Integer, capacite> capacites = new HashMap<Integer, capacite>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
-	/*public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
-		identifier("Marc", "Sanchez");
-	}*/
+	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
+		inscrire("nice", "notnice");
+	}
 	
 	/**
 	 * Méthode à utiliser pour authentifier un joueur avant de le connecter.<br>
@@ -146,6 +153,7 @@ public class BD {
 			int statsId = derniereId("stats");
 			
 			//Création d'un tuple entite pour le nouveau joueur.
+			informer("INSERT INTO entite(entite_id) VALUES(NULL);");
 			int entiteId = derniereId("entite");
 			
 			
@@ -163,7 +171,6 @@ public class BD {
 	 * Retire toutes les données de la BD du joueur connecté, puis le déconnecte.
 	 * @throws SQLException
 	 */
-	@SuppressWarnings("unused")
 	public static void desinscrire() throws SQLException {
 		BDebug("Début de la désinscription...");
 		int joueurId = joueurTable.getInt("joueur_id");
@@ -248,7 +255,6 @@ public class BD {
 	 * @throws IOException 
 	 */
 	private static void telecharger() throws SQLException, IOException {
-		int joueurId = joueurTable.getInt("joueur_id");
 		if(!dejaTelecharge) {
 			dejaTelecharge = !dejaTelecharge;
 
@@ -258,9 +264,9 @@ public class BD {
 			
 		}
 		
-		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurId));
+		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurTable.getInt("joueur_id")));
 		
-		Entity.telecharger();
+		telechargerEntite();
 		
 		personnage = new Personnage();
 		
@@ -274,8 +280,8 @@ public class BD {
 	 * @return L'integralite de la table demandée.
 	 * @throws SQLException
 	 */
-	public static ResultSet telecharger(String table) throws SQLException {
-		BDebug("Téléchargement de la table \"", table, "\"");
+	static ResultSet telecharger(String table) throws SQLException {
+		BDebug("Téléchargement de la table ", table);
 		return querir(
 			"SELECT * "
 			+ "FROM `" + table + "`"
@@ -284,51 +290,100 @@ public class BD {
 		//Il ne faut PAS mettre les noms de colonne en paramètres d'un PreparedStatement
 		//Puisque ça les entoure avec '', qui ne fonctionnent qu'avec les chaînes de caractères !
 	}
-
+	
+	private static void telechargerEntite() throws SQLException, IOException {
+    	//Sélectionne toutes les entites que le joueur n'a pas encore vaincues.
+    	//Pour rappel, la table victoire enregistre les entités vaincues par les joueurs.
+		ResultSet entiteTable = BD.querir(
+			"SELECT * "
+			+ "FROM joueur j, entite e, victoire v "
+			//L'entité ne doit pas déjà avoir été vaincue.
+			+ "WHERE e.entite_id != v.entite_id "
+			+ "AND v.joueur_id = " + BD.getJoueurTable().getInt("joueur_id")
+			//Ces entités ne peuvent être celles d'autres joueurs.
+			//(les entités mobs et joueurs sont enregistrées dans la même table !)
+			+ " AND v.entite_id NOT IN ("
+				+ "SELECT entite_id "
+				+ "FROM joueur j "
+			+ ")"
+		);
+		while(entiteTable.next()) {
+			entites.putIfAbsent(entiteTable.getInt("niveau_id"), new HashMap<Integer, HashMap<Integer, Entity>>());
+			entites.get(entiteTable.getInt("niveau_id")).putIfAbsent(entiteTable.getInt("niveau_id"), new HashMap<Integer, Entity>());
+			entites.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).put(entiteTable.getInt("entite_id"), new Mob(entiteTable));
+		}
+    }
+	
+	private static void telechargerCapacite() throws SQLException {
+		ResultSet capaciteTable = telecharger("capacite");
+	}
 	
 	/**
 	 * Sauvegarde toutes les données du Joueur dans la BD.
 	 * @throws SQLException
 	 */
 	public static void sauvegarder() throws SQLException {
-		
-		int stats_id = joueurTable.getInt("stats_id");
-		
-		informer("UPDATE entite SET x = ?, y = ?", personnage.getXp(), personnage.getPosX(), personnage.getPosY());
-		
+
+		connexion.setAutoCommit(false);
+		sauvegarderJoueur();
+		sauvegarderEntite();
+		sauvegarderStats();
+		sauvegarderObjet();
+		sauvegarderVictoire();
+		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
+		connexion.setAutoCommit(true);
+	}
+	
+	private static void sauvegarderJoueur() throws SQLException {
+		informer("UPDATE joueur SET xp = ?, pv = ? WHERE joueur_id = ?",
+			personnage.getXp(),
+			personnage.getPV(),
+			joueurTable.getInt("joueur_id")
+		);
+	}
+	
+	private static void sauvegarderEntite() throws SQLException {
+		informer("UPDATE entite SET x = ?, y = ? WHERE entite_id = ?",
+			personnage.getPosX(),
+			personnage.getPosY(),
+			joueurTable.getInt("entite_id")
+		);
+	}
+	
+	private static void sauvegarderStats() throws SQLException {
 		Stats stats = personnage.getStats();
-		informer("UPDATE stats pv_max = ?, attaque = ?, defense = ? WHERE id = ?",
+		informer("UPDATE stats pv_max = ?, attaque = ?, defense = ? WHERE stats_id = ?",
 			stats.get("pv_max"),
 			stats.get("attaque"),
 			stats.get("defense"),
-			stats_id
+			joueurTable.getInt("stats_id")
 		);
-		
+	}
+	
+	private static void sauvegarderObjet() throws SQLException {
 		//Supprimer tous les objets du joueur dans la BD...
 		informer("DELETE FROM objet WHERE joueur_id = ?", personnage.getJoueurId());
-
-		connexion.setAutoCommit(false);
 		//...puis insérer les objets de l'Inventaire dans la BD.
 		preparer("INSERT INTO objet VALUES(?,?,?,?)");
 		Inventaire inventaire = personnage.getInventaire();
 		Set<Integer> cles = inventaire.keySet();
 		for(Integer cle : cles) {
 			Objet objet = inventaire.get(cle);
-			preparer(personnage.getJoueurId(), objet.objetTypeId, objet.getDurabilite(), cle);
+			preparer(personnage.getJoueurId(), objet.objetType.objetTypeId, objet.getDurabilite(), cle);
 			preparedStatement.addBatch();
 		}
 		preparedStatement.executeBatch();
-		
+	}
+
+	private static void sauvegarderVictoire() throws SQLException {
 		//Ajoute à la BD les ids des mobs vaincus depuis le dernier chargement de sauvegarde.
 		preparer("INSERT INTO victoire VALUES(?,?)");
 		for(int i = 0; i < vaincus.size(); i++) {
-			preparer(personnage.getInventaire(), vaincus.get(i));
+			preparer(personnage.getJoueurId(), vaincus.get(i));
 			preparedStatement.addBatch();
 		}
 		preparedStatement.executeBatch();
 		vaincus.clear();	//On vide la liste pour que les mêmes mobs ne soient pas envoyés de nouveau.
-		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
-		connexion.setAutoCommit(true);
 	}
 
 	/**
@@ -338,7 +393,7 @@ public class BD {
 	 * @return	La table correspondant à la requête demandée.
 	 * @throws 	SQLException
 	 */
-	public static ResultSet querir(String sql, Object... valeurs) throws SQLException {
+	static ResultSet querir(String sql, Object... valeurs) throws SQLException {
 		preparer(sql, valeurs);
 		BDebugRequete();
 		return preparedStatement.executeQuery();
@@ -405,12 +460,14 @@ public class BD {
 	
 	/**
 	 * Ajoute l'id d'une instance de mob vaincue par le joueur
-	 * à la liste des mobs vaincus depuis le dernier chargement de sauvegarde.
+	 * à la liste des mobs vaincus depuis le dernier chargement de sauvegarde.<br>
+	 * Supprime également le mob en question des entités téléchargées
+	 * parce qu'on est jamais trop sûrs.
 	 * @param mob_id
 	 */
 	public static void victoire(int entite_id) {
 		vaincus.add(entite_id);
-		//TODO remove mob de la liste d'entités chargées
+		entites.remove(entite_id);
 	}
 
 	/**
@@ -470,15 +527,15 @@ public class BD {
 	 */
 
 	/**
-	 * Insere un mob dans la BD.
-	 * @param niveau			Non pas l'xp mais le niveau dans lequel apparaît le mob.
-	 * @param map				Map du niveau dans lequel apparaît le mob.
+	 * Insere une entité dans la BD.
+	 * @param niveau			Non pas l'xp mais le niveau dans lequel apparaît l'entité.
+	 * @param map				Map du niveau dans lequel apparaît l'entité.
 	 * @param x					Abscisse
 	 * @param y					Ordonnée
-	 * @param stats				Stats du mob
+	 * @param stats				Stats de l'entité
 	 * @throws SQLException
 	 */
-	public static void creerMob(int niveau, int map, double x, double y, Stats stats) throws SQLException {
+	public static void creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite(entite_id, niveau_id, map_id, stats_id, x, y) VALUES(NULL, ?, ?, ?, ?, ?);", niveau, map, statsId, x, y);
 		int entiteId = derniereId("entite");
@@ -487,7 +544,7 @@ public class BD {
 			"entite_id: ", Integer.toString(entiteId));
 	}
 	
-	public static int creerMob_Type(String nom, Stats stats, int xp) throws SQLException {
+	public static int creerEntiteType(String nom, Stats stats, int xp) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite_type(entite_type_id, nom, stats_id, xp_loot) VALUES(NULL, ?, ?, ?);", nom, statsId, xp);
 		int entiteId = derniereId("entite_type");
@@ -521,4 +578,5 @@ public class BD {
 		informer("INSERT INTO stats(stats_id, pv_max, attaque, defense) VALUES(NULL" + paramStr + ")", paramInts);
 		return derniereId("stats");
 	}
+
 }

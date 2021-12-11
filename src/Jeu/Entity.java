@@ -1,8 +1,5 @@
 package Jeu;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import BD.BD;
 import BD.EntiteType;
 import BD.Stats;
@@ -55,27 +52,6 @@ public abstract class Entity {
     abstract void moveDown();
     abstract void moveLeft();
     abstract void moveRight();
-    
-    public static void telecharger() throws SQLException {
-    	//Sélectionne toutes les entites que le joueur n'a pas encore vaincues.
-    	//Pour rappel, la table victoire enregistre les entités vaincues par les joueurs.
-		ResultSet entiteTable = BD.querir(
-			"SELECT * "
-			+ "FROM joueur j, entite e, victoire v "
-			//L'entité ne doit pas déjà avoir été vaincue.
-			+ "WHERE e.entite_id != v.entite_id "
-			+ "AND v.joueur_id = " + BD.getJoueurTable().getInt("joueur_id")
-			//Ces entités ne peuvent être celles d'autres joueurs.
-			//(les entités mobs et joueurs sont enregistrées dans la même table !)
-			+ " AND v.entite_id NOT IN ("
-				+ "SELECT entite_id "
-				+ "FROM joueur j "
-			+ ")"
-		);
-		while(entiteTable.next()) {
-			BD.getEntiteTypes().put(entiteTable.getInt("entite_id"), new EntiteType(entiteTable));
-		}
-    }
     
     /*
      * Getters dépendant de la sous-classe d'entité.

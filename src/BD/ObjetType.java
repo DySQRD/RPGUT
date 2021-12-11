@@ -6,16 +6,16 @@ import java.sql.SQLException;
 public class ObjetType {
 	final int objetTypeId;
 	final String nom;
-	final int durabilite;
+	final int durabiliteMax;
 	
-	public ObjetType(int objetTypeId, String nom, int durabilite) {
+	public ObjetType(int objetTypeId, String nom, int durabiliteMax) {
 		this.objetTypeId = objetTypeId;
 		this.nom = nom;
-		this.durabilite = durabilite;
+		this.durabiliteMax = durabiliteMax;
 	}
 	
 	ObjetType(ResultSet table) throws SQLException {
-		this(table.getInt("objet_id"), table.getString("nom"), table.getInt("durabilite"));
+		this(table.getInt("objet_id"), table.getString("nom"), table.getInt("durabilite_max"));
 	}
 	
 	public static void telecharger() throws SQLException {
@@ -28,9 +28,10 @@ public class ObjetType {
 				new ObjetType(
 					objetTypeId,
 					objetTypeTable.getString("nom"),
-					objetTypeTable.getInt("durabilite")
+					objetTypeTable.getInt("durabilite_max")
 				)
 			);
 		}
 	}
+	
 }
