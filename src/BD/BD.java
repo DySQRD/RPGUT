@@ -69,7 +69,7 @@ public class BD {
 	/**
 	 * Toutes les entités non encore vaincues par le joueur.
 	 */
-	private static HashMap<Integer, HashMap<Integer, HashMap<Integer, Entity>>> entites = new HashMap<Integer, HashMap<Integer, HashMap<Integer, Entity>>>();
+	private static HashMap<Integer, HashMap<Integer, HashMap<Integer, Mob>>> entites = new HashMap<Integer, HashMap<Integer, HashMap<Integer, Mob>>>();
 	/**
 	 * Enregistre les entités vaincues depuis la dernière sauvegarder().<br>
 	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
@@ -267,6 +267,7 @@ public class BD {
 		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurTable.getInt("joueur_id")));
 		
 		telechargerEntite();
+		telechargerCapacite();
 		
 		personnage = new Personnage();
 		
@@ -308,14 +309,19 @@ public class BD {
 			+ ")"
 		);
 		while(entiteTable.next()) {
-			entites.putIfAbsent(entiteTable.getInt("niveau_id"), new HashMap<Integer, HashMap<Integer, Entity>>());
-			entites.get(entiteTable.getInt("niveau_id")).putIfAbsent(entiteTable.getInt("niveau_id"), new HashMap<Integer, Entity>());
+			entites.putIfAbsent(entiteTable.getInt("niveau_id"), new HashMap<Integer, HashMap<Integer, Mob>>());
+			entites.get(entiteTable.getInt("niveau_id")).putIfAbsent(entiteTable.getInt("map_id"), new HashMap<Integer, Mob>());
 			entites.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).put(entiteTable.getInt("entite_id"), new Mob(entiteTable));
 		}
     }
 	
 	private static void telechargerCapacite() throws SQLException {
 		ResultSet capaciteTable = telecharger("capacite");
+		while(capaciteTable.next()) {
+			capacites.put(capaciteTable.getInt("capacite_id"),
+				null);
+		}
+		//TODO compléter avec constructeur capacité
 	}
 	
 	/**
