@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
 import Jeu.Entity;
+import Jeu.Mob;
 import Jeu.Personnage;
 
 
@@ -68,19 +69,20 @@ public class BD {
 	/**
 	 * Toutes les entités non encore vaincues par le joueur.
 	 */
-	private static HashMap<Integer, Entity> entites = new HashMap<Integer, Entity>();
+	private static HashMap<Integer, HashMap<Integer, Entity>> entites = new HashMap<Integer, HashMap<Integer, Entity>>();
 	/**
 	 * Enregistre les entités vaincues depuis la dernière sauvegarder().<br>
 	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
 	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
+	private static HashMap<Integer, capacite> capacites = new HashMap<Integer, capacite>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
 	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
-		identifier("Marc", "Sanchez");
+		inscrire("nice", "notnice");
 	}
 	
 	/**
@@ -289,7 +291,7 @@ public class BD {
 		//Puisque ça les entoure avec '', qui ne fonctionnent qu'avec les chaînes de caractères !
 	}
 	
-	private static void telechargerEntite() throws SQLException {
+	private static void telechargerEntite() throws SQLException, IOException {
     	//Sélectionne toutes les entites que le joueur n'a pas encore vaincues.
     	//Pour rappel, la table victoire enregistre les entités vaincues par les joueurs.
 		ResultSet entiteTable = BD.querir(
@@ -306,9 +308,13 @@ public class BD {
 			+ ")"
 		);
 		while(entiteTable.next()) {
-			BD.getEntiteTypes().put(entiteTable.getInt("entite_id"), new EntiteType(entiteTable));
+			entites.get(entiteTable.getInt("niveau_id")).put(entiteTable.getInt("entite_id"), new Mob(entiteTable));
 		}
     }
+	
+	private static void telechargerCapacite() throws SQLException {
+		ResultSet capaciteTable = telecharger("capacite");
+	}
 	
 	/**
 	 * Sauvegarde toutes les données du Joueur dans la BD.
