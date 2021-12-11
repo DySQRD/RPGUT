@@ -17,6 +17,9 @@ public abstract class Entity {
 
     //Image de l'entité
     protected ImageView imageV;
+    
+    //Liste des capacites
+    protected Movepool capacites;
 
     //Vitesse de déplacement à l'écran
     protected int velocity;
@@ -32,6 +35,8 @@ public abstract class Entity {
     protected int PV;
     protected int lvl;
 
+    protected Stats statsBonus;
+    
     protected final Stats statsPerLevel = new Stats(10, 2, 2);
     
 	public Entity(int entiteId, int entiteTypeId, double posX, double posY) {
@@ -62,6 +67,7 @@ public abstract class Entity {
     public abstract String getNom();
     public abstract Stats getStats();
 
+
     /**
      * Statistique après calcul des bonus.
      * TODO rajouter les bonus !!! Cette méthode sert de placeholder en attendant de les ajouter.
@@ -71,6 +77,8 @@ public abstract class Entity {
     public int getActualStat(String stat) {
     	return getStats().get(stat); //+ statsBonus.get(stat)
     }
+    
+    
     
     public EntiteType getEntiteType() {
     	return BD.getEntiteTypes().get(entiteTypeId);
