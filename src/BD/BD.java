@@ -153,11 +153,14 @@ public class BD {
 			int statsId = derniereId("stats");
 			
 			//Création d'un tuple entite pour le nouveau joueur.
-			informer("INSERT INTO entite(entite_id) VALUES(NULL);");
+			informer("INSERT INTO entite(entite_id) VALUES(NULL)");
 			int entiteId = derniereId("entite");
+
+			ResultSet movepoolIdTable = querir("SELECT MAX(movepool_id) movepool_id FROM (SELECT movepool_id FROM joueur UNION SELECT movepool_id FROM entite_type) m");
 			
+			int movepoolId = movepoolIdTable.getInt("movepool_id") + 1;
 			
-			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id) VALUES(?, ?, ?, ?)", pseudo, mdp, entiteId, statsId);
+			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id, movepool_id) VALUES(?, ?, ?, ?, ?)", pseudo, mdp, entiteId, statsId, movepoolId);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
 					"MDP: ", mdp,
@@ -541,24 +544,16 @@ public class BD {
 	 * @param stats				Stats de l'entité
 	 * @throws SQLException
 	 */
-	public static void creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
+	public static int creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite(entite_id, niveau_id, map_id, stats_id, x, y) VALUES(NULL, ?, ?, ?, ?, ?);", niveau, map, statsId, x, y);
-		int entiteId = derniereId("entite");
-			
-		BDebug("stats_id: ", Integer.toString(statsId),
-			"entite_id: ", Integer.toString(entiteId));
+		return derniereId("entite");
 	}
 	
 	public static int creerEntiteType(String nom, Stats stats, int xp) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite_type(entite_type_id, nom, stats_id, xp_loot) VALUES(NULL, ?, ?, ?);", nom, statsId, xp);
-		int entiteId = derniereId("entite_type");
-			
-		BDebug("stats_id: ", Integer.toString(statsId),
-			"entite_type_id: ", Integer.toString(entiteId));
-		
-		return entiteId;
+		return derniereId("entite_type");
 	}
 	
 	/**
@@ -585,4 +580,5 @@ public class BD {
 		return derniereId("stats");
 	}
 
+	
 }
