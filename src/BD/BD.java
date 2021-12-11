@@ -75,14 +75,14 @@ public class BD {
 	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
 	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
-	private static HashMap<Integer, capacite> capacites = new HashMap<Integer, capacite>();
+	private static HashMap<Integer, Capacite> capacites = new HashMap<Integer, Capacite>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
 	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
-		inscrire("nice", "notnice");
+		identifier("nice", "notnice");
 	}
 	
 	/**
@@ -157,6 +157,7 @@ public class BD {
 			int entiteId = derniereId("entite");
 
 			ResultSet movepoolIdTable = querir("SELECT MAX(movepool_id) movepool_id FROM (SELECT movepool_id FROM joueur UNION SELECT movepool_id FROM entite_type) m");
+			movepoolIdTable.next();
 			
 			int movepoolId = movepoolIdTable.getInt("movepool_id") + 1;
 			
@@ -527,6 +528,14 @@ public class BD {
 	
 	public static HashMap<Integer, ObjetType> getObjetTypes() {
 		return objetTypes;
+	}
+	
+	public static HashMap<Integer, HashMap<Integer, HashMap<Integer, Mob>>> getEntites() {
+		return entites;
+	}
+	
+	public static HashMap<Integer, Capacite> getCapacites() {
+		return capacites;
 	}
 	
 	/*

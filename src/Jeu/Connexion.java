@@ -84,6 +84,7 @@ public class Connexion extends AnimationTimer {
                 break;
             }
             case 1: {
+            	System.out.println(BD.getEntites().size());
                 loopManager.newGame();
                 loopManager.game();
             }

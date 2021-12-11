@@ -7,15 +7,22 @@ public class ObjetType {
 	final int objetTypeId;
 	final String nom;
 	final int durabiliteMax;
+	final Capacite capacite;
 	
-	public ObjetType(int objetTypeId, String nom, int durabiliteMax) {
+	public ObjetType(int objetTypeId, String nom, int durabiliteMax, Capacite capacite) {
 		this.objetTypeId = objetTypeId;
 		this.nom = nom;
 		this.durabiliteMax = durabiliteMax;
+		this.capacite = capacite;
 	}
 	
 	ObjetType(ResultSet table) throws SQLException {
-		this(table.getInt("objet_id"), table.getString("nom"), table.getInt("durabilite_max"));
+		this(
+			table.getInt("objet_id"),
+			table.getString("nom"),
+			table.getInt("durabilite_max"),
+			BD.getCapacites().get(table.getInt("capacite_id"))
+		);
 	}
 	
 	public static void telecharger() throws SQLException {
@@ -28,7 +35,8 @@ public class ObjetType {
 				new ObjetType(
 					objetTypeId,
 					objetTypeTable.getString("nom"),
-					objetTypeTable.getInt("durabilite_max")
+					objetTypeTable.getInt("durabilite_max"),
+					BD.getCapacites().get(objetTypeTable.getInt("capacite_id"))
 				)
 			);
 		}
