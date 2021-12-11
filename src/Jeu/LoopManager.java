@@ -1,7 +1,9 @@
 package Jeu;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.Group;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class LoopManager {
@@ -10,13 +12,16 @@ public class LoopManager {
     protected CombatLoop combatLoop;
     protected PauseLoop pauseLoop;
     protected AnimationTimer currentLoop;
-    public LoopManager(Connexion connexion){
-        this.connexion = connexion;
+    protected Group root;
+    public LoopManager(Group root){
+        this.root = root;
+        this.connexion = new Connexion(root);
+        connexion.loopManager = this;
         this.currentLoop = connexion;
     }
 
-    public void addGame(GameLoop gameLoop){
-        this.gameLoop = gameLoop;
+    public void newGame() throws IOException {
+        this.gameLoop = new GameLoop(root);
         this.combatLoop = gameLoop.combatLoop;
         this.pauseLoop = gameLoop.pauseLoop;
         gameLoop.loopManager = this;

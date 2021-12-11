@@ -1,5 +1,6 @@
 package Jeu;
 
+import Exceptions.ImprevuDBError;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -16,8 +17,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 public class FirstApplication extends Application {
@@ -49,84 +52,42 @@ public class FirstApplication extends Application {
         window.setScene(scene1);
         window.show();
 
-        Connexion connexion = new Connexion(root);
-        LoopManager loopManager = new LoopManager(connexion);
-        connexion.displayUpdate();
-
-        //Désérialisation du tileset dans tileset1
-        BD.identifier("Dylan", "Toledano");
-        Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-
-        String json = new String(Files.readAllBytes(FileSystems.getDefault()
-                .getPath("res/maps/default_set.json")));
-        Tileset tileset1 = gsonBuilder.fromJson(json, Tileset.class);
-
-        //Désérialisation des map
-
-        HashMap<Integer, Map> maps = new HashMap<Integer, Map>();
-        //Création du niveau
-        Level level1 = new Level("Level 1");
-        
-        for(int i = 1; i <= 9; i++) {
-        	json = new String(Files.readAllBytes(FileSystems.getDefault()
-                    .getPath("res/maps/map" + i + ".json")));
-            maps.put(i, gsonBuilder.fromJson(json, Map.class));
-            maps.get(i).addTileset(tileset1);
-            level1.addMap(maps.get(i));
-        }
-
-        maps.get(1).setSpawnX(242);
-        maps.get(1).setSpawnY(242);
-        level1.loadLevel();
-
-        maps.get(2).spawnMobs(10, "Maths", "Minion");
-        maps.get(5).spawnMobs(10, "Maths", "Minion");
-
-
-        //Zones de texte
-        Label fps1 = new Label();     // Text
-        fps1.setTextFill(Color.BLUE);
-        fps1.setFont(Font.font("",FontWeight.BOLD, 22));
-
-        Label fps3 = new Label();     // Text
-        fps3.setTextFill(Color.RED);
-        fps3.setFont(Font.font("",FontWeight.BOLD, 22));
-
-        Label mouseLocation = new Label();
-        mouseLocation.setLayoutX(700);
-        mouseLocation.setLayoutY(30);
-        mouseLocation.setTextFill(Color.MIDNIGHTBLUE);
-        mouseLocation.setFont(Font.font("",FontWeight.BOLD, 18));
-
-        //Personnages
-        //TODO A remplacer par le personnage téléchargé avec :
-        //Personnage perso1 = BD.getPersonnage();
-        Personnage perso1 = BD.getPersonnage();
+        LoopManager loopManager = new LoopManager(root);
+        loopManager.connexion.displayUpdate();
 
 
 
+        loopManager.connexion.loginButton.setOnAction(action -> {
+            try {
+                loopManager.connexion.connect(loopManager.connexion.unField.getText(), loopManager.connexion.pField.getText());
+            } catch (ImprevuDBError imprevuDBError) {
+                imprevuDBError.printStackTrace();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        //Création des root (Layout manager) 576 x 896
-        /*root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
-        root.getChildren().addAll(perso1.imageV, fps1, mouseLocation);*/
-        //Root -> scene
-
-
-        //Loops
-        GameLoop gameLoop = new GameLoop(perso1,level1,fps1, mouseLocation, root);
-        loopManager.addGame(gameLoop);
-
-        connexion.validate.setOnAction(action -> {
-            System.out.println(connexion.unField.getText());
-            System.out.println(connexion.pField.getText());
-            loopManager.game();
+        loopManager.connexion.registerButton.setOnAction(action -> {
+            try {
+                loopManager.connexion.register(loopManager.connexion.unField.getText(), loopManager.connexion.pField.getText());
+            } catch (ImprevuDBError imprevuDBError) {
+                imprevuDBError.printStackTrace();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
 
         scene1.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                mouseLocation.setText("x = " + mouseEvent.getSceneX() + ", y = "+mouseEvent.getSceneY());
+                if(loopManager.currentLoop instanceof GameLoop){
+                    loopManager.gameLoop.mouseLocationLabel.setText("x = " + mouseEvent.getSceneX() + ", y = "+mouseEvent.getSceneY());
+                }
             }
         });
 
@@ -140,28 +101,28 @@ public class FirstApplication extends Application {
             @Override
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()){
-                    case UP : if(loopManager.currentLoop instanceof GameLoop){gameLoop.up=true;break;}
+                    case UP : if(loopManager.currentLoop instanceof GameLoop){loopManager.gameLoop.up=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorUp();break;
                     }
                     else if(loopManager.currentLoop instanceof PauseLoop){
                         loopManager.pauseLoop.moveCursorUp();break;
                     }
-                    case DOWN : if(loopManager.currentLoop instanceof GameLoop){gameLoop.down=true;break;}
+                    case DOWN : if(loopManager.currentLoop instanceof GameLoop){loopManager.gameLoop.down=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorDown();break;
                     }
                     else if(loopManager.currentLoop instanceof PauseLoop){
                         loopManager.pauseLoop.moveCursorDown();break;
                     }
-                    case LEFT : if(loopManager.currentLoop instanceof GameLoop){gameLoop.left=true;break;}
+                    case LEFT : if(loopManager.currentLoop instanceof GameLoop){loopManager.gameLoop.left=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorLeft();break;
                     }
                     else if(loopManager.currentLoop instanceof PauseLoop){
                         break;
                     }
-                    case RIGHT : if(loopManager.currentLoop instanceof GameLoop){gameLoop.right=true;break;}
+                    case RIGHT : if(loopManager.currentLoop instanceof GameLoop){loopManager.gameLoop.right=true;break;}
                     else if(loopManager.currentLoop instanceof CombatLoop){
                         loopManager.combatLoop.moveCursorRight();break;
                     }
@@ -193,10 +154,10 @@ public class FirstApplication extends Application {
             @Override
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()){
-                    case UP : gameLoop.up=false; break;
-                    case DOWN : gameLoop.down=false; break;
-                    case LEFT : gameLoop.left=false; break;
-                    case RIGHT : gameLoop.right=false; break;
+                    case UP : loopManager.gameLoop.up=false; break;
+                    case DOWN : loopManager.gameLoop.down=false; break;
+                    case LEFT : loopManager.gameLoop.left=false; break;
+                    case RIGHT : loopManager.gameLoop.right=false; break;
                 }
             }
         });
