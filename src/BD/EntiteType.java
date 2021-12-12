@@ -8,17 +8,28 @@ public class EntiteType {
 	public final String nom;
 	public final Stats stats;
 	public final int xpLoot;
+	public final int xHitbox;
+	public final int yHitbox;
 	
-	EntiteType(int entiteTypeId, String nom, Stats stats, int xpLoot) {
+	EntiteType(int entiteTypeId, String nom, Stats stats, int xpLoot, int xHitbox, int yHitbox) {
 		super();
 		this.entiteTypeId = entiteTypeId;
 		this.nom = nom;
 		this.stats = stats;
 		this.xpLoot = xpLoot;
+		this.xHitbox = xHitbox;
+		this.yHitbox = yHitbox;
 	}
 
 	EntiteType(ResultSet table) throws SQLException {
-		this(table.getInt("entite_type_id"), table.getString("nom"), new Stats(table), table.getInt("xp_loot"));
+		this(
+			table.getInt("entite_type_id"),
+			table.getString("nom"),
+			new Stats(table),
+			table.getInt("xp_loot"),
+			table.getInt("xHitbox"),
+			table.getInt("yHitbox")
+		);
 	}
 	
 	static void telecharger() throws SQLException {
@@ -36,7 +47,9 @@ public class EntiteType {
 						entiteTypeTable.getInt("attaque"),
 						entiteTypeTable.getInt("defense")
 					),
-					entiteTypeTable.getInt("xp_loot")
+					entiteTypeTable.getInt("xp_loot"),
+					entiteTypeTable.getInt("xHitbox"),
+					entiteTypeTable.getInt("yHitbox")
 				)
 			);
 		}

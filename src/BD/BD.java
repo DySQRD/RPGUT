@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
+import Jeu.Capacite;
+import Jeu.Categorie;
 import Jeu.CombatLoop;
 import Jeu.Entity;
 import Jeu.FirstApplication;
@@ -353,18 +355,23 @@ public class BD {
 	private static void telechargerCapacite() throws SQLException {
 		ResultSet capaciteTable = telecharger("capacite");
 		while(capaciteTable.next()) {
+			if((capaciteTable.getString("categorie")).equals("Offensive")) {
+				
+			}
 			capacites.put(
 				capaciteTable.getInt("capacite_id"),
 				new Capacite(
-					capaciteTable.getInt("capacite_id"),
 					capaciteTable.getString("nom"),
+					capaciteTable.getString("description"),
+					Categorie.valueOf(capaciteTable.getString("categorie")),
 					capaciteTable.getInt("puissance"),
 					capaciteTable.getInt("precision"),
-					capaciteTable.getString("cibles"),
+					capaciteTable.getBoolean("oneshot"),
 					capaciteTable.getInt("up"),
 					capaciteTable.getInt("down"),
-					capaciteTable.getString("description"),
-					Categorie.valueOf(capaciteTable.getString("categorie"))));
+					capaciteTable.getString("cibles")
+				)
+			);
 		}
 	}
 	
@@ -631,5 +638,19 @@ public class BD {
 		return derniereId("stats");
 	}
 
-	
+	public static int creerCapacite(Capacite capacite) throws SQLException {
+		informer("INSERT INTO capacite(capacite_id, nom, puissance, precisionn, cibles, oneshot, up, down, description, categorie) "
+			+ "VALUES(NULL, ?, ?, ?);",
+			capacite.getName(),
+			capacite.getDamage(),
+			capacite.getPrecision(),
+			capacite.getTarget(),
+			capacite.isOneshot(),
+			capacite.getUp(),
+			capacite.getDown(),
+			capacite.getDescription(),
+			capacite.getCategorie()
+		);
+		return derniereId("capacite");
+	}
 }
