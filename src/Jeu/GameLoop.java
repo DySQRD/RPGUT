@@ -65,8 +65,17 @@ public class GameLoop extends AnimationTimer {
         levels.add(level1);
         this.currentLevel = level1;
 
-        maps.get(2).spawnMobs(10, "Maths", "Minion");
-        maps.get(5).spawnMobs(10, "Maths", "Minion");
+        //maps.get(2).spawnMobs(10, "Maths", "Minion");
+        //maps.get(5).spawnMobs(10, "Maths", "Minion");
+
+        /*for(Integer lvl : BD.getEntites().keySet() ){
+            for(Integer map : BD.getEntites().get(lvl).keySet()){
+                for(Integer mob : BD.getEntites().get(lvl).get(map).keySet()){
+                    levels.get(lvl).getMap(map).spawnMobs(BD.getEntites().get(lvl).get(map).get(mob));
+
+                }
+            }
+        }*/
 
 
         //Zones de texte
@@ -82,8 +91,6 @@ public class GameLoop extends AnimationTimer {
         //TODO A remplacer par le personnage téléchargé avec :
         //Personnage perso1 = BD.getPersonnage();
         this.perso = BD.getPersonnage();
-
-
 
 
         //Création des root (Layout manager) 576 x 896
@@ -102,8 +109,9 @@ public class GameLoop extends AnimationTimer {
     public void displayUpdate(){
         this.root.getChildren().clear();
         this.root.getChildren().addAll(currentLevel.getMap(currentLevel.getCurrentMap()).getCanvas(), fpsLabel, mouseLocationLabel, perso.imageV);
-        for(int k=0; k<currentLevel.getMap(currentLevel.getCurrentMap()).getMobs().size(); k++){
-            root.getChildren().add(currentLevel.getMap(currentLevel.getCurrentMap()).getMobs().get(k).imageV);
+        for(int k=0; k<BD.getEntites().get(currentLevel).get(currentLevel.currentMap).size(); k++){
+            //root.getChildren().add(currentLevel.getMap(currentLevel.getCurrentMap()).getMobs().get(k).imageV);
+            root.getChildren().add(BD.getEntites().get(currentLevel).get(currentLevel.currentMap).get(k).imageV);
         }
     }
 

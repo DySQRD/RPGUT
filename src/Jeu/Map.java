@@ -139,6 +139,10 @@ public class Map {
         }
 
     }
+
+    public void spawnMob(Mob mob){
+
+    }
     public ArrayList<Mob> getMobs(){
         return mobs;
     }

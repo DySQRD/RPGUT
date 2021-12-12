@@ -358,7 +358,7 @@ public class BD {
 	
 	private static void sauvegarderStats() throws SQLException {
 		Stats stats = personnage.getStats();
-		informer("UPDATE stats pv_max = ?, attaque = ?, defense = ? WHERE stats_id = ?",
+		informer("UPDATE stats SET pv_max = ?, attaque = ?, defense = ? WHERE stats_id = ?",
 			stats.get("pv_max"),
 			stats.get("attaque"),
 			stats.get("defense"),
@@ -524,6 +524,10 @@ public class BD {
 	
 	public static HashMap<Integer, ObjetType> getObjetTypes() {
 		return objetTypes;
+	}
+
+	public static HashMap<Integer, HashMap<Integer, HashMap<Integer, Mob>>> getEntites(){
+		return entites;
 	}
 	
 	/*

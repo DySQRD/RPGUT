@@ -133,7 +133,11 @@ public class FirstApplication extends Application {
                             loopManager.combatLoop.select();break;
                         }
                         else if(loopManager.currentLoop instanceof PauseLoop){
+                        try {
                             loopManager.pauseLoop.select();
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
                     }
                 }
             }

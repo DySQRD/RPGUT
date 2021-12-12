@@ -22,7 +22,6 @@ public class Mob extends Entity{
         imageV.setImage(imageMob);
         imageV.setFitWidth(25);
         imageV.setFitHeight(25);
-        System.out.println(BD.getEntiteTypes().get(entiteTypeId).stats.get("pv_max"));
         this.setPV(BD.getEntiteTypes().get(entiteTypeId).stats.get("pv_max"));
         this.velocity = 7;
         this.lvl = 1;

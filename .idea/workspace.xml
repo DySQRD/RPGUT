@@ -304,6 +304,8 @@
       <workItem from="1639113108716" duration="6054000" />
       <workItem from="1639218020958" duration="4508000" />
       <workItem from="1639228196529" duration="3320000" />
+      <workItem from="1639231815643" duration="9740000" />
+      <workItem from="1639284322684" duration="669000" />
     </task>
     <servers />
   </component>
@@ -363,38 +365,38 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="389" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1638879352055" />
-    <state width="1323" height="120" key="GridCell.Tab.0.bottom" timestamp="1639231731709">
+    <state width="1323" height="277" key="GridCell.Tab.0.bottom" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1639231731709" />
-    <state width="1323" height="120" key="GridCell.Tab.0.center" timestamp="1639231731709">
+    <state width="1323" height="277" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
+    <state width="1323" height="277" key="GridCell.Tab.0.center" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1639231731709" />
-    <state width="1323" height="120" key="GridCell.Tab.0.left" timestamp="1639231731709">
+    <state width="1323" height="277" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
+    <state width="1323" height="277" key="GridCell.Tab.0.left" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1639231731709" />
-    <state width="1323" height="120" key="GridCell.Tab.0.right" timestamp="1639231731709">
+    <state width="1323" height="277" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
+    <state width="1323" height="277" key="GridCell.Tab.0.right" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="120" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1639231731709" />
-    <state width="1323" height="168" key="GridCell.Tab.1.bottom" timestamp="1639225074815">
+    <state width="1323" height="277" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
+    <state width="1323" height="277" key="GridCell.Tab.1.bottom" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1639225074815" />
-    <state width="1323" height="168" key="GridCell.Tab.1.center" timestamp="1639225074799">
+    <state width="1323" height="277" key="GridCell.Tab.1.bottom/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
+    <state width="1323" height="277" key="GridCell.Tab.1.center" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1639225074799" />
-    <state width="1323" height="168" key="GridCell.Tab.1.left" timestamp="1639225074799">
+    <state width="1323" height="277" key="GridCell.Tab.1.center/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
+    <state width="1323" height="277" key="GridCell.Tab.1.left" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1639225074799" />
-    <state width="1323" height="168" key="GridCell.Tab.1.right" timestamp="1639225074799">
+    <state width="1323" height="277" key="GridCell.Tab.1.left/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
+    <state width="1323" height="277" key="GridCell.Tab.1.right" timestamp="1639241666894">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="168" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1639225074799" />
+    <state width="1323" height="277" key="GridCell.Tab.1.right/0.0.1366.728@0.0.1366.728" timestamp="1639241666894" />
     <state x="163" y="0" key="SettingsEditor" timestamp="1638906321717">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -424,24 +426,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>75</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Jeu/CombatLoop.java</url>
-          <line>152</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Jeu/Tileset.java</url>
-          <line>50</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Jeu/Connexion.java</url>
-          <line>86</line>
-          <option name="timeStamp" value="6" />
+          <url>file://$PROJECT_DIR$/src/Jeu/GameLoop.java</url>
+          <line>111</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -450,5 +437,10 @@
         <PinnedItemInfo parentTag="javafx.stage.Stage" memberName="screen" />
       </pinned-members>
     </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="BD.entites" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

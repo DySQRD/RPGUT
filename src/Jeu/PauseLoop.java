@@ -1,5 +1,6 @@
 package Jeu;
 
+import BD.BD;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -7,6 +8,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PauseLoop extends AnimationTimer {
@@ -79,12 +81,12 @@ public class PauseLoop extends AnimationTimer {
         }
     }
 
-    public void select(){
+    public void select() throws SQLException {
         if(menu){
             switch(menuSelected){
                 case 0 :break;
                 case 1 :break;
-                case 2 :break;
+                case 2 : BD.sauvegarder();break;
                 case 3 : loopManager.connexion();break;
                 case 4 : loopManager.game();break;
             }
