@@ -119,7 +119,7 @@ public class GameLoop extends AnimationTimer {
         System.out.println(BD.getEntites().get(currentLevel).keySet());
         
         if(BD.getEntites().get(currentLevel).containsKey(levels.get(currentLevel).currentMap)) {
-            for(Integer mobID : BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).keySet()){
+            for(Integer mobID : getCurrentLevelMapMobs().keySet()){
             	System.out.println(mobID);
             	System.out.println(BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).get(mobID));
                 //root.getChildren().add(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(k).imageV);
@@ -222,7 +222,7 @@ public class GameLoop extends AnimationTimer {
 
         for(int i=0; i<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().size(); i++){
             int random = (int) (Math.random()*4);
-            Mob mob = levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(i);
+            Mob mob = getCurrentLevelMapMobs().get(i);
             int xMove = 0, yMove = 0;
             switch (random) {
             	case 0: yMove = -mob.velocity; break;
@@ -232,8 +232,8 @@ public class GameLoop extends AnimationTimer {
             }
             mob.hitbox.setY(mob.hitbox.getY()+yMove);
             mob.hitbox.setX(mob.hitbox.getX()+xMove);
-            for(int k=0; k<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getObstacles().size(); k++){
-                if((mob.hitbox.getBoundsInParent().intersects(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getObstacles().get(k).hitbox.getBoundsInParent()))){
+            for(int k=0; k<getCurrentMap().getObstacles().size(); k++){
+                if((mob.hitbox.getBoundsInParent().intersects(getCurrentMap().getObstacles().get(k).hitbox.getBoundsInParent()))){
                     mob.collision = true;
                 }
             }
@@ -337,5 +337,17 @@ public class GameLoop extends AnimationTimer {
     
     public void setCurrentMapId(int mapId) {
     	levels.get(currentLevel).currentMap = mapId;
+    }
+    
+    private Map getCurrentMap() {
+    	return levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap());
+    }
+    
+    private HashMap<Integer, HashMap<Integer, Mob>> getCurrentLevelMaps() {
+    	return BD.getEntites().get(currentLevel);
+    }
+    
+    private HashMap<Integer, Mob> getCurrentLevelMapMobs() {
+    	return BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap);
     }
 }
