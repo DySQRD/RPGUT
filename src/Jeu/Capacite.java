@@ -202,8 +202,8 @@ public class Capacite {
 	 * Permet d'utiliser une capacité, quel soit offensive, ou défensive (l'augmentation ou la réduction de statistiques).
 	 */
 	public void use(Entity user) {
-		Entity mob = GameLoop.perso.mobVS;
-		Entity character = GameLoop.perso;
+		Entity mob =FirstApplication.loopManager.getGameLoop().perso.mobVS;
+		Entity character = FirstApplication.loopManager.getGameLoop().perso;
 		Entity targetE;
 		if(Math.random() <= (precision/100)) {
 		if(this.target.equals("adversaire")) {
