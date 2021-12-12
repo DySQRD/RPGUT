@@ -319,7 +319,7 @@ public class CombatLoop extends AnimationTimer {
             }
             else if(positionCursorAction == 3){
                 System.out.println("Vous avez pris la fuite.");
-                gameLoop.currentLevel.getMap(gameLoop.currentLevel.getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
+                gameLoop.getcurrentLevel().getMap(gameLoop.getcurrentLevel().getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
                 loopManager.game();
             }
         }
@@ -354,7 +354,7 @@ public class CombatLoop extends AnimationTimer {
         System.out.println("Vous avez battu " + gameLoop.perso.mobVS.getNom() +" "+ gameLoop.perso.mobVS.entiteId);
         BD.victoire(gameLoop.perso.mobVS.entiteId);
         gameLoop.perso.giveXp();
-        gameLoop.currentLevel.getMap(gameLoop.currentLevel.getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
+        gameLoop.getcurrentLevel().getMap(gameLoop.getcurrentLevel().getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
         loopManager.game();
     }
 
@@ -362,8 +362,8 @@ public class CombatLoop extends AnimationTimer {
     public void perd(){
         System.out.println("Vous avez été battu par " + gameLoop.perso.mobVS.getNom() + " " + gameLoop.perso.mobVS.entiteId);
         gameLoop.perso.mobVS.fullPV();
-        this.gameLoop.currentLevel.currentMap = 0;
-        this.gameLoop.perso.tp(gameLoop.currentLevel.getMap(0).getSpawnX(), gameLoop.currentLevel.getMap(0).getSpawnY());
+        this.gameLoop.getcurrentLevel().currentMap = 0;
+        this.gameLoop.perso.tp(gameLoop.getcurrentLevel().getMap(0).getSpawnX(), gameLoop.getcurrentLevel().getMap(0).getSpawnY());
         this.gameLoop.perso.setPV(this.gameLoop.perso.stats.get("pv_max")/2);
         loopManager.game();
     }
