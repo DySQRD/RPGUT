@@ -84,19 +84,12 @@ public class Connexion extends AnimationTimer {
                 break;
             }
             case 1: {
+            	System.out.println(BD.getEntites().size());
                 loopManager.newGame();
                 loopManager.game();
             }
         }
     }
-
-
-    /*public void id(){
-        BD.inscrire("id", "Mdp");
-        BD.identifier("id", "Mdp");
-    }*/
-
-
 
     @Override
     public void handle(long l) {

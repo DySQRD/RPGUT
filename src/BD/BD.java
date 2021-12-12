@@ -11,23 +11,46 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
+import Jeu.CombatLoop;
 import Jeu.Entity;
+import Jeu.FirstApplication;
+import Jeu.GameLoop;
 import Jeu.Mob;
 import Jeu.Personnage;
 
 
 /**
- * 	Classe d'interaction avec la BD. A utiliser comme suit :
+ * 	<p>
+ * 		Classe d'interaction avec la base de données.<br>
+ * 		Il ne peut y avoir qu'un seul joueur connecté à une seule BD par lancement de programme.<br>
+ * 		Pour cette raison, il n'y a pas de BD à instancier, et tous les attributs et méthodes de cette classe sont statiques.<br>
+ * 		Cela permet d'y accéder depuis n'importe où dans le programme.
+ * 	</p>
+ * 	Si aucun joueur n'est connecté, l'utiliser comme suit :
  * 	<ul>
- * 		<li>Si l'utilisateur souhaite s'inscrire, utiliser BD.inscrire(String pseudo, String mdp).
- * 		<li>Sinon, s'il souhaite se connecter, utiliser BD.identifier(String pseudo, String mdp).
- * 		<li>Ces deux méthodes renvoient 1 s'il n'y a pas de problème.
- * 		<li>Toutes les données nécessaires sont téléchargées et l'accès au jeu peut être accordé.
+ * 		<li>Si l'utilisateur souhaite s'inscrire, utiliser BD.inscrire(String pseudo, String mdp).</li>
+ * 		<li>Sinon, s'il souhaite se connecter, utiliser BD.identifier(String pseudo, String mdp).</li>
+ * 		<li>Ces deux méthodes renvoient 1 en cas de succès.<br>
+ * 		Sinon se référer à leur doc.</li>
+ * 		<li>Toutes les données nécessaires sont téléchargées et l'accès au jeu peut être accordé.</li>
  * 	</ul>
  * 
- * De nombreuses méthodes lancent SQLException.
- * Quand cela arrive, il faut indiquer que la connexion à la BD n'a pu être établie ou a été perdue.
- * @author Dylan Toledano
+ * 	D'autres méthodes deviennent ensuite utilisables :
+ * 	<ul>
+ * 		<li>BD.sauvegarder() enregistre la progression du joueur dans la BD.</li>
+ * 		<li>BD.deconnecter() est à lancer lorsque le joueur souhaite arrêter de jouer sans fermer le programme.<br>
+ * 		Cette méthode ne sauvegarde pas automatiquement !</li>
+ * 		<li>BD.desinscrire() supprime les données du joueur connecté de la BD puis le déconnecte.</li>
+ * 		<li>BD.victoire() enregistre une victoire du joueur connecté face à un mob, de sorte à ce que ce mob
+ * 		ne réapparaisse plus jamais pour ce joueur.</li>
+ * 	</ul>
+ * 
+ * 	<p>
+ * 		De nombreuses méthodes lancent SQLException.
+ * 		Quand cela arrive, il faut indiquer que la connexion à la BD n'a pu être établie ou a été perdue.
+ * 	</p>
+ * 
+ * 	@author Dylan Toledano
  *
  */
 public class BD {
@@ -75,14 +98,14 @@ public class BD {
 	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
 	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
-	private static HashMap<Integer, capacite> capacites = new HashMap<Integer, capacite>();
+	private static HashMap<Integer, Capacite> capacites = new HashMap<Integer, Capacite>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
 	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
-		inscrire("nice", "notnice");
+		identifier("nice", "notnice");
 	}
 	
 	/**
@@ -153,11 +176,15 @@ public class BD {
 			int statsId = derniereId("stats");
 			
 			//Création d'un tuple entite pour le nouveau joueur.
-			informer("INSERT INTO entite(entite_id) VALUES(NULL);");
+			informer("INSERT INTO entite(entite_id) VALUES(NULL)");
 			int entiteId = derniereId("entite");
+
+			ResultSet movepoolIdTable = querir("SELECT MAX(movepool_id) movepool_id FROM (SELECT movepool_id FROM joueur UNION SELECT movepool_id FROM entite_type) m");
+			movepoolIdTable.next();
 			
+			int movepoolId = movepoolIdTable.getInt("movepool_id") + 1;
 			
-			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id) VALUES(?, ?, ?, ?)", pseudo, mdp, entiteId, statsId);
+			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id, movepool_id) VALUES(?, ?, ?, ?, ?)", pseudo, mdp, entiteId, statsId, movepoolId);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
 					"MDP: ", mdp,
@@ -297,31 +324,48 @@ public class BD {
     	//Pour rappel, la table victoire enregistre les entités vaincues par les joueurs.
 		ResultSet entiteTable = BD.querir(
 			"SELECT * "
-			+ "FROM joueur j, entite e, victoire v "
-			//L'entité ne doit pas déjà avoir été vaincue.
-			+ "WHERE e.entite_id != v.entite_id "
-			+ "AND v.joueur_id = " + BD.getJoueurTable().getInt("joueur_id")
+			+ "FROM entite e "
 			//Ces entités ne peuvent être celles d'autres joueurs.
-			//(les entités mobs et joueurs sont enregistrées dans la même table !)
-			+ " AND v.entite_id NOT IN ("
-				+ "SELECT entite_id "
-				+ "FROM joueur j "
-			+ ")"
+			+ "WHERE e.entite_type_id != 1 "
+			//L'entité ne doit pas déjà avoir été vaincue par le joueur connecté.
+			+ "AND e.entite_id NOT IN ("
+				//Renvoie les ids des mobs vainus par le joueur connecté
+				+ "SELECT v.entite_id "
+				+ "FROM victoire v, joueur j "
+				+ "WHERE j.joueur_id = ? "
+				+ "AND j.joueur_id = v.joueur_id"
+			+ ")",
+			BD.getJoueurTable().getInt("joueur_id")
 		);
 		while(entiteTable.next()) {
+			Mob mob = new Mob(entiteTable);
 			entites.putIfAbsent(entiteTable.getInt("niveau_id"), new HashMap<Integer, HashMap<Integer, Mob>>());
 			entites.get(entiteTable.getInt("niveau_id")).putIfAbsent(entiteTable.getInt("map_id"), new HashMap<Integer, Mob>());
-			entites.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).put(entiteTable.getInt("entite_id"), new Mob(entiteTable));
+			entites.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).put(entiteTable.getInt("entite_id"), mob);
+			
+			System.out.println(
+				"NbMaps: " + entites.get(entiteTable.getInt("niveau_id")).size() +
+				" Map " + entiteTable.getInt("map_id") +
+				" NbMobs: " + entites.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).size());
 		}
     }
 	
 	private static void telechargerCapacite() throws SQLException {
 		ResultSet capaciteTable = telecharger("capacite");
 		while(capaciteTable.next()) {
-			capacites.put(capaciteTable.getInt("capacite_id"),
-				null);
+			capacites.put(
+				capaciteTable.getInt("capacite_id"),
+				new Capacite(
+					capaciteTable.getInt("capacite_id"),
+					capaciteTable.getString("nom"),
+					capaciteTable.getInt("puissance"),
+					capaciteTable.getInt("precision"),
+					capaciteTable.getString("cibles"),
+					capaciteTable.getInt("up"),
+					capaciteTable.getInt("down"),
+					capaciteTable.getString("description"),
+					Categorie.valueOf(capaciteTable.getString("categorie"))));
 		}
-		//TODO compléter avec constructeur capacité
 	}
 	
 	/**
@@ -330,10 +374,10 @@ public class BD {
 	 */
 	public static void sauvegarder() throws SQLException {
 
-		connexion.setAutoCommit(false);
 		sauvegarderJoueur();
 		sauvegarderEntite();
 		sauvegarderStats();
+		connexion.setAutoCommit(false);
 		sauvegarderObjet();
 		sauvegarderVictoire();
 		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
@@ -349,16 +393,18 @@ public class BD {
 	}
 	
 	private static void sauvegarderEntite() throws SQLException {
-		informer("UPDATE entite SET x = ?, y = ? WHERE entite_id = ?",
+		informer("UPDATE entite SET x = ?, y = ?, niveau_id = ?, map_id = ? WHERE entite_id = ?",
 			personnage.getPosX(),
 			personnage.getPosY(),
+			FirstApplication.loopManager.getGameLoop().getCurrentLevelId(),
+			FirstApplication.loopManager.getGameLoop().getCurrentMapId(),
 			joueurTable.getInt("entite_id")
 		);
 	}
 	
 	private static void sauvegarderStats() throws SQLException {
 		Stats stats = personnage.getStats();
-		informer("UPDATE stats pv_max = ?, attaque = ?, defense = ? WHERE stats_id = ?",
+		informer("UPDATE stats SET pv_max = ?, attaque = ?, defense = ? WHERE stats_id = ?",
 			stats.get("pv_max"),
 			stats.get("attaque"),
 			stats.get("defense"),
@@ -525,6 +571,14 @@ public class BD {
 	public static HashMap<Integer, ObjetType> getObjetTypes() {
 		return objetTypes;
 	}
+
+	public static HashMap<Integer, HashMap<Integer, HashMap<Integer, Mob>>> getEntites(){
+		return entites;
+	}
+	
+	public static HashMap<Integer, Capacite> getCapacites() {
+		return capacites;
+	}
 	
 	/*
 	 * Méthodes de gestion dans la BD.
@@ -541,24 +595,16 @@ public class BD {
 	 * @param stats				Stats de l'entité
 	 * @throws SQLException
 	 */
-	public static void creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
+	public static int creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite(entite_id, niveau_id, map_id, stats_id, x, y) VALUES(NULL, ?, ?, ?, ?, ?);", niveau, map, statsId, x, y);
-		int entiteId = derniereId("entite");
-			
-		BDebug("stats_id: ", Integer.toString(statsId),
-			"entite_id: ", Integer.toString(entiteId));
+		return derniereId("entite");
 	}
 	
 	public static int creerEntiteType(String nom, Stats stats, int xp) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite_type(entite_type_id, nom, stats_id, xp_loot) VALUES(NULL, ?, ?, ?);", nom, statsId, xp);
-		int entiteId = derniereId("entite_type");
-			
-		BDebug("stats_id: ", Integer.toString(statsId),
-			"entite_type_id: ", Integer.toString(entiteId));
-		
-		return entiteId;
+		return derniereId("entite_type");
 	}
 	
 	/**
@@ -585,4 +631,5 @@ public class BD {
 		return derniereId("stats");
 	}
 
+	
 }

@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class LoopManager {
@@ -20,7 +21,7 @@ public class LoopManager {
         this.currentLoop = connexion;
     }
 
-    public void newGame() throws IOException {
+    public void newGame() throws IOException, SQLException {
         this.gameLoop = new GameLoop(root);
         this.combatLoop = gameLoop.combatLoop;
         this.pauseLoop = gameLoop.pauseLoop;
@@ -76,5 +77,9 @@ public class LoopManager {
         pauseLoop.displayInit();
         pauseLoop.start();
         this.currentLoop = pauseLoop;
+    }
+    
+    public GameLoop getGameLoop() {
+    	return gameLoop;
     }
 }

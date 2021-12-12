@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class FirstApplication extends Application {
+	public static LoopManager loopManager;
 
     //Actions avant l'application
     @Override
@@ -42,7 +43,7 @@ public class FirstApplication extends Application {
         window.setScene(scene1);
         window.show();
 
-        LoopManager loopManager = new LoopManager(root);
+        loopManager = new LoopManager(root);
         loopManager.connexion.displayUpdate();
 
 
@@ -133,7 +134,11 @@ public class FirstApplication extends Application {
                             loopManager.combatLoop.select();break;
                         }
                         else if(loopManager.currentLoop instanceof PauseLoop){
+                        try {
                             loopManager.pauseLoop.select();
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
                     }
                 }
             }

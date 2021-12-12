@@ -114,7 +114,7 @@ public class Map {
     public ArrayList<Obstacle> getObstacles(){
         return obstacles;
     }
-
+    
     public void spawnMobs(int nbreMobs,String matiere,String type) throws IOException{
         double spawnX;
         double spawnY;
@@ -137,6 +137,10 @@ public class Map {
                 }
             } while (collision == true);
         }
+
+    }
+
+    public void spawnMob(Mob mob){
 
     }
     public ArrayList<Mob> getMobs(){
