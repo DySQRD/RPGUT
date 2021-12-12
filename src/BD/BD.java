@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
+import Jeu.CombatLoop;
 import Jeu.Entity;
+import Jeu.GameLoop;
 import Jeu.Mob;
 import Jeu.Personnage;
 
@@ -75,14 +77,14 @@ public class BD {
 	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
 	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
-	private static HashMap<Integer, capacite> capacites = new HashMap<Integer, capacite>();
+	private static HashMap<Integer, Capacite> capacites = new HashMap<Integer, Capacite>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
 	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
 	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
-		inscrire("nice", "notnice");
+		identifier("nice", "notnice");
 	}
 	
 	/**
@@ -153,11 +155,15 @@ public class BD {
 			int statsId = derniereId("stats");
 			
 			//Création d'un tuple entite pour le nouveau joueur.
-			informer("INSERT INTO entite(entite_id) VALUES(NULL);");
+			informer("INSERT INTO entite(entite_id) VALUES(NULL)");
 			int entiteId = derniereId("entite");
+
+			ResultSet movepoolIdTable = querir("SELECT MAX(movepool_id) movepool_id FROM (SELECT movepool_id FROM joueur UNION SELECT movepool_id FROM entite_type) m");
+			movepoolIdTable.next();
 			
+			int movepoolId = movepoolIdTable.getInt("movepool_id") + 1;
 			
-			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id) VALUES(?, ?, ?, ?)", pseudo, mdp, entiteId, statsId);
+			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id, movepool_id) VALUES(?, ?, ?, ?, ?)", pseudo, mdp, entiteId, statsId, movepoolId);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
 					"MDP: ", mdp,
@@ -318,8 +324,18 @@ public class BD {
 	private static void telechargerCapacite() throws SQLException {
 		ResultSet capaciteTable = telecharger("capacite");
 		while(capaciteTable.next()) {
-			capacites.put(capaciteTable.getInt("capacite_id"),
-				null);
+			capacites.put(
+				capaciteTable.getInt("capacite_id"),
+				new Capacite(
+					capaciteTable.getInt("capacite_id"),
+					capaciteTable.getString("nom"),
+					capaciteTable.getInt("puissance"),
+					capaciteTable.getInt("precision"),
+					capaciteTable.getString("cibles"),
+					capaciteTable.getInt("up"),
+					capaciteTable.getInt("down"),
+					capaciteTable.getString("description"),
+					Categorie.valueOf(capaciteTable.getString("categorie"))));
 		}
 		//TODO compléter avec constructeur capacité
 	}
@@ -330,10 +346,10 @@ public class BD {
 	 */
 	public static void sauvegarder() throws SQLException {
 
-		connexion.setAutoCommit(false);
 		sauvegarderJoueur();
 		sauvegarderEntite();
 		sauvegarderStats();
+		connexion.setAutoCommit(false);
 		sauvegarderObjet();
 		sauvegarderVictoire();
 		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
@@ -348,10 +364,13 @@ public class BD {
 		);
 	}
 	
+	//, map_id = ?
+	//TODO ajouter la map et le niveau
 	private static void sauvegarderEntite() throws SQLException {
 		informer("UPDATE entite SET x = ?, y = ? WHERE entite_id = ?",
 			personnage.getPosX(),
 			personnage.getPosY(),
+			//GameLoop.getCurrentLevel().getCurrentMap(),
 			joueurTable.getInt("entite_id")
 		);
 	}
@@ -530,6 +549,14 @@ public class BD {
 		return entites;
 	}
 	
+	public static HashMap<Integer, HashMap<Integer, HashMap<Integer, Mob>>> getEntites() {
+		return entites;
+	}
+	
+	public static HashMap<Integer, Capacite> getCapacites() {
+		return capacites;
+	}
+	
 	/*
 	 * Méthodes de gestion dans la BD.
 	 * Ces méthodes ne doivent être utilisées que par les développeurs
@@ -545,24 +572,16 @@ public class BD {
 	 * @param stats				Stats de l'entité
 	 * @throws SQLException
 	 */
-	public static void creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
+	public static int creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite(entite_id, niveau_id, map_id, stats_id, x, y) VALUES(NULL, ?, ?, ?, ?, ?);", niveau, map, statsId, x, y);
-		int entiteId = derniereId("entite");
-			
-		BDebug("stats_id: ", Integer.toString(statsId),
-			"entite_id: ", Integer.toString(entiteId));
+		return derniereId("entite");
 	}
 	
 	public static int creerEntiteType(String nom, Stats stats, int xp) throws SQLException {
 		int statsId = creerStats(stats);
 		informer("INSERT INTO entite_type(entite_type_id, nom, stats_id, xp_loot) VALUES(NULL, ?, ?, ?);", nom, statsId, xp);
-		int entiteId = derniereId("entite_type");
-			
-		BDebug("stats_id: ", Integer.toString(statsId),
-			"entite_type_id: ", Integer.toString(entiteId));
-		
-		return entiteId;
+		return derniereId("entite_type");
 	}
 	
 	/**
@@ -589,4 +608,5 @@ public class BD {
 		return derniereId("stats");
 	}
 
+	
 }

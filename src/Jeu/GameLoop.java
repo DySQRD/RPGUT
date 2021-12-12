@@ -87,9 +87,7 @@ public class GameLoop extends AnimationTimer {
         mouseLocationLabel.setTextFill(Color.MIDNIGHTBLUE);
         mouseLocationLabel.setFont(Font.font("",FontWeight.BOLD, 18));
 
-        //Personnages
-        //TODO A remplacer par le personnage téléchargé avec :
-        //Personnage perso1 = BD.getPersonnage();
+        //Personnage
         this.perso = BD.getPersonnage();
 
 
@@ -278,5 +276,9 @@ public class GameLoop extends AnimationTimer {
                 enterCombat();
             }
         }
+    }
+    
+    public Level getCurrentLevel() {
+    	return currentLevel;
     }
 }
