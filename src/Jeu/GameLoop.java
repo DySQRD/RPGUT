@@ -13,6 +13,7 @@ import javafx.scene.text.FontWeight;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,14 +30,14 @@ public class GameLoop extends AnimationTimer {
     protected CombatLoop combatLoop;
     protected PauseLoop pauseLoop;
     protected LoopManager loopManager;
-    protected ArrayList<Level> levels = new ArrayList<>();
+    protected HashMap<Integer, Level> levels = new HashMap<Integer, Level>();
     protected int currentLevel;
 
     protected boolean up, down, left, right;
 
     protected double width, height;
 
-    public GameLoop(Group root) throws IOException {
+    public GameLoop(Group root) throws IOException, SQLException {
 
         //Désérialisation du tileset dans tileset1
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -56,14 +57,15 @@ public class GameLoop extends AnimationTimer {
                     .getPath("res/maps/map" + i + ".json")));
             maps.put(i, gsonBuilder.fromJson(json, Map.class));
             maps.get(i).addTileset(tileset1);
-            level1.addMap(maps.get(i));
+            level1.addMap(i, maps.get(i));
+            System.out.println(i + " " + level1.getMapsList().size());
         }
 
         maps.get(1).setSpawnX(242);
         maps.get(1).setSpawnY(242);
         level1.loadLevel();
-        levels.add(level1);
-        this.currentLevel = levels.indexOf(level1);
+        levels.put(1, level1);
+        this.currentLevel = 1;
 
         //maps.get(2).spawnMobs(10, "Maths", "Minion");
         //maps.get(5).spawnMobs(10, "Maths", "Minion");
@@ -90,6 +92,9 @@ public class GameLoop extends AnimationTimer {
         //Personnage
         this.perso = BD.getPersonnage();
 
+        currentLevel = BD.getJoueurTable().getInt("niveau_id");
+        levels.get(currentLevel).currentMap = BD.getJoueurTable().getInt("map_id");
+        System.out.println("mapjsp: " + levels.get(currentLevel).currentMap);
 
         //Création des root (Layout manager) 576 x 896
         /*root.getChildren().add(level1.getMap(level1.getCurrentMap()).getCanvas());
@@ -107,9 +112,19 @@ public class GameLoop extends AnimationTimer {
     public void displayUpdate(){
         this.root.getChildren().clear();
         this.root.getChildren().addAll(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getCanvas(), fpsLabel, mouseLocationLabel, perso.imageV);
-        for(int k=0; k<BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).size(); k++){
-            //root.getChildren().add(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(k).imageV);
-            root.getChildren().add(BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).get(k).imageV);
+        
+        System.out.println("level: " + currentLevel);
+        System.out.println("map: " + levels.get(currentLevel).currentMap);
+        System.out.println("entites: " + BD.getEntites());
+        System.out.println(BD.getEntites().get(currentLevel).keySet());
+        
+        if(BD.getEntites().get(currentLevel).containsKey(levels.get(currentLevel).currentMap)) {
+            for(Integer mobID : BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).keySet()){
+            	System.out.println(mobID);
+            	System.out.println(BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).get(mobID));
+                //root.getChildren().add(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(k).imageV);
+                root.getChildren().add(BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).get(mobID).imageV);
+            }
         }
     }
 
@@ -278,7 +293,23 @@ public class GameLoop extends AnimationTimer {
         }
     }
     
-    public Level getcurrentLevel() {
+    public int getCurrentLevelId() {
+    	return currentLevel;
+    }
+    
+    public void setCurrentLevelId(int levelId) {
+    	currentLevel = levelId;
+    }
+    
+    public Level getCurrentLevel() {
     	return levels.get(currentLevel);
+    }
+    
+    public int getCurrentMapId() {
+    	return levels.get(currentLevel).currentMap;
+    }
+    
+    public void setCurrentMapId(int mapId) {
+    	levels.get(currentLevel).currentMap = mapId;
     }
 }
