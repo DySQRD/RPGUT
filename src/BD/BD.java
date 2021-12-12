@@ -11,7 +11,9 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
+import Jeu.CombatLoop;
 import Jeu.Entity;
+import Jeu.GameLoop;
 import Jeu.Mob;
 import Jeu.Personnage;
 
@@ -322,8 +324,18 @@ public class BD {
 	private static void telechargerCapacite() throws SQLException {
 		ResultSet capaciteTable = telecharger("capacite");
 		while(capaciteTable.next()) {
-			capacites.put(capaciteTable.getInt("capacite_id"),
-				null);
+			capacites.put(
+				capaciteTable.getInt("capacite_id"),
+				new Capacite(
+					capaciteTable.getInt("capacite_id"),
+					capaciteTable.getString("nom"),
+					capaciteTable.getInt("puissance"),
+					capaciteTable.getInt("precision"),
+					capaciteTable.getString("cibles"),
+					capaciteTable.getInt("up"),
+					capaciteTable.getInt("down"),
+					capaciteTable.getString("description"),
+					Categorie.valueOf(capaciteTable.getString("categorie"))));
 		}
 		//TODO compléter avec constructeur capacité
 	}
@@ -334,10 +346,10 @@ public class BD {
 	 */
 	public static void sauvegarder() throws SQLException {
 
-		connexion.setAutoCommit(false);
 		sauvegarderJoueur();
 		sauvegarderEntite();
 		sauvegarderStats();
+		connexion.setAutoCommit(false);
 		sauvegarderObjet();
 		sauvegarderVictoire();
 		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
@@ -352,10 +364,13 @@ public class BD {
 		);
 	}
 	
+	//, map_id = ?
+	//TODO ajouter la map et le niveau
 	private static void sauvegarderEntite() throws SQLException {
 		informer("UPDATE entite SET x = ?, y = ? WHERE entite_id = ?",
 			personnage.getPosX(),
 			personnage.getPosY(),
+			//GameLoop.getCurrentLevel().getCurrentMap(),
 			joueurTable.getInt("entite_id")
 		);
 	}
