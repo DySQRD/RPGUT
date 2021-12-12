@@ -549,10 +549,6 @@ public class BD {
 		return entites;
 	}
 	
-	public static HashMap<Integer, HashMap<Integer, HashMap<Integer, Mob>>> getEntites() {
-		return entites;
-	}
-	
 	public static HashMap<Integer, Capacite> getCapacites() {
 		return capacites;
 	}
