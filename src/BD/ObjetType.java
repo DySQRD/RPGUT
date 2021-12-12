@@ -3,6 +3,8 @@ package BD;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import Jeu.Capacite;
+
 public class ObjetType {
 	final int objetTypeId;
 	final String nom;

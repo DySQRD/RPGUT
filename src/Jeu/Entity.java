@@ -66,7 +66,7 @@ public abstract class Entity {
     
     public abstract String getNom();
     public abstract Stats getStats();
-
+    public abstract Movepool getMovepool();
 
     /**
      * Statistique après calcul des bonus.

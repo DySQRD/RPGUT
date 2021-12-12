@@ -26,7 +26,7 @@ public class Capacite {
 	 * @param oneshot_
 	 * @param user
 	 */
-	Capacite(String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
+	public Capacite(String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
 		name=name_;
 		description=description_;
 		categorie=Categorie.Offensive;
@@ -48,7 +48,7 @@ public class Capacite {
 	 * @param down
 	 * @param cible
 	 */
-	Capacite(String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
+	public Capacite(String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
 		name = name_;
 		description=description_;
 		categorie=soutien;
