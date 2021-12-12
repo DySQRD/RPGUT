@@ -223,6 +223,31 @@ public class GameLoop extends AnimationTimer {
         for(int i=0; i<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().size(); i++){
             int random = (int) (Math.random()*4);
             Mob mob = levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(i);
+            int xMove = 0, yMove = 0;
+            switch (random) {
+            	case 0: yMove = -mob.velocity; break;
+            	case 1: yMove = mob.velocity; break;
+            	case 2: xMove = -mob.velocity; break;
+            	case 3: xMove = mob.velocity; break;
+            }
+            mob.hitbox.setY(mob.hitbox.getY()+yMove);
+            mob.hitbox.setX(mob.hitbox.getX()+xMove);
+            for(int k=0; k<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getObstacles().size(); k++){
+                if((mob.hitbox.getBoundsInParent().intersects(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getObstacles().get(k).hitbox.getBoundsInParent()))){
+                    mob.collision = true;
+                }
+            }
+            mob.hitbox.setY(mob.hitbox.getY()-yMove);
+            mob.hitbox.setX(mob.hitbox.getX()-xMove);
+            if(!(mob.collision)){
+            	switch (random) {
+	            	case 0: mob.moveUp(); break;
+	            	case 1: mob.moveDown(); break;
+	            	case 2: mob.moveLeft(); break;
+	            	case 3: mob.moveRight(); break;
+            	}
+            }
+            /*
             switch (random){
                 case 0 : mob.hitbox.setY(mob.hitbox.getY()-mob.velocity);
                 for(int k=0; k<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getObstacles().size(); k++){
@@ -269,6 +294,7 @@ public class GameLoop extends AnimationTimer {
                     }
                     mob.collision = false;break;
             }
+            */
         }
         checkCombatMob();
     }
