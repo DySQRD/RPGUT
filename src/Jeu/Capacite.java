@@ -11,15 +11,15 @@ public class Capacite {
 	 * en un coup, d'o� le booléan "oneshot"*/
 	
 
-	private String name;
-	private String description;
+	private final String name;
+	private final String description;
 	private final Categorie categorie;
-	private float damage;
-	private float precision;
-	private boolean oneshot;
-	private int up;
-	private int down;
-	private String target;
+	private final int damage;
+	private final int precision;
+	private final boolean oneshot;
+	private final int up;
+	private final int down;
+	private final String target;
 	
 	/**
 	 * Le constructeur des capacités de type offensive.
@@ -30,7 +30,8 @@ public class Capacite {
 	 * @param oneshot_
 	 * @param target
 	 */
-	Capacite(String name_, String description_, float damage_, float precision_, boolean oneshot_, String target){
+	public Capacite(String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
+		name=name_;
 		description=description_;
 		categorie=Categorie.Offensive;
 		damage=damage_;
@@ -51,7 +52,8 @@ public class Capacite {
 	 * @param down
 	 * @param target
 	 */
-	Capacite(String name_, String description_, float precision_,Categorie soutien, int up, int down,String target){
+	public Capacite(String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
+		name = name_;
 		description=description_;
 		categorie=soutien;
 		damage=0;
@@ -70,16 +72,7 @@ public class Capacite {
 	public String getName() {
 		return name;
 	}
-	
-	/**
-	 * Permet de redéfinir le nom de la capacité
-	 * @param name 
-	 * le nouveau nom
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+
 	/**
 	 * Permet de retourner la description de la capacité.
 	 * @return description
@@ -87,29 +80,13 @@ public class Capacite {
 	public String getDescription() {
 		return description;
 	}
-	
+		
 	/**
-	 * Permet de redéfinir la description de la capacité
-	 * @param description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	/**
-	 *Permet d'obtenir les dég�ts qu'inflige la capacité (en cas de capacité offensive)
+	 *Permet d'obtenir les dégâts qu'inflige la capacité (en cas de capacité offensive)
 	 * @return damage
 	 */
 	public float getDamage() {
 		return damage;
-	}
-	
-	/**
-	 * Permet de redéfinir l'attaque d'une capacité.
-	 * @param damage
-	 */
-	public void setDamage(float damage) {
-		this.damage = damage;
 	}
 	
 	/**
@@ -121,28 +98,12 @@ public class Capacite {
 	}
 	
 	/**
-	 *Permet de redéfinir la précision de la capacité.
-	 * @param precision
-	 */
-	public void setPrecision(float precision) {
-		this.precision = precision;
-	}
-	
-	/**
 	 * Permet de savoir la capacité (de type offensive) mettra l'adversaire hors jeu en un coup.
 	 * @return oneshot
 	 * si true donc elle mettra l'adversaire KO en un coup, sinon non.
 	 */
 	public boolean isOneshot() {
 		return oneshot;
-	}
-	
-	/**
-	 * Permet de redéfinir le booléen oneshot
-	 * @param oneshot
-	 */
-	public void setOneshot(boolean oneshot) {
-		this.oneshot = oneshot;
 	}
 	
 	/**
@@ -162,14 +123,6 @@ public class Capacite {
 	}
 	
 	/**
-	 * permet de redéfinir la hausse de statistique
-	 * @param up
-	 */
-	public void setUp(int up) {
-		this.up = up;
-	}
-	
-	/**
 	 * permet d'obtenir la réduction de statistique
 	 * @return down
 	 */
@@ -178,35 +131,20 @@ public class Capacite {
 	}
 	
 	/**
-	 * permet de redéfinir la réduction de statistique
-	 * @param down
-	 */
-	public void setDown(int down) {
-		this.down = down;
-	}
-	
-	/**
 	 * Retourne l'entité qui sera la cible de la capacité
 	 * @return target
-	 * peut �tre soit le personnage contrél�, soit un mob quelconque.
+	 * peut être soit le personnage contrôlé soit un mob quelconque.
 	 */
 	public String getTarget() {
 		return target;
 	}
-	/**
-	 * Redéfinit la cible de la capacité
-	 * @param target
-	 * représente cette cible l�.
-	 */
-	public void setTarget(String target) {
-		this.target = target;
-	}
-	
+
+
 	/**
 	 * Permet d'utiliser une capacité, quel soit offensive, ou défensive (l'augmentation ou la réduction de statistiques) en fonction du lanceur.
 	 * @param user
 	 * représente le lanceur.
-	 */
+	 * */
 	public void use(Entity user) {
 		Entity mob =FirstApplication.loopManager.getGameLoop().perso.mobVS;
 		Entity character = FirstApplication.loopManager.getGameLoop().perso;
@@ -235,6 +173,7 @@ public class Capacite {
 		if(categorie==Categorie.UpHealth) {
 			if(statBonus.get("pv_max")+statBase.get("pv_max")/up <= statBase.get("pv_max")) statBonus.put("pv_max",statBonus.get("pv_max")+statBase.get("pv_max")/up);}
 		else statBonus.put("pv_max",statBonus.get("pv_max"));
+
 		} else System.out.println(user.getNom() +" a raté sa capacité !");
 	}
 	

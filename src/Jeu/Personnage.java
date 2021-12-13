@@ -20,6 +20,7 @@ public class Personnage extends Entity {
     
     //Inventaire et Stats de l'entité
     protected Inventaire inventaire;
+    protected Movepool movepool;
     protected Stats stats;
     protected Stats statsBonus;
 	
@@ -45,7 +46,7 @@ public class Personnage extends Entity {
     }
 
     public Personnage(int joueurId, int entiteId, String nom, int xp, int PV, Stats stats, Inventaire inventaire, double posX, double posY) {
-    	super(entiteId, 1, posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
+    	super(entiteId, BD.getEntiteTypes().get(1), posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
     	this.joueurId = joueurId;
     	this.nom = nom;
     	this.xp = xp;
@@ -154,6 +155,12 @@ public class Personnage extends Entity {
 
 	public Stats getStats() {
 		return stats;
+	}
+
+	@Override
+	public Movepool getMovepool() {
+		// TODO Auto-generated method stub
+		return null;
 	}
     
     

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import BD.BD;
+import BD.EntiteType;
 import BD.Stats;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,15 +15,15 @@ public class Mob extends Entity{
     protected Image imageMob;
     protected static int nbreMobs = 0;
     
-    public Mob(int entiteId, int entiteTypeId, double posX, double posY) throws IOException {
-    	super(entiteId, entiteTypeId, posX, posY);
+    public Mob(int entiteId, EntiteType entiteType, double posX, double posY) throws IOException {
+    	super(entiteId, entiteType, posX, posY);
         nbreMobs++;
     	this.imageMob = new Image("file:res/Images/" + this.getNom() + ".png");
         imageV = new ImageView();
         imageV.setImage(imageMob);
         imageV.setFitWidth(25);
         imageV.setFitHeight(25);
-        this.setPV(BD.getEntiteTypes().get(entiteTypeId).stats.get("pv_max"));
+        this.setPV(entiteType.stats.get("pv_max"));
         this.velocity = 7;
         this.lvl = 1;
     }
@@ -30,7 +31,7 @@ public class Mob extends Entity{
     public Mob(ResultSet table) throws IOException, SQLException {
     	this(
 	    	table.getInt("entite_id"),
-	    	table.getInt("entite_type_id"),
+	    	BD.getEntiteTypes().get(table.getInt("entite_type_id")),
 			table.getDouble("x"),
 			table.getDouble("y")
 		);
@@ -67,10 +68,14 @@ public class Mob extends Entity{
     }
     
     public String getNom() {
-    	return getEntiteType().nom;
+    	return entiteType.nom;
     }
     
     public Stats getStats() {
-    	return getEntiteType().stats;
+    	return entiteType.stats;
+    }
+    
+    public Movepool getMovepool() {
+    	return entiteType.movepool;
     }
 }

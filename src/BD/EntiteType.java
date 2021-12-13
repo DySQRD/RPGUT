@@ -3,22 +3,38 @@ package BD;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import Jeu.Movepool;
+
 public class EntiteType {
 	public final int entiteTypeId;
 	public final String nom;
 	public final Stats stats;
 	public final int xpLoot;
+	public final int xHitbox;
+	public final int yHitbox;
+	public final Movepool movepool;
 	
-	EntiteType(int entiteTypeId, String nom, Stats stats, int xpLoot) {
+	EntiteType(int entiteTypeId, String nom, Stats stats, int xpLoot, int xHitbox, int yHitbox, Movepool movepool) {
 		super();
 		this.entiteTypeId = entiteTypeId;
 		this.nom = nom;
 		this.stats = stats;
 		this.xpLoot = xpLoot;
+		this.xHitbox = xHitbox;
+		this.yHitbox = yHitbox;
+		this.movepool = movepool;
 	}
 
 	EntiteType(ResultSet table) throws SQLException {
-		this(table.getInt("entite_type_id"), table.getString("nom"), new Stats(table), table.getInt("xp_loot"));
+		this(
+			table.getInt("entite_type_id"),
+			table.getString("nom"),
+			new Stats(table),
+			table.getInt("xp_loot"),
+			table.getInt("xHitbox"),
+			table.getInt("yHitbox"),
+			BD.getMovepools().get(table.getInt("movepool_id"))
+		);
 	}
 	
 	static void telecharger() throws SQLException {
@@ -36,7 +52,10 @@ public class EntiteType {
 						entiteTypeTable.getInt("attaque"),
 						entiteTypeTable.getInt("defense")
 					),
-					entiteTypeTable.getInt("xp_loot")
+					entiteTypeTable.getInt("xp_loot"),
+					entiteTypeTable.getInt("xHitbox"),
+					entiteTypeTable.getInt("yHitbox"),
+					BD.getMovepools().get(entiteTypeTable.getInt("movepool_id"))
 				)
 			);
 		}

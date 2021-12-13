@@ -14,9 +14,10 @@ import Exceptions.ImprevuDBError;
 import Jeu.Capacite;
 import Jeu.CombatLoop;
 import Jeu.Entity;
+import Jeu.Categorie;
 import Jeu.FirstApplication;
-import Jeu.GameLoop;
 import Jeu.Mob;
+import Jeu.Movepool;
 import Jeu.Personnage;
 
 
@@ -100,6 +101,7 @@ public class BD {
 	 */
 	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
 	private static HashMap<Integer, Capacite> capacites = new HashMap<Integer, Capacite>();
+	private static HashMap<Integer, Movepool> movepools = new HashMap<Integer, Movepool>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
@@ -354,18 +356,28 @@ public class BD {
 	private static void telechargerCapacite() throws SQLException {
 		ResultSet capaciteTable = telecharger("capacite");
 		while(capaciteTable.next()) {
-			capacites.put(
-				capaciteTable.getInt("capacite_id"),
-				new Capacite(
-					capaciteTable.getInt("capacite_id"),
+			Capacite cap;
+			if((capaciteTable.getString("categorie")).equals("Offensive")) {
+				cap = new Capacite(
 					capaciteTable.getString("nom"),
+					capaciteTable.getString("description"),
 					capaciteTable.getInt("puissance"),
 					capaciteTable.getInt("precision"),
-					capaciteTable.getString("cibles"),
+					capaciteTable.getBoolean("oneshot"),
+					capaciteTable.getString("cibles")
+				);
+			} else {
+				cap = new Capacite(
+					capaciteTable.getString("nom"),
+					capaciteTable.getString("description"),
+					capaciteTable.getInt("precision"),
+					Categorie.valueOf(capaciteTable.getString("categorie")),
 					capaciteTable.getInt("up"),
 					capaciteTable.getInt("down"),
-					capaciteTable.getString("description"),
-					Categorie.valueOf(capaciteTable.getString("categorie"))));
+					capaciteTable.getString("cibles")
+				);
+			}
+			capacites.put(capaciteTable.getInt("capacite_id"), cap);
 		}
 	}
 	
@@ -414,6 +426,7 @@ public class BD {
 	}
 	
 	private static void sauvegarderObjet() throws SQLException {
+		connexion.setAutoCommit(false);
 		//Supprimer tous les objets du joueur dans la BD...
 		informer("DELETE FROM objet WHERE joueur_id = ?", personnage.getJoueurId());
 		//...puis insérer les objets de l'Inventaire dans la BD.
@@ -426,9 +439,11 @@ public class BD {
 			preparedStatement.addBatch();
 		}
 		preparedStatement.executeBatch();
+		connexion.setAutoCommit(true);
 	}
 
 	private static void sauvegarderVictoire() throws SQLException {
+		connexion.setAutoCommit(false);
 		//Ajoute à la BD les ids des mobs vaincus depuis le dernier chargement de sauvegarde.
 		preparer("INSERT INTO victoire VALUES(?,?)");
 		for(int i = 0; i < vaincus.size(); i++) {
@@ -437,6 +452,7 @@ public class BD {
 		}
 		preparedStatement.executeBatch();
 		vaincus.clear();	//On vide la liste pour que les mêmes mobs ne soient pas envoyés de nouveau.
+		connexion.setAutoCommit(true);
 	}
 
 	/**
@@ -581,6 +597,10 @@ public class BD {
 		return capacites;
 	}
 	
+	public static HashMap<Integer, Movepool> getMovepools() {
+		return movepools;
+	}
+	
 	/*
 	 * Méthodes de gestion dans la BD.
 	 * Ces méthodes ne doivent être utilisées que par les développeurs
@@ -632,5 +652,19 @@ public class BD {
 		return derniereId("stats");
 	}
 
-	
+	public static int creerCapacite(Capacite capacite) throws SQLException {
+		informer("INSERT INTO capacite(capacite_id, nom, puissance, precisionn, cibles, oneshot, up, down, description, categorie) "
+			+ "VALUES(NULL, ?, ?, ?);",
+			capacite.getName(),
+			capacite.getDamage(),
+			capacite.getPrecision(),
+			capacite.getTarget(),
+			capacite.isOneshot(),
+			capacite.getUp(),
+			capacite.getDown(),
+			capacite.getDescription(),
+			capacite.getCategorie()
+		);
+		return derniereId("capacite");
+	}
 }

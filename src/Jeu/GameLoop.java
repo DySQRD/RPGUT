@@ -120,10 +120,7 @@ public class GameLoop extends AnimationTimer {
         
         if(BD.getEntites().get(currentLevel).containsKey(levels.get(currentLevel).currentMap)) {
             for(Integer mobID : getCurrentLevelMapMobs().keySet()){
-            	System.out.println(mobID);
-            	System.out.println(BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).get(mobID));
-                //root.getChildren().add(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(k).imageV);
-                root.getChildren().add(BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap).get(mobID).imageV);
+            	root.getChildren().add(getCurrentLevelMapMobs().get(mobID).imageV);
             }
         }
     }

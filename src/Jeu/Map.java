@@ -1,6 +1,8 @@
 package Jeu;
 
 import com.google.gson.annotations.Expose;
+
+import BD.BD;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -122,7 +124,7 @@ public class Map {
         for(int i=0; i<nbreMobs; i++) {
             spawnX = Math.random() * width * tilewidth;
             spawnY = Math.random() * height * tileheight;
-            this.mobs.add(new Mob(2, 2, 200, 200));
+            this.mobs.add(new Mob(2, BD.getEntiteTypes().get(2), 200, 200));
             mobs.get(i).hitbox = new Rectangle(0, 0, mobs.get(i).imageV.getFitWidth(), mobs.get(i).imageV.getFitHeight());
             mobs.get(i).tp(spawnX, spawnY);
             do {

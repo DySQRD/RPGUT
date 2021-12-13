@@ -10,7 +10,7 @@ public abstract class Entity {
 	//Id d'instance d'entité dans la BD
 	protected int entiteId;
 	//Id de type d'entité dans la BD
-	protected int entiteTypeId;
+	protected EntiteType entiteType;
 	
     //Position à l'écran (0,0 = en haut à gauche)
     protected double posX, posY;
@@ -39,9 +39,9 @@ public abstract class Entity {
     
     protected final Stats statsPerLevel = new Stats(10, 2, 2);
     
-	public Entity(int entiteId, int entiteTypeId, double posX, double posY) {
+	public Entity(int entiteId, EntiteType entiteType, double posX, double posY) {
 		this.entiteId = entiteId;
-    	this.entiteTypeId = entiteTypeId;
+    	this.entiteType = entiteType;
         this.posX = posX;
         this.posY = posY;
     }
@@ -66,7 +66,7 @@ public abstract class Entity {
     
     public abstract String getNom();
     public abstract Stats getStats();
-
+    public abstract Movepool getMovepool();
 
     /**
      * Statistique après calcul des bonus.
@@ -78,12 +78,6 @@ public abstract class Entity {
     	return getStats().get(stat); //+ statsBonus.get(stat)
     }
     
-    
-    
-    public EntiteType getEntiteType() {
-    	return BD.getEntiteTypes().get(entiteTypeId);
-    }
-    
     public double getPosX() {
 		return posX;
 	}
@@ -93,7 +87,7 @@ public abstract class Entity {
 	}
 
 	public int getXpLoot() {
-    	return BD.getEntiteTypes().get(entiteTypeId).xpLoot;
+    	return entiteType.xpLoot;
     }
 
 	public int getPV() {
@@ -108,5 +102,11 @@ public abstract class Entity {
         this.setPV(getStats().get("pv_max"));
     }
     
+	public int getDxHitbox() {
+		return entiteType.xHitbox;
+	}
 	
+	public int getDyHitbox() {
+		return entiteType.yHitbox;
+	}
 }
