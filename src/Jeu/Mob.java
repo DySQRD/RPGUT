@@ -10,6 +10,7 @@ import BD.EntiteType;
 import BD.Stats;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 
 public class Mob extends Entity{
     protected Image imageMob;
@@ -23,6 +24,9 @@ public class Mob extends Entity{
         imageV.setImage(imageMob);
         imageV.setFitWidth(25);
         imageV.setFitHeight(25);
+        imageV.setX(posX);
+        imageV.setY(posY);
+        this.hitbox = new Rectangle(posX+dxHitbox, posY+dyHitbox, 20, 20);
         this.setPV(entiteType.stats.get("pv_max"));
         this.velocity = 7;
         this.lvl = 1;

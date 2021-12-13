@@ -117,6 +117,7 @@ public class GameLoop extends AnimationTimer {
         System.out.println("map: " + levels.get(currentLevel).currentMap);
         System.out.println("entites: " + BD.getEntites());
         System.out.println(BD.getEntites().get(currentLevel).keySet());
+
         
         if(BD.getEntites().get(currentLevel).containsKey(levels.get(currentLevel).currentMap)) {
             for(Integer mobID : getCurrentLevelMapMobs().keySet()){
@@ -296,7 +297,7 @@ public class GameLoop extends AnimationTimer {
         checkCombatMob();
     }
 
-    public void checkCombatPerso(){
+    /*public void checkCombatPerso(){
         for(int i=0; i<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().size(); i++){
             if(perso.hitbox.getBoundsInParent().intersects(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
                 perso.mobVS = levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(i);
@@ -312,6 +313,30 @@ public class GameLoop extends AnimationTimer {
                 perso.mobVS = levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(i);
                 loopManager.combatLoop.tourMob = true;
                 enterCombat();
+            }
+        }
+    }*/
+
+    public void checkCombatPerso(){
+        if(BD.getEntites().get(currentLevel).containsKey(levels.get(currentLevel).currentMap)) {
+            for(Integer mobID : getCurrentLevelMapMobs().keySet()){
+                if(perso.hitbox.getBoundsInParent().intersects(getCurrentLevelMapMobs().get(mobID).hitbox.getBoundsInParent())) {
+                    perso.mobVS = getCurrentLevelMapMobs().get(mobID);
+                    loopManager.combatLoop.tourMob = false;
+                    enterCombat();
+                }
+            }
+        }
+    }
+
+    public void checkCombatMob(){
+        if(BD.getEntites().get(currentLevel).containsKey(levels.get(currentLevel).currentMap)) {
+            for(Integer mobID : getCurrentLevelMapMobs().keySet()){
+                if(perso.hitbox.getBoundsInParent().intersects(getCurrentLevelMapMobs().get(mobID).hitbox.getBoundsInParent())) {
+                    perso.mobVS = getCurrentLevelMapMobs().get(mobID);
+                    loopManager.combatLoop.tourMob = true;
+                    enterCombat();
+                }
             }
         }
     }

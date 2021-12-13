@@ -354,7 +354,8 @@ public class CombatLoop extends AnimationTimer {
         System.out.println("Vous avez battu " + gameLoop.perso.mobVS.getNom() +" "+ gameLoop.perso.mobVS.entiteId);
         BD.victoire(gameLoop.perso.mobVS.entiteId);
         gameLoop.perso.giveXp();
-        gameLoop.getCurrentLevel().getMap(gameLoop.getCurrentLevel().getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
+        //gameLoop.getCurrentLevel().getMap(gameLoop.getCurrentLevel().getCurrentMap()).getMobs().remove(gameLoop.perso.mobVS);
+        BD.victoire(gameLoop.perso.mobVS.entiteId);
         loopManager.game();
     }
 
