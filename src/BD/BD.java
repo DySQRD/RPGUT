@@ -15,6 +15,7 @@ import Jeu.Capacite;
 import Jeu.Categorie;
 import Jeu.FirstApplication;
 import Jeu.Listecapacite;
+import Jeu.Listeobjet;
 import Jeu.Mob;
 import Jeu.Movepool;
 import Jeu.Personnage;
@@ -358,15 +359,17 @@ public class BD {
 			Capacite cap;
 			if((capaciteTable.getString("categorie")).equals("Offensive")) {
 				cap = new Capacite(
+					capaciteTable.getInt("capacite_id"),
 					capaciteTable.getString("nom"),
 					capaciteTable.getString("description"),
 					capaciteTable.getInt("puissance"),
-					capaciteTable.getInt("precision"),
+					capaciteTable.getInt("precisionn"),
 					capaciteTable.getBoolean("oneshot"),
 					capaciteTable.getString("cibles")
 				);
 			} else {
 				cap = new Capacite(
+					capaciteTable.getInt("capacite_id"),
 					capaciteTable.getString("nom"),
 					capaciteTable.getString("description"),
 					capaciteTable.getInt("precisionn"),
@@ -664,6 +667,15 @@ public class BD {
 			capacite.getDown(),
 			capacite.getDescription(),
 			capacite.getCategorie().toString()
+		);
+		return derniereId("capacite");
+	}
+	public static int creerObjetType(ObjetType objetType) throws SQLException {
+		informer("INSERT INTO objet_type(nom, durabilite_max, capacite_id) "
+			+ "VALUES(?, ?, ?);",
+			objetType.nom,
+			objetType.durabiliteMax,
+			objetType.capacite.getCapaciteId()
 		);
 		return derniereId("capacite");
 	}

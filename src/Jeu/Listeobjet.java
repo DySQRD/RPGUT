@@ -22,7 +22,7 @@ public class Listeobjet extends HashMap<Integer,ObjetType> {
 	/**
 	 * Crée la liste d'objet nécessaire.
 	 */
-	Listeobjet(){
+	public Listeobjet(){
 		Listecapacite liste = new Listecapacite();
 		put(count.incrementAndGet(),new ObjetType(countID.incrementAndGet(),"Café",5,liste.get(32)));
 		put(count.incrementAndGet(),new ObjetType(countID.incrementAndGet(), "Batterie Externe",2,liste.get(33)));

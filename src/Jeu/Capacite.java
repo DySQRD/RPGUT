@@ -10,7 +10,7 @@ public class Capacite {
 	/* Dans nos idées actuels, une capacité possède un identifiant, un nom,une description, un type, des dégats, une précision, et peut éliminer
 	 * en un coup, d'où le booléan "oneshot"*/
 	
-
+	private final int capaciteId;
 	private final String name;
 	private final String description;
 	private final Categorie categorie;
@@ -21,6 +21,7 @@ public class Capacite {
 	private final int down;
 	private final String target;
 	
+	
 	/**
 	 * Le constructeur des capacités de type offensive.
 	 * @param name_
@@ -30,7 +31,8 @@ public class Capacite {
 	 * @param oneshot_
 	 * @param target
 	 */
-	public Capacite(String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
+	public Capacite(int capaciteId, String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
+		this.capaciteId = capaciteId;
 		name=name_;
 		description=description_;
 		categorie=Categorie.Offensive;
@@ -52,7 +54,8 @@ public class Capacite {
 	 * @param down
 	 * @param target
 	 */
-	public Capacite(String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
+	public Capacite(int capaciteId, String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
+		this.capaciteId = capaciteId;
 		name = name_;
 		description=description_;
 		categorie=soutien;
@@ -62,6 +65,13 @@ public class Capacite {
 		this.down=down;
 		oneshot=false;
 		this.target=target;
+	}
+	
+	/**
+	 * 
+	 */
+	public int getCapaciteId() {
+		return capaciteId;
 	}
 	
 	/**
