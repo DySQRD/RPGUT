@@ -12,7 +12,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
+/**
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
 public class FirstApplication extends Application {
 	public static LoopManager loopManager;
 
@@ -22,7 +26,11 @@ public class FirstApplication extends Application {
         System.out.println("Before");
     }
 
-    //Lancement de l'application
+    /**
+     * La méthode où la taille de la fênetre, le stage, les scenes, et la gestion d'évenement en temps réel sont pris en compte.
+     * Exécute aussi l'application.
+     * @param 
+     **/
     @Override
     public void start(Stage stage) throws Exception {
 

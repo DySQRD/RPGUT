@@ -10,9 +10,13 @@ import javafx.scene.layout.VBox;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author Marc SANCHEZ
+ *  
+ */
 public class PauseLoop extends AnimationTimer {
-
+	
     protected LoopManager loopManager;
     protected GameLoop gameLoop;
     protected boolean menu = true;
@@ -29,7 +33,16 @@ public class PauseLoop extends AnimationTimer {
     protected Label menuLabel = new Label("Menu de connexion");
     protected Label backLabel = new Label("Retour");
     protected ArrayList<Label> labelList = new ArrayList<Label>();
-
+    
+    /**
+     * Crée l'interface de pause (Permettra de sauvegarder, vérifier les stats etc)
+     * @param width
+     * Largeur de l'écran de pause.
+     * @param height
+     * Hauteur de l'écran de pause.
+     * @param gameloop
+     * Boucle de jouabilité à mettre en pause.
+     */
     public PauseLoop(Double width, Double height, GameLoop gameloop){
         this.gameLoop = gameloop;
         pane.setPrefSize(width*0.75, height*0.75);
@@ -50,15 +63,24 @@ public class PauseLoop extends AnimationTimer {
         vBox.setStyle(vBoxCSS);
         pane.getChildren().add(vBox);
     }
-
+    
+    /**
+     * Ajoute un group de nodes (ce qui permettra d'ajouter des éléments graphiques).
+     */
     public void displayInit() {
         gameLoop.root.getChildren().add(pane);
     }
-
+    
+    /**
+     * Retire le groupe de nodes (ce qui pourra être appelé une "interface").
+     */
     public void displayRemove(){
         gameLoop.root.getChildren().remove(pane);
     }
-
+    
+    /**
+     * Sélectionne la case au dessus, lui attribue une couleur à l'élément choisi (pour la visibilité) et l'entoure.
+     */
     public void moveCursorUp(){
         if(menu){
             if(menuSelected == 0){}
@@ -69,7 +91,9 @@ public class PauseLoop extends AnimationTimer {
             }
         }
     }
-
+    /**
+     * Sélectionne la case au dessous, lui attribue une couleur à l'élément choisi (pour la visibilité) et l'entoure.
+     */
     public void moveCursorDown(){
         if(menu){
             if(menuSelected == labelList.size()-1){}
@@ -80,7 +104,12 @@ public class PauseLoop extends AnimationTimer {
             }
         }
     }
-
+    
+    /**
+     * Crée les cases de l'interface de pause (Sauvegarde, Stats, etc)
+     * @throws SQLException
+     * Erreur SQL
+     */
     public void select() throws SQLException {
         if(menu){
             switch(menuSelected){
@@ -92,7 +121,10 @@ public class PauseLoop extends AnimationTimer {
             }
         }
     }
-
+    
+    /**
+     * Permet de fermer l'interface.
+     */
     public void escape(){
         loopManager.game();
     }

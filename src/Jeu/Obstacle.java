@@ -3,6 +3,11 @@ package Jeu;
 import com.google.gson.annotations.Expose;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
 public class Obstacle {
     @Expose
     public float height;
@@ -17,8 +22,10 @@ public class Obstacle {
     @Expose
     public float y;
     public Rectangle hitbox = null;
-    //https://stackoverflow.com/questions/56803554/exception-in-thread-thread-0-java-lang-reflect-inaccessibleobjectexception
 
+    /**
+     * Crée un objet Obstacle, permettant soit de définir les limites du niveau, soit les portes de sortie.
+     */
     public Obstacle(){}
     public void setHitbox(){
         this.hitbox = new Rectangle(x, y, width, height);
