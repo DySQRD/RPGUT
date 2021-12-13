@@ -19,7 +19,7 @@ public class Listecapacite extends HashMap<Integer,Capacite> {
 	/**
 	 * Crée la liste de capacité nécessaire.
 	 */
-	Listecapacite(){
+	public Listecapacite(){
 		put(count.incrementAndGet(), new Capacite("D.E.S","Décompose l'adversaire en plusieurs éléments. ", 90, Categorie.DownDefense, 0, 2, "adversaire"));
 		put(count.incrementAndGet(), new Capacite("IPP","Intégre l'adversaire pour n'en faire qu'une bouchée. Inflige des dégâts.",10,80,false,"adversaire"));
 		put(count.incrementAndGet(), new Capacite("Changement de variable","S'adapte à l'adversaire et utilise les variables nécessaires pour lui infliger des dégâts.",8,100,false,"adversaire"));

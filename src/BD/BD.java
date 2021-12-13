@@ -12,10 +12,9 @@ import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
 import Jeu.Capacite;
-import Jeu.CombatLoop;
-import Jeu.Entity;
 import Jeu.Categorie;
 import Jeu.FirstApplication;
+import Jeu.Listecapacite;
 import Jeu.Mob;
 import Jeu.Movepool;
 import Jeu.Personnage;
@@ -370,7 +369,7 @@ public class BD {
 				cap = new Capacite(
 					capaciteTable.getString("nom"),
 					capaciteTable.getString("description"),
-					capaciteTable.getInt("precision"),
+					capaciteTable.getInt("precisionn"),
 					Categorie.valueOf(capaciteTable.getString("categorie")),
 					capaciteTable.getInt("up"),
 					capaciteTable.getInt("down"),
@@ -654,8 +653,8 @@ public class BD {
 	}
 
 	public static int creerCapacite(Capacite capacite) throws SQLException {
-		informer("INSERT INTO capacite(capacite_id, nom, puissance, precisionn, cibles, oneshot, up, down, description, categorie) "
-			+ "VALUES(NULL, ?, ?, ?);",
+		informer("INSERT INTO capacite(nom, puissance, precisionn, cibles, oneshot, up, down, description, categorie) "
+			+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
 			capacite.getName(),
 			capacite.getDamage(),
 			capacite.getPrecision(),
@@ -664,7 +663,7 @@ public class BD {
 			capacite.getUp(),
 			capacite.getDown(),
 			capacite.getDescription(),
-			capacite.getCategorie()
+			capacite.getCategorie().toString()
 		);
 		return derniereId("capacite");
 	}

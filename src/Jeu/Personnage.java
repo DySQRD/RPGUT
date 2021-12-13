@@ -164,8 +164,7 @@ public class Personnage extends Entity {
 
 	@Override
 	public Movepool getMovepool() {
-		// TODO Auto-generated method stub
-		return null;
+		return movepool;
 	}
     
     
