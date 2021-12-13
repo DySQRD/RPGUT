@@ -46,7 +46,7 @@ public class GameLoop extends AnimationTimer {
      * @param root
      * L'objet Group permettant de stocker tout node.
      * @throws IOException
-     * Erreur d'input/output.
+     * Erreur d'input/output
      * @throws SQLException
      * Erreur de BDD/SQL.
      */

@@ -47,6 +47,7 @@ public class LoopManager {
         this.currentLoop = combatLoop;
 
     }
+    
     public void game(){
         if (currentLoop instanceof CombatLoop) {
             combatLoop.stop();
@@ -70,8 +71,8 @@ public class LoopManager {
             gameLoop.start();
             this.currentLoop = gameLoop;
         }
-
     }
+
     public void pause(){
         gameLoop.stop();
         pauseLoop.displayInit();

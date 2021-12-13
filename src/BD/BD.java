@@ -390,11 +390,8 @@ public class BD {
 		sauvegarderJoueur();
 		sauvegarderEntite();
 		sauvegarderStats();
-		connexion.setAutoCommit(false);
 		sauvegarderObjet();
 		sauvegarderVictoire();
-		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
-		connexion.setAutoCommit(true);
 	}
 	
 	private static void sauvegarderJoueur() throws SQLException {
@@ -439,6 +436,7 @@ public class BD {
 			preparedStatement.addBatch();
 		}
 		preparedStatement.executeBatch();
+		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
 		connexion.setAutoCommit(true);
 	}
 
@@ -452,6 +450,7 @@ public class BD {
 		}
 		preparedStatement.executeBatch();
 		vaincus.clear();	//On vide la liste pour que les mêmes mobs ne soient pas envoyés de nouveau.
+		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
 		connexion.setAutoCommit(true);
 	}
 
@@ -535,8 +534,10 @@ public class BD {
 	 * @param mob_id
 	 */
 	public static void victoire(int entite_id) {
+		int lvl = FirstApplication.loopManager.getGameLoop().getCurrentLevelId();
+		int map = FirstApplication.loopManager.getGameLoop().getCurrentMapId();
 		vaincus.add(entite_id);
-		entites.remove(entite_id);
+		entites.get(lvl).get(map).remove(entite_id);
 	}
 
 	/**
