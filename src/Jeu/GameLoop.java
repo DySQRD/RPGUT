@@ -16,7 +16,11 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+/**
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
 public class GameLoop extends AnimationTimer {
     protected long delta = 0;
     protected long lastFrameTime=0;
@@ -37,6 +41,15 @@ public class GameLoop extends AnimationTimer {
 
     protected double width, height;
 
+    /**
+     * Une boucle de jouabilité pour gérer les niveaux, leurs map etc
+     * @param root
+     * L'objet Group permettant de stocker tout node.
+     * @throws IOException
+     * Erreur d'input/output.
+     * @throws SQLException
+     * Erreur de BDD/SQL.
+     */
     public GameLoop(Group root) throws IOException, SQLException {
 
         //Désérialisation du tileset dans tileset1
@@ -109,6 +122,9 @@ public class GameLoop extends AnimationTimer {
         this.pauseLoop = new PauseLoop(width, height, this);
     }
 
+    /**
+     * Met à jour l'affichage de l'écran (Niveau, map, et monstres).
+     */
     public void displayUpdate(){
         this.root.getChildren().clear();
         this.root.getChildren().addAll(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getCanvas(), fpsLabel, mouseLocationLabel, perso.imageV);
@@ -124,12 +140,24 @@ public class GameLoop extends AnimationTimer {
             }
         }
     }
-
+    
+    /**
+     * à utiliser en combat. Gère le tour par tour pour les capacités, la fuite, et les objets.
+     */
     public void enterCombat(){
         this.loopManager.combat();
     }
-    public void enterPause(){this.loopManager.pause();}
-
+    
+    /**
+     *	permet de mettre en pause la boucle de jouabilité. 
+     */
+    public void enterPause(){
+    	this.loopManager.pause();
+    	}
+    
+    /**
+     * 
+     */
     @Override
     public void handle(long now) {
         //compteur de fps
@@ -295,7 +323,9 @@ public class GameLoop extends AnimationTimer {
         }
         checkCombatMob();
     }
-
+    /**
+     * Vérifie si le personnage est entré en collision avec un monstre, et donc si le combat est initié par le joueur.
+     */
     public void checkCombatPerso(){
         for(int i=0; i<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().size(); i++){
             if(perso.hitbox.getBoundsInParent().intersects(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
@@ -305,7 +335,9 @@ public class GameLoop extends AnimationTimer {
             }
         }
     }
-
+    /**
+     * Vérifie si le mob est entré en collision avec un personnage, et donc si le combat est initié par un monstre.
+     */
     public void checkCombatMob(){
         for(int i=0; i<levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().size(); i++){
             if(perso.hitbox.getBoundsInParent().intersects(levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap()).getMobs().get(i).hitbox.getBoundsInParent())){
@@ -316,34 +348,73 @@ public class GameLoop extends AnimationTimer {
         }
     }
     
+    /**
+     * Retourne le niveau.
+     * @return currentLevel
+     * L'id du niveau actuel
+     */
     public int getCurrentLevelId() {
     	return currentLevel;
     }
     
+    /**
+     * Permet de définir l'id du niveau actuel
+     * @param levelId
+     * l'id du niveau à sélectionner.
+     */
     public void setCurrentLevelId(int levelId) {
     	currentLevel = levelId;
     }
     
+    /**
+     * Retourne un objet Level.
+     * @return levels.get(currentLevel)
+     * l'objet level
+     */
     public Level getCurrentLevel() {
     	return levels.get(currentLevel);
     }
-    
+    /**
+     * Retourne la map actuelle.
+     * @return levels.get(currentLevel).currentMap
+     * la map actuel du niveau actuel
+     */
     public int getCurrentMapId() {
     	return levels.get(currentLevel).currentMap;
     }
     
+    /**
+     * Permet de définir la map.
+     * @param mapId
+     * l'id de la map à définir.
+     */
     public void setCurrentMapId(int mapId) {
     	levels.get(currentLevel).currentMap = mapId;
     }
     
+    /**
+     * Retourne un objet Map
+     * @return levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap())
+     * l'objet Map (généralement la map sur laquelle on se situe).
+     */
     private Map getCurrentMap() {
     	return levels.get(currentLevel).getMap(levels.get(currentLevel).getCurrentMap());
     }
     
+    /**
+     * Retourne la map sur laquelle chaque mob se situe.
+     * @return BD.getEntites().get(currentLevel)
+     * toutes entités sur chaque map de chaque niveau.
+     */
     private HashMap<Integer, HashMap<Integer, Mob>> getCurrentLevelMaps() {
     	return BD.getEntites().get(currentLevel);
     }
     
+    /**
+     * Retourne les mobs de la map actuelle.
+     * @return BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap)
+     * les entités(dont le joueur) à la map actuelle du level actuel.
+     */
     private HashMap<Integer, Mob> getCurrentLevelMapMobs() {
     	return BD.getEntites().get(currentLevel).get(levels.get(currentLevel).currentMap);
     }

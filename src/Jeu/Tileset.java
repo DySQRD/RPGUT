@@ -9,6 +9,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.Buffer;
 
+/**
+ * 
+ * @author Marc Sanchez
+ *
+ */
+
 public class Tileset{
 
     @Expose
@@ -43,10 +49,17 @@ public class Tileset{
 
     //L'image du tileset en pixels
     public BufferedImage bufferedImage;
-
+    
+    /**
+     * Permet de créer un Tileset, or l'objet qui représentera visuel un level
+     */
     public Tileset(){}
 
     //.png -> BufferedImage
+    /**
+     * Récupère les textures nécessaires pour créer le level.
+     * @throws IOException
+     */
     public void loadbImage() throws IOException {
         BufferedImage bImage = ImageIO.read(new File(this.image));
         this.bufferedImage = bImage;

@@ -12,6 +12,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
 
 public class Personnage extends Entity {
 	//Id du joueur

@@ -7,8 +7,8 @@ import BD.Stats;
  *
  */
 public class Capacite {
-	/* Dans nos idées actuels, une capacité poss�de un identifiant, un nom,une description, un type, des dégats, une précision, et peut éliminer
-	 * en un coup, d'o� le booléan "oneshot"*/
+	/* Dans nos idées actuels, une capacité possède un identifiant, un nom,une description, un type, des dégats, une précision, et peut éliminer
+	 * en un coup, d'où le booléan "oneshot"*/
 	
 
 	private final String name;
