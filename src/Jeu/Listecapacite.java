@@ -10,45 +10,82 @@ public class Listecapacite extends HashMap<Integer,Capacite> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	/*Cette classe permet de créer des listes de capacités, que ce soit la liste totale des capacités, la liste ennemi, ou la liste du personnage*/
+	/*Cette classe permet de crÃ©er des listes de capacitÃ©s, que ce soit la liste totale des capacitÃ©s, la liste ennemi, ou la liste du personnage*/
 	
 	private static final AtomicInteger count = new AtomicInteger(0);
 	
 	Listecapacite(){
-		put(count.incrementAndGet(), new Capacite("D.E.S","Décompose l'adversaire en plusieurs éléments. ", 90, Categorie.DownDefense, 0, 2, "adversaire"));
-		put(count.incrementAndGet(), new Capacite("IPP","Intègre l'adversaire pour n'en faire qu'une bouchée. Inflige des dégâts.",10,80,false,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Changement de variable","S'adapte à l'adversaire et utilise les variables nécessaires pour lui infliger des dégâts.",8,100,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("D.E.S","DÃ©compose l'adversaire en plusieurs Ã©lÃ©ments. ", 90, Categorie.DownDefense, 0, 2, "adversaire"));
+		put(count.incrementAndGet(), new Capacite("IPP","IntÃ©gre l'adversaire pour n'en faire qu'une bouchÃ©e. Inflige des dÃ©gÃ¢ts.",10,80,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Changement de variable","S'adapte Ã  l'adversaire et utilise les variables nÃ©cessaires pour lui infliger des dÃ©gÃ¢ts.",8,100,false,"adversaire"));
 		put(count.incrementAndGet(), new Capacite("Garbage Collector","Invoque le GC pour attaquer l'adversaire.",15,60,false,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Ciscocted","Crée un réseau virtuel pour infliger une grosse quantité de dégâts à l'adversaire. Tue l'adversaire en un coup.",999,30,true,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Eveil Forcé","S'efforce à se réveiller et se préparer pour les partiels. Augmente l'attaque de moitié.",85,Categorie.UpAttaque,2,0,"soi"));
-		put(count.incrementAndGet(), new Capacite("Coup d'crayon","Capacité simple, basique, mais fait l'affaire. Inflige des capacités.",5,100,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Ciscocted","CrÃ©e un rÃ©seau virtuel pour infliger une grosse quantitÃ© de dÃ©gÃ¢ts Ã  l'adversaire. Tue l'adversaire en un coup.",999,30,true,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Eveil ForcÃ©","S'efforce Ã  se rÃ©veiller et se prÃ©parer pour les partiels. Augmente l'attaque de moitiÃ©.",85,Categorie.UpAttaque,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Coup d'crayon","capacitÃ© simple, basique, mais fait l'affaire. Inflige des capacitÃ©s.",5,100,false,"adversaire"));
 		put(count.incrementAndGet(), new Capacite("SWITCH","Centralise toute l'attaque via un commutateur. Augmente l'attaque d'un quart.",100,Categorie.UpAttaque,4,0,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("HUB","Centralise toute la défense via un concentrateur. Augmente la défense d'un quart.", 100, Categorie.UpDefense,4,0,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Celene","Accède aux modules et leur cours pour acquérir des capacités et double l'attaque.", 30, Categorie.UpAttaque, 1, 0,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Recherche Google","Obtient les connaissances nécessaires sur Google, peut être considérer comme de la triche. Augmente l'attaque d'un cinquième.",40,Categorie.UpAttaque,5,0,"soi"));
-		put(count.incrementAndGet(), new Capacite("Factorisation","Simplifie au maximum l'adversaire, retire complètement la défense.",20,Categorie.DownDefense,1,0,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Abstraction","Fait abstraction de ce qu'il pourra lui porter atteinte. Augmente la défense de moitié.",70, Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("HUB","Centralise toute la dÃ©fense via un concentrateur. Augmente la dÃ©fense d'un quart.", 100, Categorie.UpDefense,4,0,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Celene","AccÃ¨de aux modules et leur cours pour acquÃ©rir des capacitÃ©s et double l'attaque.", 30, Categorie.UpAttaque, 1, 0,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Recherche Google","Obtient les connaissances nÃ©cessaires sur Google, peut Ãªtre considÃ©rer comme de la triche. Augmente l'attaque d'un cinquiÃ¨me.",40,Categorie.UpAttaque,5,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Factorisation","Simplifie au maximum l'adversaire, retire complÃ¨tement la dÃ©fense.",20,Categorie.DownDefense,1,0,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Abstraction","Fait abstraction de ce qu'il pourra lui porter atteinte. Augmente la dÃ©fense de moitiÃ©.",70, Categorie.UpDefense,2,0,"soi"));
 		put(count.incrementAndGet(), new Capacite("Heritage","Augmente son attaque d'un quart.",100,Categorie.UpAttaque,4,0,"soi"));
-		put(count.incrementAndGet(), new Capacite("ArrayList","Retourne tous les éléments d'une arraylist et inflige des dégâts.",15,60,false,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("HashMap","Retourne tous les éléments et leur clé d'une hashmap et inflige des dégâts.",20,50,false,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("PERT","Si vous êtes mal organisé, cette capacité peut porter préjudice ... et c'est le cas. un quart de défense de moins.",80,Categorie.DownDefense,0,4,"soi"));
-		put(count.incrementAndGet(), new Capacite("GANTT","S'organise sur le temps en fonction des tâches. Augmente les points de vie d'un quart.",100,Categorie.UpHealth,4,0,"soi"));
-		put(count.incrementAndGet(), new Capacite("RACI","Fait appel à ses coéquipiers et s'organisent tous ensemble pour réduire les points de vie de l'adversaire de moitié.",90,Categorie.DownHealth,0,2,"soi"));
+		put(count.incrementAndGet(), new Capacite("ArrayList","Retourne tous les Ã©lÃ©ments d'une arraylist et inflige des dÃ©gÃ¢ts.",15,60,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("HashMap","Retourne tous les Ã©lÃ©ments et leur clÃ© d'une hashmap et inflige des dÃ©gÃ¢ts.",20,50,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("PERT","Si vous Ãªtes mal organisÃ©, cette capacitÃ© peut porter prÃ©judice ... et c'est le cas. un quart de dÃ©fense de moins.",80,Categorie.DownDefense,0,4,"soi"));
+		put(count.incrementAndGet(), new Capacite("GANTT","S'organise sur le temps en fonction des tÃ¢ches. Augmente les points de vie d'un quart.",100,Categorie.UpHealth,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("RACI","Fait appel Ã  ses coÃ©quipiers et s'organisent tous ensemble pour rÃ©duire les points de vie de l'adversaire de moitiÃ©.",90,Categorie.DownHealth,0,2,"soi"));
 		put(count.incrementAndGet(), new Capacite("Implement","Restaure entierement la vie.",20,Categorie.UpHealth,1,0,"soi"));
 		put(count.incrementAndGet(), new Capacite("Extend","Retire toute la vie de l'adversaire.",20,Categorie.DownHealth,1,0,"soi"));
 		put(count.incrementAndGet(), new Capacite("Diagramme de classe","Submerge l'adversaire d'une tonne d'information qu'il ne pourra jamais traiter. Met ko en un coup.",999,30,true,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Diagramme de cas d'utilisation","Vérifie toute utilisation possible et réduit l'attaque de l'adversaire.",90,Categorie.DownAttaque,4,0,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Diagramme de séquence","Trace tous les processus avec des if et else. Réduit la défense de moitié.",80, Categorie.DownDefense,2,0,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Diagramme d'activité","Réduit la vie de l'adversaire de moitié.",60,Categorie.DownHealth,0,2,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("null pointer exception","Cauchemar de toutes entités. Met KO en un coup.",999,30,true,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Diagramme de cas d'utilisation","VÃ©rifie toute utilisation possible et rÃ©duit l'attaque de l'adversaire.",90,Categorie.DownAttaque,4,0,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Diagramme de sÃ©quence","Trace tous les processus avec des if et else. RÃ©duit la dÃ©fense de moitiÃ©.",80, Categorie.DownDefense,2,0,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Diagramme d'activitÃ©","RÃ©duit la vie de l'adversaire de moitiÃ©.",60,Categorie.DownHealth,0,2,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("null pointer exception","Cauchemar de toutes entitÃ©s. Met KO en un coup.",999,30,true,"adversaire"));
 		put(count.incrementAndGet(), new Capacite("Scrum MASTER","Faites face au courroux de la fac de Blois. Peut mettre son lanceur KO.",999,10,true,"soi"));
-		put(count.incrementAndGet(), new Capacite("Escroquerie","Au vu du thème du jeu, il y a probablement des étudiants escrots. Augmente sa défense de moitié pour se protéger.",70,Categorie.UpDefense,2,0,"soi"));
-		put(count.incrementAndGet(), new Capacite("Intégrale de Reimann","Façon d'intégrer l'adversaire. Inflige des dégats.",15,80,false,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("SQL","Double la défense du lanceur de moitié.",70,Categorie.UpDefense,2,0,"adversaire"));
-		put(count.incrementAndGet(), new Capacite("Jointure","Inflige plusieurs dégâts à l'adversaire.",7,100,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Escroquerie","Au vu du thÃ¨me du jeu, il y a probablement des Ã©tudiants escrots. Augmente sa dÃ©fense de moitiÃ© pour se protÃ©ger.",70,Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("IntÃ©grale de Reimann","FaÃ§on d'intÃ©grer l'adversaire. Inflige des dÃ©gats.",15,80,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("SQL","Double la dÃ©fense du lanceur de moitiÃ©.",70,Categorie.UpDefense,2,0,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Jointure","Inflige plusieurs dÃ©gÃ¢ts Ã  l'adversaire.",7,100,false,"adversaire"));
+		put(count.incrementAndGet(), new Capacite("Objet CafÃ©","Revigore la vie du personnage principale d'un cinquiÃ¨me.",100,Categorie.UpHealth,5,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Batterie Externe","Augmente la dÃ©fense d'un quart.",100,Categorie.UpDefense,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Calculatrice","Augmente l'attaque du personnage d'un quart.",100,Categorie.UpAttaque,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet RÃ¨gle","Augmente l'attaque d'un tier.",100,Categorie.UpAttaque,3,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Equerre","Augmente l'attaque d'un tiers.",100,Categorie.UpAttaque,3,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Compas","Augmente l'attaque de moitiÃ©.",100,Categorie.UpAttaque,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Sac Ã  dos","Augmente la dÃ©fense de moitiÃ©.",100,Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Pochette d'ordi","Augmente la dÃ©fense de moitiÃ©",100,Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Stylo 4 couleurs","Augmente les points de vie d'un tier.",100,Categorie.UpHealth,3,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Effaceur","Augmente la dÃ©fense de moitiÃ©.",100,Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Tippex","Augmente la dÃ©fense d'un tier.",100,Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Gomme","Augmente la dÃ©fense d'un quart.",100,Categorie.UpDefense,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Maximator","RÃ©duit les points de vie d'un quart.",100,Categorie.DownHealth,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Alcool","Augmente les points de vie d'un quart.",100,Categorie.UpHealth,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet ThÃ©","Augmente les points de vie d'un tier.",100,Categorie.UpHealth,3,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Smartphone","Augmente l'attaque d'un tier.",100,Categorie.UpAttaque,3,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Sandwich","Augmente les points de vie de moitiÃ©.",100,Categorie.UpHealth,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Tacos","RÃ©duit les points de vie d'un tier.",100,Categorie.UpHealth,3,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Pizza","Augmente les points de vie d'un quart.",100,Categorie.UpHealth,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Launchpack","Augmente les points de vie de moitiÃ©.",100,Categorie.UpHealth,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Feuille","Augmente l'attaque d'un cinquiÃ¨me.",100,Categorie.UpAttaque,5,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Cahier","Augmente l'attaque d'un quart.",100,Categorie.UpAttaque,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Montre","Augmente la dÃ©fense d'un tier.",100,Categorie.UpDefense,3,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet RÃ©veil","Augmente la dÃ©fense de moitiÃ©.",100,Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Craie","Augmente l'attaque d'un quart.",100,Categorie.UpAttaque,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Feutre","Augmente l'attaque d'un quart.",100,Categorie.UpAttaque,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Crayon","Augmente l'attaque d'un cinquiÃ¨me",100,Categorie.UpAttaque,5,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Ordinateur","Double l'attaque.",100,Categorie.UpAttaque,1,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Souris","Augmente l'attaque de moitiÃ©.",100,Categorie.UpAttaque,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Clavier","Augmente la dÃ©fense de moitiÃ©.",100,Categorie.UpDefense,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Post-it","Augmente l'attaque d'un quart.",100,Categorie.UpAttaque,4,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Nouilles InstantanÃ©es","Redonne la totalitÃ© des points de vie.",100,Categorie.UpAttaque,1,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Agrafeuse","Double la dÃ©fense.",100,Categorie.UpDefense,1,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Bouteille d'eau","Augmente les points de vie de moitiÃ©.",100,Categorie.UpHealth,1,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet Chocolat Chaud","Redonne la totalitÃ© des points de vie.",100,Categorie.UpHealth,1,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet CafÃ© Noisette","Augmente les points de vie de moitiÃ©.",100,Categorie.DownHealth,2,0,"soi"));
+		put(count.incrementAndGet(), new Capacite("Objet HaltÃ¨res","Double la dÃ©fense",100,Categorie.UpDefense,1,0,"soi"));
 	}
 	
-	/*Vérifie si la capacité existe dans la liste. Si l'on compare uniquement ces 3 attributs, c'est parce qu'ils représentent suffisamment la capacité,
+	/*VÃ©rifie si la capacitÃ© existe dans la liste. Si l'on compare uniquement ces 3 attributs, c'est parce qu'ils reprÃ©sentent suffisamment la capacitÃ©,
 	 * pour que l'on puisse se baser dessus.*/
 	public boolean exist(Capacite e) {
 			if(containsValue(e)) return true;
