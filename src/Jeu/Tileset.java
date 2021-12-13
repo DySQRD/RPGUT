@@ -59,6 +59,7 @@ public class Tileset{
     /**
      * Récupère les textures nécessaires pour créer le level.
      * @throws IOException
+     * Erreur In/Out
      */
     public void loadbImage() throws IOException {
         BufferedImage bImage = ImageIO.read(new File(this.image));
