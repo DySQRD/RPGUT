@@ -187,6 +187,13 @@ public class Capacite {
 		} else System.out.println(user.getNom() +" a raté sa capacité !");
 	}
 	
+	/**
+	 * Vérifie si deux capacités sont égales.
+	 * @param capacite
+	 * la capacité à sélectionner
+	 * @return
+	 * Vrai si ces deux capacités sont égales.
+	 */
 	public boolean equals(Capacite capacite) {
 		if(name.equals(capacite.name) && description .equals(capacite.description) && categorie.equals(capacite.categorie)) return true;
 		else return false;

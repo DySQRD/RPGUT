@@ -36,6 +36,11 @@ public class Personnage extends Entity {
     protected static final int DEFENSE_PER_LVL = 2;
     protected static final int HEALTH_PER_LVL = 10;
 
+    /**
+     * Crée le personnage du jeur vidéo, il possède un identifiant, un identifiant entité, un nom, de l'xp, des points de vie, un inventaire, et une position (x,y)
+     * @throws SQLException
+     * Erreur SQL/BDD
+     */
     public Personnage() throws SQLException {
     	this(
 			BD.getJoueurTable().getInt("joueur_id"),
@@ -49,7 +54,28 @@ public class Personnage extends Entity {
 			BD.getJoueurTable().getInt("y")
     	);
     }
-
+    
+    /**
+     * 
+     * @param joueurId
+     * Identifiant de l'utilisateur
+     * @param entiteId
+     * Identifiant de l'entité
+     * @param nom
+     * Nom du personnage
+     * @param xp
+     * Expérience du jeu
+     * @param PV
+     * Points de vie actuels
+     * @param stats
+     * Statistique comportant (les pdv max, attaque, défense)
+     * @param inventaire
+     * Inventaire du personnage (Objets)
+     * @param posX
+     * Position abscisse
+     * @param posY
+     * Position ordonnéee
+     */
     public Personnage(int joueurId, int entiteId, String nom, int xp, int PV, Stats stats, Inventaire inventaire, double posX, double posY) {
     	super(entiteId, BD.getEntiteTypes().get(1), posX, posY);	//1 correspond à l'id du type de mob "Joueur" dans la BD
     	this.joueurId = joueurId;
@@ -72,7 +98,10 @@ public class Personnage extends Entity {
         this.setPV(stats.get("pv_max"));
         this.lvl = 1;
     }
-
+    
+    /**
+     * Calcule l'xp obtenu après avoir gagné un combat.
+     */
     public void giveXp(){
         float ratio = (float)mobVS.lvl/(float)lvl;
         int lvlAfter;
@@ -85,7 +114,9 @@ public class Personnage extends Entity {
         }
     }
 
-
+    /**
+     * Méthode pour se déplacer vers le haut.
+     */
     public void moveUp(){
         this.posY -= this.velocity;
         this.imageV.setY(this.posY);
@@ -94,6 +125,10 @@ public class Personnage extends Entity {
         u++;
         if(u>3) u=0;
     }
+    
+    /**
+     * Méthode pour se déplacer vers le bas.
+     */
     public void moveDown(){
         this.posY += this.velocity;
         this.imageV.setY(this.posY);
@@ -102,6 +137,10 @@ public class Personnage extends Entity {
         d++;
         if(d>3) d=0;
     }
+    
+    /**
+     * Méthode pour se déplacer vers la gauche.
+     */
     public void moveLeft(){
         this.posX -= this.velocity;
         this.imageV.setX(this.posX);
@@ -110,6 +149,10 @@ public class Personnage extends Entity {
         l++;
         if(l>3) l=0;
     }
+    
+    /**
+     * Méthode pour se déplacer vers la droite.
+     */
     public void moveRight(){
         this.posX += this.velocity;
         this.imageV.setX(this.posX);
@@ -118,6 +161,10 @@ public class Personnage extends Entity {
         r++;
         if(r>3) r=0;
     }
+    
+    /**
+     * Redéfinit la position du personnage.
+     */
     public void tp(double x, double y){
         this.posX = x;
         this.imageV.setX(x);
@@ -127,6 +174,11 @@ public class Personnage extends Entity {
         this.hitbox.setY(y+dyHitbox);
     }
     
+    /**
+     * Permet d'atteindre le niveau suivant. (ex : niveau actuel 1 -> 2)
+     * @param lvlAfter
+     * Le niveau suivant à atteindre (en fonction de l'xp)
+     */
     public void lvlUp(int lvlAfter){
         System.out.println("Vous êtes monté lvl " + lvlAfter + ".");
         this.lvl = lvlAfter;
@@ -141,33 +193,55 @@ public class Personnage extends Entity {
     /*
      * Getters et setters
      */
-
+    
+    /**
+     * Retourne l'identifiant du joueur.
+     * @return jouerId
+     * Identifiant du joueur
+     */
 	public int getJoueurId() {
 		return joueurId;
 	}
     
+	/***
+	 * Retourne le nom du joueur.
+	 * @return nom
+	 * Le nom du joueur
+	 */
     public String getNom() {
     	return nom;
     }
 
+    /**
+     * Retourne l'expérience du personnage.
+     * @return xp
+     * l'xp du personnage
+     */
 	public int getXp() {
 		return xp;
 	}
 	
+	/**
+	 * Retourne l'inventaire du personnage.
+	 * @return inventaire
+	 * L'inventaire du joueur
+	 */
     public Inventaire getInventaire() {
     	return inventaire;
     }
-
+    
+    /**
+     * Retourne les statistiques (PV_max, attaque, défense) du personnage.
+     * @return stats
+     * Les statistiques du joueur
+     */
 	public Stats getStats() {
 		return stats;
 	}
-
+	
 	@Override
 	public Movepool getMovepool() {
 		return movepool;
 	}
-    
-    
-    
-    
+
 }
