@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
 import Jeu.Capacite;
+import Jeu.CombatLoop;
+import Jeu.Entity;
 import Jeu.Categorie;
 import Jeu.FirstApplication;
 import Jeu.Mob;

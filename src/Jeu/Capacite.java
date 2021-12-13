@@ -1,10 +1,14 @@
 package Jeu;
 
 import BD.Stats;
-
+/**
+ * 
+ * @author Nasser AZROU-ISGHI
+ *
+ */
 public class Capacite {
-	/* Dans nos id�es actuels, une capacit� poss�de un identifiant, un nom,une description, un type, des d�gats, une pr�cision, et peut �liminer
-	 * en un coup, d'o� le bool�an "oneshot"*/
+	/* Dans nos idées actuels, une capacité poss�de un identifiant, un nom,une description, un type, des dégats, une précision, et peut éliminer
+	 * en un coup, d'o� le booléan "oneshot"*/
 	
 
 	private final String name;
@@ -18,13 +22,13 @@ public class Capacite {
 	private final String target;
 	
 	/**
-	 * Le constructeur des capacit�s de type offensive.
+	 * Le constructeur des capacités de type offensive.
 	 * @param name_
 	 * @param description_
 	 * @param damage_
 	 * @param precision_
 	 * @param oneshot_
-	 * @param user
+	 * @param target
 	 */
 	public Capacite(String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
 		name=name_;
@@ -39,14 +43,14 @@ public class Capacite {
 	}
 	
 	/**
-	 * Le constructeur des capacit�s de type soutien.
+	 * Le constructeur des capacités de type soutien.
 	 * @param name_
 	 * @param description_
 	 * @param precision_
 	 * @param soutien
 	 * @param up
 	 * @param down
-	 * @param cible
+	 * @param target
 	 */
 	public Capacite(String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
 		name = name_;
@@ -61,24 +65,24 @@ public class Capacite {
 	}
 	
 	/**
-	 * Retourne le nom de la capacit�
+	 * Retourne le nom de la capacité
 	 * @return name
-	 * or le nom qu'aura cette capacit�
+	 * or le nom qu'aura cette capacité
 	 */
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
-	 * Permet de retourner la description de la capacit�.
+	 * Permet de retourner la description de la capacité.
 	 * @return description
 	 */
 	public String getDescription() {
 		return description;
 	}
-	
+		
 	/**
-	 *Permet d'obtenir les d�g�ts qu'inflige la capacit� (en cas de capacit� offensive)
+	 *Permet d'obtenir les dégâts qu'inflige la capacité (en cas de capacité offensive)
 	 * @return damage
 	 */
 	public float getDamage() {
@@ -86,7 +90,7 @@ public class Capacite {
 	}
 	
 	/**
-	 * Permet d'obtenir la pr�cision de la capacit�.
+	 * Permet d'obtenir la précision de la capacité.
 	 * @return precision
 	 */
 	public float getPrecision() {
@@ -94,7 +98,7 @@ public class Capacite {
 	}
 	
 	/**
-	 * Permet de savoir la capacit� (de type offensive) mettra l'adversaire hors jeu en un coup.
+	 * Permet de savoir la capacité (de type offensive) mettra l'adversaire hors jeu en un coup.
 	 * @return oneshot
 	 * si true donc elle mettra l'adversaire KO en un coup, sinon non.
 	 */
@@ -103,7 +107,7 @@ public class Capacite {
 	}
 	
 	/**
-	 * Permet d'obtenir la cat�gorie (Offensive, (Up/Down)(Attack/Defense/Health)
+	 * Permet d'obtenir la catégorie (Offensive, (Up/Down)(Attack/Defense/Health)
 	 * @return categorie
 	 */
 	public Categorie getCategorie() {
@@ -119,7 +123,7 @@ public class Capacite {
 	}
 	
 	/**
-	 * permet d'obtenir la r�duction de statistique
+	 * permet d'obtenir la réduction de statistique
 	 * @return down
 	 */
 	public int getDown() {
@@ -127,17 +131,20 @@ public class Capacite {
 	}
 	
 	/**
-	 * Retourne l'entit� qui sera la cible de la capacit�
+	 * Retourne l'entité qui sera la cible de la capacité
 	 * @return target
-	 * peut �tre soit le personnage contr�l�, soit un mob quelconque.
+	 * peut être soit le personnage contrôlé soit un mob quelconque.
 	 */
 	public String getTarget() {
 		return target;
 	}
-	
+
+
 	/**
-	 * Permet d'utiliser une capacit�, quel soit offensive, ou d�fensive (l'augmentation ou la r�duction de statistiques).
-	 */
+	 * Permet d'utiliser une capacité, quel soit offensive, ou défensive (l'augmentation ou la réduction de statistiques) en fonction du lanceur.
+	 * @param user
+	 * représente le lanceur.
+	 * */
 	public void use(Entity user) {
 		Entity mob =FirstApplication.loopManager.getGameLoop().perso.mobVS;
 		Entity character = FirstApplication.loopManager.getGameLoop().perso;
@@ -166,7 +173,8 @@ public class Capacite {
 		if(categorie==Categorie.UpHealth) {
 			if(statBonus.get("pv_max")+statBase.get("pv_max")/up <= statBase.get("pv_max")) statBonus.put("pv_max",statBonus.get("pv_max")+statBase.get("pv_max")/up);}
 		else statBonus.put("pv_max",statBonus.get("pv_max"));
-		} else System.out.println(user.getNom() +" a rat� sa capacit� !");
+
+		} else System.out.println(user.getNom() +" a raté sa capacité !");
 	}
 	
 	public boolean equals(Capacite capacite) {
