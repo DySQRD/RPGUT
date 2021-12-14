@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * Permettra de créer les obstacles, or les cadres de collision permettant d'entrer en combat <br> 
+ * contre des ennemis, ou alors le changement de map
  * 
  * @author Marc SANCHEZ
  *

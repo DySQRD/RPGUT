@@ -2,6 +2,7 @@ package Jeu;
 
 import javafx.application.Application;
 /**
+ * Utilisé pour lancer le jeu.
  * 
  * @author Marc SANCHEZ
  *

@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 /**
  * 
+ * L'inventaire d'objet associé au personnage.
+ * 
  * @author Dylan TOLEDANO
  *
  */
@@ -14,6 +16,7 @@ public class Inventaire extends HashMap<Integer, Objet> {
 	/**
 	 * Télécharge l'inventaire du joueur connecté.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	public Inventaire() throws SQLException {
 		this(BD.querir("SELECT * FROM objet WHERE joueur_id = ?", BD.getJoueurTable().getInt("joueur_id")));
@@ -22,7 +25,9 @@ public class Inventaire extends HashMap<Integer, Objet> {
 	/**
 	 * Construit un Inventaire à partir d'un ResultSet ayant les mêmes attributs que la table inventaire de la BD.
 	 * @param inventaireTable
+	 * Table de l'inventaire.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	public Inventaire(ResultSet inventaireTable) throws SQLException {
 		while(inventaireTable.next()) {
@@ -37,8 +42,10 @@ public class Inventaire extends HashMap<Integer, Objet> {
 	/**
 	 * Déplace un objet d'un emplacement vers un autre.<br>
 	 * Si un objet se trouve déjà à la destination, les deux objets sont intervertis.
-	 * @param origine		Emplacement de l'objet à déplacer.
-	 * @param destination	Emplacement vers lequel déplacer.
+	 * @param origine		
+	 * Emplacement de l'objet à déplacer.
+	 * @param destination	E
+	 * mplacement vers lequel déplacer.
 	 */
 	public void deplacer(int origine, int destination) {
 		put(origine, put(destination, get(origine)));

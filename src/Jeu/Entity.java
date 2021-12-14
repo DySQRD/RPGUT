@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * Une classe abstraite pour la création d'entité, cela peut-être le personnage, ou alors les monstres.
  * 
  * @author Marc SANCHEZ
  *
@@ -84,6 +85,8 @@ public abstract class Entity {
     public int getActualStat(String stat) {
     	return getStats().get(stat); //+ statsBonus.get(stat)
     }
+    
+   //Getters et Setters.
     
     public double getPosX() {
 		return posX;

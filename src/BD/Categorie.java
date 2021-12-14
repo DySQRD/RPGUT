@@ -3,6 +3,7 @@ package BD;
 
 
 /**
+ * Les catégories de capacités sont répertoriés ici.
  * 
  * @author Nasser AZROU-ISGHI
  *

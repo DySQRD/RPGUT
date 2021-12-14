@@ -209,6 +209,7 @@ public class BD {
 	/**
 	 * Retire toutes les données de la BD du joueur connecté, puis le déconnecte.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	public static void desinscrire() throws SQLException {
 		BDebug("Début de la désinscription...");
@@ -255,7 +256,9 @@ public class BD {
 	/**
 	 * Télécharge toutes les données du jeu et celles du joueur demandé.
 	 * @param 	pseudo
+	 * Pseudonyme du joueur.
 	 * @param 	mdp
+	 * Mot de passe du joueur.
 	 * @return	
 	 * 0 si le joueur est introuvable<br> -1 si le mot de passe est incorrect<br> sinon l'id du joueur correspondant
 	 * @throws 	SQLException 

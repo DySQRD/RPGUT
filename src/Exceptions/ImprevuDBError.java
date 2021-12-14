@@ -1,5 +1,6 @@
 package Exceptions;
 /**
+ * En cas d'existence de plusieurs tuples similaires.
  * 
  * @author Dylan TOLEDANO
  *

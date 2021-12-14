@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 /**
+ * La boucle du jeu est gérée ici. Avec son compteur de FPS, ses élements graphiques, toutes les loops (Pause,LoopManager etc).<br>
+ * Elle gerera aussi les déplacements des entités, les collisions, l'affichage, etc.
  * 
  * @author Marc SANCHEZ
  *

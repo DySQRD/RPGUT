@@ -5,6 +5,8 @@ import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 
 /**
+ * Complète le travail de la classe Tileset.<br>
+ * L'utilisation de la librairie GSON est obligatoire.
  * 
  * @author Marc SANCHEZ
  *

@@ -1,5 +1,6 @@
 package Exceptions;
 /**
+ * Pour les erreurs inattendus de la BD.
  * 
  * @author Dylan TOLEDANO
  *

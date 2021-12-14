@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.Buffer;
 
 /**
+ * C'est ici que les textures de chaque niveau/map, leur tailles et leur obstacles sont récupérés. <br>
+ * L'utilisation de la librairie GSON est obligatoire.
  * 
  * @author Marc Sanchez
  *

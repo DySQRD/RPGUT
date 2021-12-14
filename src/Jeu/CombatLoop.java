@@ -17,6 +17,13 @@ import java.util.ArrayList;
 
 import BD.BD;
 
+/**
+ * Ici, sera géré la boucle des combats. Avec l'affichage des noms, points de vie, dégâts infligés, etc.
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
+
 public class CombatLoop extends AnimationTimer {
     //Position du curseur (en haut à gauche = 0, en haut à droite = 1, ...)
     protected int positionCursorAction = 0;
@@ -68,7 +75,19 @@ public class CombatLoop extends AnimationTimer {
     protected Label healthperso = new Label();
     protected Label healthMob = new Label();
 
-
+	/**
+	 * Constructeur pour la CombatLoop.
+	 * @param layoutX
+	 * Position x (Abscisse) de l'interface de combat.
+	 * @param layoutY
+	 * Position y (Ordonnée) de l'interface de combat.
+	 * @param width
+	 * Largeur de la fenêtre.
+	 * @param height
+	 * Hauteur de la fenêtre.
+	 * @param gameLoop
+	 * Boucle du jeu.
+	 */
     public CombatLoop(Double layoutX, Double layoutY,Double width, Double height, GameLoop gameLoop){
 
         //BORDERPANE SETUP (FENETRE DE COMBAT)
@@ -170,12 +189,18 @@ public class CombatLoop extends AnimationTimer {
         this.combatPane.setRight(healthMob);
 
     }
-
+    
+    /**
+     * Méthode pour quitter le combat.
+     */
     public void quitCombat(){
         this.loopManager.game();
     }
 
     //Entrée en combat
+    /**
+     * Méthode pour l'interface combat et son entrée.
+     */
     public void displayInit(){
         this.healthperso.setText("PV : " + gameLoop.perso.getPV());
         this.healthMob.setText("PV : " + gameLoop.perso.mobVS.getPV());

@@ -13,6 +13,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 /**
+ * Les entités monstres seront gérés ici. <br>
+ * Cette classe attribue à chaque mob (monstre) un identifiant, un type, et une position.
  * 
  * @author Marc SANCHEZ
  *

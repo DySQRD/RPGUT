@@ -9,6 +9,9 @@ import Jeu.Mob;
 import Jeu.Personnage;
 /**
  * 
+ * Classe permettant de créer des capacités, leur nom, leur effet, si elle mette ko en un coup, leur dégâts, précisions et la cible.<br>
+ * Chaque capacité possède une cible et un lanceur.
+ * 
  * @author Nasser AZROU-ISGHI
  *
  */
@@ -31,11 +34,17 @@ public class Capacite {
 	/**
 	 * Le constructeur des capacités de type offensive.
 	 * @param name_
+	 * Nom de la capacité.
 	 * @param description_
+	 * Sa description.
 	 * @param damage_
+	 * Dégâts à infliger.
 	 * @param precision_
+	 * Précision de la capacité.	 * 
 	 * @param oneshot_
+	 * Si la capacité met KO en un coup.
 	 * @param target
+	 * La cible de la capacité.
 	 */
 	public Capacite(int capaciteId, String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
 		this.capaciteId = capaciteId;
@@ -53,12 +62,19 @@ public class Capacite {
 	/**
 	 * Le constructeur des capacités de type soutien.
 	 * @param name_
+	 * Nom de capacité.
 	 * @param description_
+	 * Description de chaque capacité.
 	 * @param precision_
+	 * Précision de chaque capacité.
 	 * @param soutien
+	 * Catégorie de la capacité de type soutien.
 	 * @param up
+	 * De combien la statistique sera augmenté.
 	 * @param down
+	 * De combien la statistique sera réduite.
 	 * @param target
+	 * Cible de la capacité.
 	 */
 	public Capacite(int capaciteId, String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
 		this.capaciteId = capaciteId;

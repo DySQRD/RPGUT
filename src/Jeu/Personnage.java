@@ -15,7 +15,11 @@ import javafx.scene.shape.Rectangle;
 
 /**
  * 
+ * L'objet Personnage est créé via cette classe.<br>
+ * Il possède un identifiant, un nom, un inventaire (d'objet), une liste de capacité (movepool), et des statistiques.<br>
+ * Il peut se déplacer en haut, en bas, à droite, ou à gauche. Et également combattre des mobs.
  * @author Marc SANCHEZ
+ *
  *
  */
 

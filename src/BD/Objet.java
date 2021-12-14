@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
+ * Classe pour créer une instance d'un objettype.
  * 
  * @author Dylan TOLEDANO
  *

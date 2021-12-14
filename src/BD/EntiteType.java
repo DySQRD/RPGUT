@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import BD.Movepool;
 
 /**
+ *Concerne les types d'entité.
  * 
  * @author Dylan TOLEDANO
  *

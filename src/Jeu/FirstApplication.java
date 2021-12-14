@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 /**
  * 
+ * Pour la création de la fenêtre du jeu, et les déplacements.
+ * 
  * @author Marc SANCHEZ
  *
  */

@@ -14,6 +14,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.shape.Rectangle;
 
 /**
+ * Représente une partie du niveau. Avec son identifiant, ses obstacles, et ses mobs.
  * 
  * @author Marc SANCHEZ
  *

@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
+ * Il fallait bien une classe pour gérer toutes les loops (boucles du jeu).<br>
+ * C'est pour quoi cette classe a été créé.
  * 
  * @author Marc SANCHEZ
  *

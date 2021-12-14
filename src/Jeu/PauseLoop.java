@@ -11,9 +11,10 @@ import javafx.scene.layout.VBox;
 import java.sql.SQLException;
 import java.util.ArrayList;
 /**
- * 
+ *  La boucle de pause pour l'interface de pause est généré ici. <br>
+ *  Elle permettra de se déconnecter, d'accéder aux statistiques et à l'inventaire du joueur.
  * @author Marc SANCHEZ
- *  
+ * 
  */
 public class PauseLoop extends AnimationTimer {
 	/**

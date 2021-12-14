@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * Une collection de map est un niveau. <br>
+ * Le joueur pourra se balader dessus en combattant des monstres.<br>
+ * Chaque niveau/level contient 9 maps et un nom.
  * 
  * @author Marc SANCHEZ
  *
