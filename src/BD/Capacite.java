@@ -1,5 +1,8 @@
 package BD;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import Jeu.Entity;
 import Jeu.FirstApplication;
 import Jeu.Mob;
@@ -200,5 +203,35 @@ public class Capacite {
 	public boolean equals(Capacite capacite) {
 		if(name.equals(capacite.name) && description .equals(capacite.description) && categorie.equals(capacite.categorie)) return true;
 		else return false;
+	}
+	
+	static void telecharger() throws SQLException {
+		ResultSet capaciteTable = BD.telecharger("capacite");
+		while(capaciteTable.next()) {
+			Capacite cap;
+			if((capaciteTable.getString("categorie")).equals("Offensive")) {
+				cap = new Capacite(
+					capaciteTable.getInt("capacite_id"),
+					capaciteTable.getString("nom"),
+					capaciteTable.getString("description"),
+					capaciteTable.getInt("puissance"),
+					capaciteTable.getInt("precisionn"),
+					capaciteTable.getBoolean("oneshot"),
+					capaciteTable.getString("cibles")
+				);
+			} else {
+				cap = new Capacite(
+					capaciteTable.getInt("capacite_id"),
+					capaciteTable.getString("nom"),
+					capaciteTable.getString("description"),
+					capaciteTable.getInt("precisionn"),
+					Categorie.valueOf(capaciteTable.getString("categorie")),
+					capaciteTable.getInt("up"),
+					capaciteTable.getInt("down"),
+					capaciteTable.getString("cibles")
+				);
+			}
+			BD.capacites.put(capaciteTable.getInt("capacite_id"), cap);
+		}
 	}
 }

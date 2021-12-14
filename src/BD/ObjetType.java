@@ -4,10 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ObjetType {
-	final int objetTypeId;
-	final String nom;
-	final int durabiliteMax;
-	final Capacite capacite;
+	public final int objetTypeId;
+	public final String nom;
+	public final int durabiliteMax;
+	public final Capacite capacite;
 	
 	public ObjetType(int objetTypeId, String nom, int durabiliteMax, Capacite capacite) {
 		this.objetTypeId = objetTypeId;

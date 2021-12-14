@@ -7,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
@@ -52,7 +50,7 @@ import Jeu.Personnage;
  *
  */
 public class BD {
-	private static Connection connexion;
+	static Connection connexion;
 	/**
 	 * L'objet contenant les requêtes SQL à envoyer.<br>
 	 * N'utilisant jamais plus de deux PreparedStatement en même temps, il est plus simple d'en avoir un
@@ -60,33 +58,33 @@ public class BD {
 	 * Le PreparedStatement aurait comme avantage, sur le Statement, d'être pré-compilé et de
 	 * nettoyer les chaînes de caractères passées en paramètres de sa méthode associée setString().
 	 */
-	private static PreparedStatement preparedStatement;
+	static PreparedStatement preparedStatement;
 	/**
 	 * Une fois un joueur connecté, ce ResultSet contient la ligne correspondante des tables joueur,
 	 * entite et stats de la BD.
 	 */
-	private static ResultSet joueurTable;
+	static ResultSet joueurTable;
 	/**
 	 * 	Le joueur téléchargé suite à une connexion réussie à la BD.
 	 */
-	private static Personnage personnage;
+	static Personnage personnage;
 	/**
 	 * Dans telecharger(), détermine s'il faut télécharger les collections statiques.<br>
 	 * Cela ne devrait arriver qu'une fois par lancement du programme.
 	 */
-	private static boolean dejaTelecharge = false;
+	static boolean dejaTelecharge = false;
 	/**
 	 * Tous les types d'objets existants dans la BD.<br>
 	 * Collection statique, çad dont les données sont communes à tous les joueurs
 	 * et qui n'est pas téléchargée de nouveau à chaque connexion.
 	 */
-	private static HashMap<Integer, ObjetType> objetTypes = new HashMap<Integer, ObjetType>();
+	static HashMap<Integer, ObjetType> objetTypes = new HashMap<Integer, ObjetType>();
 	/**
 	 * Tous les types d'entites existants dans la BD.<br>
 	 * Collection statique, çad dont les données sont communes à tous les joueurs
 	 * et qui n'est pas téléchargée de nouveau à chaque connexion.
 	 */
-	private static HashMap<Integer, EntiteType> entiteTypes = new HashMap<Integer, EntiteType>();
+	static HashMap<Integer, EntiteType> entiteTypes = new HashMap<Integer, EntiteType>();
 	/**
 	 * Toutes les entités non encore vaincues par le joueur.
 	 */
@@ -95,13 +93,13 @@ public class BD {
 	 * Enregistre les entités vaincues depuis la dernière sauvegarder().<br>
 	 * Le contenu de cette ArrayList est envoyé dans la BD puis effacé à chaque sauvegarder().
 	 */
-	private static ArrayList<Integer> vaincus = new ArrayList<Integer>();
-	private static HashMap<Integer, Capacite> capacites = new HashMap<Integer, Capacite>();
-	private static HashMap<Integer, Movepool> movepools = new HashMap<Integer, Movepool>();
+	static ArrayList<Integer> vaincus = new ArrayList<Integer>();
+	static HashMap<Integer, Capacite> capacites = new HashMap<Integer, Capacite>();
+	static HashMap<Integer, Movepool> movepools = new HashMap<Integer, Movepool>();
 	/**
 	 * Regex utilisé par la entreeSafe() pour vérifier la conformité des chaînes insérées.
 	 */
-	private static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
+	static final Pattern safePattern = Pattern.compile("^[a-zA-Z0-9]{1,30}$");
 	
 	public static void main(String[] args) throws SQLException, ImprevuDBError, IOException {
 		identifier("nice", "notnice");
@@ -139,7 +137,6 @@ public class BD {
 			BDebug("Mot de passe incorrect ! Saisi: ", mdp, ", BD: ", joueurTable.getString("mdp"));
 			return -1;
 		} else {
-			BDebug("Identification réussie !");
 			return connecter();
 		}
 	}
@@ -184,6 +181,11 @@ public class BD {
 			int movepoolId = movepoolIdTable.getInt("movepool_id") + 1;
 			
 			informer("INSERT INTO joueur(nom, mdp, entite_id, stats_id, movepool_id) VALUES(?, ?, ?, ?, ?)", pseudo, mdp, entiteId, statsId, movepoolId);
+			
+			//Correspond à la capacité Coup d'Crayon
+			informer("INSERT INTO movepool VALUES(?, ?, ?)", movepoolId, 11, 1);
+			//Correspond à la capacité Eveil Forcé
+			informer("INSERT INTO movepool VALUES(?, ?, ?)", movepoolId, 10, 2);
 				
 			BDebug("Inscription réussie ! Pseudo: ", pseudo,
 					"MDP: ", mdp,
@@ -207,6 +209,7 @@ public class BD {
 		informer("DELETE FROM completion WHERE joueur_id = ?", joueurId);
 		informer("DELETE FROM victoire WHERE joueur_id = ?", joueurId);
 		informer("DELETE FROM objet WHERE joueur_id = ?", joueurId);
+		informer("DELETE FROM movepool WHERE movepool_id = ?", joueurTable.getInt("movepool_id"));
 		//Le joueur est supprimé en dernier sinon SQL va se plaindre
 		//que des tuples d'autres tables pointent vers une ID joueur non existante.
 		informer("DELETE FROM joueur WHERE id = ?", joueurId);
@@ -249,6 +252,7 @@ public class BD {
 		BDebug("Connexion en cours...");
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut?allowMultiQueries=true", "joueur", "joueur");
 		//Télécharge toutes les données pertinentes de la BD.
+		BDebug("Identification réussie !");
 		telecharger();
 		BDebug("Connexion terminée !");
 		informer("INSERT INTO connexion(joueur_id) VALUES(?)", personnage.getJoueurId());
@@ -293,7 +297,7 @@ public class BD {
 		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurTable.getInt("joueur_id")));
 		
 		telechargerEntite();
-		telechargerCapacite();
+		Capacite.telecharger();
 		
 		personnage = new Personnage();
 		
@@ -365,36 +369,6 @@ public class BD {
 		}
     }
 	
-	private static void telechargerCapacite() throws SQLException {
-		ResultSet capaciteTable = telecharger("capacite");
-		while(capaciteTable.next()) {
-			Capacite cap;
-			if((capaciteTable.getString("categorie")).equals("Offensive")) {
-				cap = new Capacite(
-					capaciteTable.getInt("capacite_id"),
-					capaciteTable.getString("nom"),
-					capaciteTable.getString("description"),
-					capaciteTable.getInt("puissance"),
-					capaciteTable.getInt("precisionn"),
-					capaciteTable.getBoolean("oneshot"),
-					capaciteTable.getString("cibles")
-				);
-			} else {
-				cap = new Capacite(
-					capaciteTable.getInt("capacite_id"),
-					capaciteTable.getString("nom"),
-					capaciteTable.getString("description"),
-					capaciteTable.getInt("precisionn"),
-					Categorie.valueOf(capaciteTable.getString("categorie")),
-					capaciteTable.getInt("up"),
-					capaciteTable.getInt("down"),
-					capaciteTable.getString("cibles")
-				);
-			}
-			capacites.put(capaciteTable.getInt("capacite_id"), cap);
-		}
-	}
-	
 	/**
 	 * Sauvegarde toutes les données du Joueur dans la BD.
 	 * @throws SQLException
@@ -403,8 +377,8 @@ public class BD {
 
 		sauvegarderJoueur();
 		sauvegarderEntite();
-		sauvegarderStats();
-		sauvegarderObjet();
+		Stats.sauvegarder();
+		Objet.sauvegarder();
 		sauvegarderVictoire();
 	}
 	
@@ -424,34 +398,6 @@ public class BD {
 			FirstApplication.loopManager.getGameLoop().getCurrentMapId(),
 			joueurTable.getInt("entite_id")
 		);
-	}
-	
-	private static void sauvegarderStats() throws SQLException {
-		Stats stats = personnage.getStats();
-		informer("UPDATE stats SET pv_max = ?, attaque = ?, defense = ? WHERE stats_id = ?",
-			stats.get("pv_max"),
-			stats.get("attaque"),
-			stats.get("defense"),
-			joueurTable.getInt("stats_id")
-		);
-	}
-	
-	private static void sauvegarderObjet() throws SQLException {
-		connexion.setAutoCommit(false);
-		//Supprimer tous les objets du joueur dans la BD...
-		informer("DELETE FROM objet WHERE joueur_id = ?", personnage.getJoueurId());
-		//...puis insérer les objets de l'Inventaire dans la BD.
-		preparer("INSERT INTO objet VALUES(?,?,?,?)");
-		Inventaire inventaire = personnage.getInventaire();
-		Set<Integer> cles = inventaire.keySet();
-		for(Integer cle : cles) {
-			Objet objet = inventaire.get(cle);
-			preparer(personnage.getJoueurId(), objet.objetType.objetTypeId, objet.getDurabilite(), cle);
-			preparedStatement.addBatch();
-		}
-		preparedStatement.executeBatch();
-		connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
-		connexion.setAutoCommit(true);
 	}
 
 	private static void sauvegarderVictoire() throws SQLException {
@@ -488,7 +434,7 @@ public class BD {
 	 * @return	Le nombre de lignes affectées par la requête.
 	 * @throws 	SQLException
 	 */
-	private static int informer(String sql, Object... valeurs) throws SQLException {
+	static int informer(String sql, Object... valeurs) throws SQLException {
 		preparer(sql, valeurs);
 		BDebugRequete();
 		return preparedStatement.executeUpdate();
@@ -500,7 +446,7 @@ public class BD {
 	 * @param sql
 	 * @throws SQLException
 	 */
-	private static void preparer(String sql) throws SQLException {
+	static void preparer(String sql) throws SQLException {
 		preparedStatement = connexion.prepareStatement(sql);
 	}
 	
@@ -509,7 +455,7 @@ public class BD {
 	 * @param valeurs
 	 * @throws SQLException
 	 */
-	private static void preparer(Object... valeurs) throws SQLException {
+	static void preparer(Object... valeurs) throws SQLException {
 		for(int i = 0; i < valeurs.length; i++) {
 			preparedStatement.setObject(i + 1, valeurs[i]);
 		}
@@ -521,7 +467,7 @@ public class BD {
 	 * @param valeurs
 	 * @throws SQLException
 	 */
-	private static void preparer(String sql, Object... valeurs) throws SQLException {
+	static void preparer(String sql, Object... valeurs) throws SQLException {
 		preparer(sql);
 		preparer(valeurs);
 	}
@@ -534,7 +480,7 @@ public class BD {
 	 * @return
 	 * @throws SQLException 
 	 */
-	private static int derniereId(String tableName) throws SQLException {
+	static int derniereId(String tableName) throws SQLException {
 		ResultSet table = querir("SELECT MAX(" + tableName + "_id) " + tableName + "_id FROM " + tableName);
 		table.next();
 		return table.getInt(tableName + "_id");
@@ -558,7 +504,7 @@ public class BD {
 	 * Une fonction me permettant de personnaliser syso au cas où j'en aurais besoin.
 	 * @param options	Les chaînes à afficher.
 	 */
-	private static void BDebug(String... options) {
+	static void BDebug(String... options) {
 		String message = "BDebug: ";
 		for(int i = 0; i < options.length; i++) {
 			message = message + options[i];
@@ -569,7 +515,7 @@ public class BD {
 	/**
 	 * Ecrit la requête contenue dans le PreparedStatement dans la console.
 	 */
-	private static void BDebugRequete() {
+	static void BDebugRequete() {
 		String prepStr = preparedStatement.toString();	//PreparedStatement en String contient la requête qui sera envoyée.
 		BDebug("Requête: ", prepStr.substring(43, prepStr.length()));//Retire la partie de prepStr qui n'est pas la requête
 	}
@@ -579,7 +525,7 @@ public class BD {
 	 * @param entree
 	 * @return true si la chaîne est conforme.
 	 */
-	private static boolean entreeSafe(String entree) {
+	static boolean entreeSafe(String entree) {
 		BDebug("Vérification de la conformité de l'entrée: ", entree);
 		return safePattern.matcher(entree).matches();
 	}
