@@ -16,10 +16,24 @@ import java.util.ArrayList;
  *  
  */
 public class PauseLoop extends AnimationTimer {
-	
+	/**
+	 * Boucle permettant de gérer toutes les boucles de jouabilité.
+	 */
     protected LoopManager loopManager;
+    
+    /**
+     * Boucle de combat.
+     */
     protected GameLoop gameLoop;
+    
+    /**
+     * Booléen pour accéder au menu si true.
+     */
     protected boolean menu = true;
+    
+    /**
+     * Représente la case sélectionnée (Statistiques, Sauvegarder, Inventaire, Déconnexion, Retour).
+     */
     protected int menuSelected = 0;
 
     protected StackPane pane = new StackPane();
@@ -32,6 +46,10 @@ public class PauseLoop extends AnimationTimer {
     protected Label saveLabel = new Label("Sauvegarder");
     protected Label menuLabel = new Label("Menu de connexion");
     protected Label backLabel = new Label("Retour");
+    
+    /**
+     * Regroupe les cases/labels (Sauvegarder, Déconnexion, etc).
+     */
     protected ArrayList<Label> labelList = new ArrayList<Label>();
     
     /**

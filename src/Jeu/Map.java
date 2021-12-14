@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
 
 public class Map {
     private int spawnX;

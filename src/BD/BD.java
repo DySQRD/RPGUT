@@ -113,16 +113,22 @@ public class BD {
 	/**
 	 * Méthode à utiliser pour authentifier un joueur avant de le connecter.<br>
 	 * Vérifie que le pseudo existe et que le mdp correspond.
-	 * @param pseudo		
+	 * @param pseudo	
+	 * Le pseudo du joueur.	
 	 * @param mdp
-	 * @return	<ul> 
+	 * son mot de passe.
+	 * @return	
+	 * 			<ul> 
 	 * 				<li>0 si le pseudo n'est pas dans la BD.
 	 * 				<li>-1 si le mdp ne correspond pas.
 	 * 				<li>1 sinon.
 	 * 			</ul>
 	 * @throws SQLException
-	 * @throws ImprevuDBError	Si le pseudo apparaît plusieurs fois dans la BD.
+	 * Erreur BDD/SQL
+	 * @throws ImprevuDBError	
+	 * Si le pseudo apparaît plusieurs fois dans la BD.
 	 * @throws IOException 
+	 * Erreur In/Out
 	 */
 	public static int identifier(String pseudo, String mdp) throws SQLException, ImprevuDBError, IOException {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
@@ -151,13 +157,18 @@ public class BD {
 	 * Ajoute un pseudo et un mdp a la BD à condition que le pseudonyme ne soit pas deja utilisé.
 	 * 
 	 * @param 	pseudo
+	 * pseudonyme du joueur.
 	 * @param 	mdp
+	 * son mdp.
 	 * @return	0 si le pseudo existe déjà dans la BD<br>
 	 * 			-1 si le mdp ne correspond pas aux critères imposés<br>
 	 * 			Sinon l'id du nouveau joueur
-	 * @throws 	SQLException 	S'il est impossible de se connecter a la BD.
+	 * @throws 	SQLException 	
+	 * S'il est impossible de se connecter a la BD.
 	 * @throws 	ImprevuDBError 	
+	 * Si le pseudo apparaît plusieurs fois dans la BD.
 	 * @throws IOException 
+	 * Erreur In/Out.
 	 */
 	public static int inscrire(String pseudo, String mdp) throws SQLException, ImprevuDBError, IOException {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
@@ -222,9 +233,13 @@ public class BD {
 	 * Tente de télécharger la table du joueur demandé.<br>
 	 * Renvoie s'il y a au moins une correspondance.
 	 * @param pseudo
+	 * Pseudonyme du joueur.
 	 * @param mdp
-	 * @return
+	 * Mot de passe du joueur.
+	 * @return boolean
+	 * true si ce joueur existe, sinon false
 	 * @throws SQLException
+	 * Erreur BDD/SQL.
 	 */
 	private static boolean verifier(String pseudo) throws SQLException {
 		BDebug("Vérification de la présence du pseudo ", pseudo, " dans la BD.");
@@ -243,12 +258,14 @@ public class BD {
 	 * Télécharge toutes les données du jeu et celles du joueur demandé.
 	 * @param 	pseudo
 	 * @param 	mdp
-	 * @return	0 si le joueur est introuvable<br>
-	 * 			-1 si le mot de passe est incorrect<br>
-	 * 			sinon l'id du joueur correspondant
-	 * @throws 	SQLException S'il est impossible de se connecter a la BD.
+	 * @return	
+	 * 0 si le joueur est introuvable<br> -1 si le mot de passe est incorrect<br> sinon l'id du joueur correspondant
+	 * @throws 	SQLException 
+	 * S'il est impossible de se connecter a la BD.
 	 * @throws IOException 
-	 * @throws 	ImprevuDBError S'il y a plus d'un resultat pour le pseudonyme demande.
+	 * Erreur In/Out.
+	 * @throws 	ImprevuDBError 
+	 * S'il y a plus d'un resultat pour le pseudonyme demande.
 	 */
 	public static int connecter() throws SQLException, IOException {
 		BDebug("Connexion en cours...");
@@ -265,6 +282,7 @@ public class BD {
 	 * puis diminue les privilèges (DELETE et UPDATE).<br>
 	 * Cette méthode ne sauvegarde PAS automatiquement, il faut le faire avant !!!
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	public static void deconnecter() throws SQLException {
 		BDebug("Déconnexion en cours...");
@@ -280,8 +298,11 @@ public class BD {
 	 * sauf si cette méthode a déjà été appelée depuis le lancement du programme.<br>
 	 * Pas besoin de télécharger plusieurs fois les données statiques.
 	 * @param joueurId
+	 * Identifiant du joueur
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 * @throws IOException 
+	 * Erreur In/Out.
 	 */
 	private static void telecharger() throws SQLException, IOException {
 		if(!dejaTelecharge) {
@@ -307,8 +328,11 @@ public class BD {
 	 * A n'utiliser que pour les tables statiques,<br>
 	 * c'est-à-dire ne contenant que des données qui ne sont pas susceptibles de changer.
 	 * @param table
-	 * @return L'integralite de la table demandée.
+	 * table dont les données seront téléchargés.
+	 * @return ResultSet
+	 * L'integralite de la table demandée.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	static ResultSet telecharger(String table) throws SQLException {
 		BDebug("Téléchargement de la table ", table);
@@ -383,6 +407,7 @@ public class BD {
 	/**
 	 * Sauvegarde toutes les données du Joueur dans la BD.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	public static void sauvegarder() throws SQLException {
 
@@ -455,10 +480,14 @@ public class BD {
 
 	/**
 	 * Permet d'exécuter une requête lisant la BD.
-	 * @param 	sql				La requête à exécuter.
-	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
-	 * @return	La table correspondant à la requête demandée.
+	 * @param 	sql			
+	 * La requête à exécuter.
+	 * @param 	valeurs			
+	 * Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
+	 * @return	ResultSet
+	 * La table correspondant à la requête demandée.
 	 * @throws 	SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	static ResultSet querir(String sql, Object... valeurs) throws SQLException {
 		preparer(sql, valeurs);
@@ -468,10 +497,14 @@ public class BD {
 	
 	/**
 	 * Permet d'exécuter une requête mettant à jour la BD.
-	 * @param 	sql				La requête à exécuter.
-	 * @param 	valeurs			Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
-	 * @return	Le nombre de lignes affectées par la requête.
+	 * @param 	sql				
+	 * La requête à exécuter.
+	 * @param 	valeurs			
+	 * Les paramètres de la requête (ce qui remplace les ? du PreparedStatement).
+	 * @return	int
+	 * Le nombre de lignes affectées par la requête.
 	 * @throws 	SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	private static int informer(String sql, Object... valeurs) throws SQLException {
 		preparer(sql, valeurs);
@@ -482,8 +515,10 @@ public class BD {
 	/**
 	 * Raccourci d'écriture pour :<br>
 	 * {@code preparedStatement = connexion.prepareStatement(sql);}
-	 * @param sql
+	 * @param sql 
+	 * Requête à préparer.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	private static void preparer(String sql) throws SQLException {
 		preparedStatement = connexion.prepareStatement(sql);
@@ -492,7 +527,9 @@ public class BD {
 	/**
 	 * Ajoute les valeurs en paramètres de preparedStatement.
 	 * @param valeurs
+	 * Valeurs à ajouter.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	private static void preparer(Object... valeurs) throws SQLException {
 		for(int i = 0; i < valeurs.length; i++) {
@@ -503,8 +540,11 @@ public class BD {
 	/**
 	 * Prépare et remplit preparedStatement.
 	 * @param sql
+	 * Requête à préparer.
 	 * @param valeurs
+	 * Valeurs à remplir.
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	private static void preparer(String sql, Object... valeurs) throws SQLException {
 		preparer(sql);
@@ -516,8 +556,11 @@ public class BD {
 	 * Ne fonctionne pas avec les tables n'ayant pas de colonne dont le nom a la forme <nom de la table>_id.<br>
 	 * Elle n'est cependant jamais utilisée de cette manière.
 	 * @param table
-	 * @return
+	 * La table dont l'id sera récupéré.
+	 * @return int
+	 * Id le plus élevé
 	 * @throws SQLException 
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	private static int derniereId(String tableName) throws SQLException {
 		ResultSet table = querir("SELECT MAX(" + tableName + "_id) " + tableName + "_id FROM " + tableName);
@@ -531,6 +574,7 @@ public class BD {
 	 * Supprime également le mob en question des entités téléchargées
 	 * parce qu'on est jamais trop sûrs.
 	 * @param mob_id
+	 * Id du mob vaincu.
 	 */
 	public static void victoire(int entite_id) {
 		int lvl = FirstApplication.loopManager.getGameLoop().getCurrentLevelId();
@@ -541,7 +585,8 @@ public class BD {
 
 	/**
 	 * Une fonction me permettant de personnaliser syso au cas où j'en aurais besoin.
-	 * @param options	Les chaînes à afficher.
+	 * @param options	
+	 * Les chaînes à afficher.
 	 */
 	private static void BDebug(String... options) {
 		String message = "BDebug: ";
@@ -562,7 +607,9 @@ public class BD {
 	/**
 	 * Vérifie qu'une chaîne entrée par l'utilisateur respecte les critères d'insertion.
 	 * @param entree
-	 * @return true si la chaîne est conforme.
+	 * la chaîne entrée.
+	 * @return true 
+	 * si la chaîne est conforme.
 	 */
 	private static boolean entreeSafe(String entree) {
 		BDebug("Vérification de la conformité de l'entrée: ", entree);
@@ -609,12 +656,18 @@ public class BD {
 
 	/**
 	 * Insere une entité dans la BD.
-	 * @param niveau			Non pas l'xp mais le niveau dans lequel apparaît l'entité.
-	 * @param map				Map du niveau dans lequel apparaît l'entité.
-	 * @param x					Abscisse
-	 * @param y					Ordonnée
-	 * @param stats				Stats de l'entité
+	 * @param niveau			
+	 * Non pas l'xp mais le niveau dans lequel apparaît l'entité.
+	 * @param map				
+	 * Map du niveau dans lequel apparaît l'entité.
+	 * @param x					
+	 * Abscisse
+	 * @param y					
+	 * Ordonnée
+	 * @param stats				
+	 * Stats de l'entité
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	public static int creerEntite(int niveau, int map, double x, double y, Stats stats) throws SQLException {
 		int statsId = creerStats(stats);
@@ -631,8 +684,11 @@ public class BD {
 	/**
 	 * Insere des stats dans la BD à partir d'un objet Stats;
 	 * @param stats
-	 * @return
+	 * Statistiques à insérer.
+	 * @return int
+	 * id
 	 * @throws SQLException
+	 * S'il est impossible de se connecter a la BD.
 	 */
 	public static int creerStats(Stats stats) throws SQLException {
 		int length = Stats.statsOrdre.length;

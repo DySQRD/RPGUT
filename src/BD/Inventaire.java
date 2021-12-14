@@ -2,6 +2,11 @@ package BD;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+/**
+ * 
+ * @author Dylan TOLEDANO
+ *
+ */
 
 public class Inventaire extends HashMap<Integer, Objet> {
 	private static final long serialVersionUID = 7469243752520600817L;

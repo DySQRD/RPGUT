@@ -16,7 +16,14 @@ public class Listeobjet extends HashMap<Integer,ObjetType> {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	/**
+	 * Compteur pour les objets.
+	 */
 	private static final AtomicInteger count = new AtomicInteger(0);
+	
+	/**
+	 * Compteur pour l'identifiant des objets.
+	 */
 	private static final AtomicInteger countID = new AtomicInteger(99);
 	
 	/**

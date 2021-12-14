@@ -1,11 +1,15 @@
 package Jeu;
 
-import BD.BD;
 import BD.EntiteType;
 import BD.Stats;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
 public abstract class Entity {
 	//Id d'instance d'entité dans la BD
 	protected int entiteId;
@@ -72,7 +76,9 @@ public abstract class Entity {
      * Statistique après calcul des bonus.
      * TODO rajouter les bonus !!! Cette méthode sert de placeholder en attendant de les ajouter.
      * @param stat
-     * @return
+     * Statistique à retourner
+     * @return stat
+     * la valeur de la statistique.
      */
     public int getActualStat(String stat) {
     	return getStats().get(stat); //+ statsBonus.get(stat)

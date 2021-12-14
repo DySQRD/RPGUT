@@ -13,7 +13,11 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
+/**
+ * 
+ * @author Marc SANCHEZ
+ *
+ */
 public class Connexion extends AnimationTimer {
     protected LoopManager loopManager;
 
@@ -32,7 +36,7 @@ public class Connexion extends AnimationTimer {
 
 
     protected Group root;
-
+    
     public Connexion(Group root){
         this.root = root;
 

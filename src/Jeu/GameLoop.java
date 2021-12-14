@@ -22,23 +22,72 @@ import java.util.HashMap;
  *
  */
 public class GameLoop extends AnimationTimer {
+	/**
+	 * Pour le calcul des FPS (Frame Per Seconds).
+	 */
     protected long delta = 0;
     protected long lastFrameTime=0;
     protected long fps;
     protected long lastFPSTime;
+    
+    /**
+     * Le personnage contrôlé dans le jeu.
+     */
     protected Personnage perso;
+    
+    /**
+     * Groupe de nodes pour l'ajout d'élément graphique.
+     */
     protected Group root;
+    
+    /**
+     * Label pour l'affichage des fps.
+     */
     protected Label fpsLabel = new Label();
+    
+    /**
+     * Label pour l'affichage des points de vie.
+     */
     protected Label hpLabel;
+    
+    /**
+     * Label pour les coordonnées de la souris.
+     */
     protected Label mouseLocationLabel = new Label();
+    
+    /**
+     * La boucle de jouabilité dans des combats.
+     */
     protected CombatLoop combatLoop;
+    
+    /**
+     * La boucle de jouabilité pour l'interface de pause.
+     */
     protected PauseLoop pauseLoop;
+    
+    /**
+     * Boucle pour gérer toutes les boucles de jouabilité (Pause, Game, Combat).
+     */
     protected LoopManager loopManager;
+    
+    /**
+     * HashMap répertoriant tous les niveaux.
+     */
     protected HashMap<Integer, Level> levels = new HashMap<Integer, Level>();
+    
+    /**
+     * Le niveau actuel.
+     */
     protected int currentLevel;
 
+    /**
+     * Booléens pour les déplacements. Ex : si up est true, le joueur se déplacera vers le haut tant que la variable est true.
+     */
     protected boolean up, down, left, right;
 
+    /**
+     * Largeur et hauteur.
+     */
     protected double width, height;
 
     /**

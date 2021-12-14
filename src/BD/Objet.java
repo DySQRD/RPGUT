@@ -1,6 +1,11 @@
 package BD;
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author Dylan TOLEDANO
+ *
+ */
 public class Objet {
 	/**
 	 * Identifiant définissant le type d'objet.
@@ -11,6 +16,11 @@ public class Objet {
 	 */
 	private int durabilite;
 	
+	/**
+	 * Constructeur pour créer un ObjetType et lui établir une durabilité de base.
+	 * @param objetType
+	 * l'objet Type
+	 */
 	Objet(ObjetType objetType) {
 		this.objetType = objetType;
 		this.durabilite = objetType.durabiliteMax;
@@ -18,7 +28,8 @@ public class Objet {
 	
 	/**
 	 * Crée un objet basé sur les caractéristiques d'un objet de la BD.
-	 * @param id
+	 * @param objetTypeId
+	 * Identifiant de l'objet type
 	 */
 	Objet(int objetTypeId) {
 		this(BD.getObjetTypes().get(objetTypeId));
@@ -34,7 +45,8 @@ public class Objet {
 	/**
 	 * Renvoie une id d'un objet de la BD.<br>
 	 * Cette méthode est utilisée pour générer un objet aléatoire lors d'un drop par un mob.
-	 * @return	Une id d'un objet de la BD.
+	 * @return	id
+	 * Une id d'un objet de la BD.
 	 */
 	private static int randomId() {
 		//Il n'y a pas moyen de récupérer une entrée aléatoirement depuis la HashMap...
@@ -62,6 +74,7 @@ public class Objet {
 	 * Si l'argument est inférieur à 0, la durabilité devient 0.<br>
 	 * Si l'argument est supérieur à la durabilité maximale de l'objet, la durabilité devient la durabilité maximale.
 	 * @param durabilite
+	 * durabilité de l'objet.
 	 */
 	public void setDurabilite(int durabilite) {
 		if(durabilite < 0) this.durabilite = 0;
@@ -71,8 +84,10 @@ public class Objet {
 	
 	/**
 	 * Un raccourci d'écriture pour simuler += tout en conservant l'encapsulation.
-	 * @param ajustement	La valeur à ajouter à durabilite.
+	 * @param ajustement	
+	 * La valeur à ajouter à durabilite.
 	 * @see	setDurabilite
+	 * Se réfère à la durabilité.
 	 */
 	public void ajusterDurabilite(int ajustement) {
 		setDurabilite(getDurabilite() + ajustement);

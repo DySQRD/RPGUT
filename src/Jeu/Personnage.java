@@ -19,21 +19,64 @@ import javafx.scene.shape.Rectangle;
  */
 
 public class Personnage extends Entity {
-	//Id du joueur
+	/**
+	 * Identifiant du joueur.
+	 */
 	protected final int joueurId;
+	/**
+	 * Le nom du joueur.
+	 */
 	protected final String nom;
     
-    //Inventaire et Stats de l'entité
+    /**
+     * Inventaire (liste d'objets) du joueur.
+     */
     protected Inventaire inventaire;
+    
+    /**
+     * Liste de capacités attribués au joueur.
+     */
     protected Movepool movepool;
+    
+    /**
+     * Les statistiques de bases du joueur.
+     */
     protected Stats stats;
+    
+    /**
+     * Les statistiques bonus du joueur, or les stastiques qui seront additionnées aux statistiques de bases en cas d'augmentation ou de réduction <br>
+     * de statistiques en utilisant une capacité ou un objet.
+     */
     protected Stats statsBonus;
 	
+    /**
+     * Image par laquelle le joueur sera visible.
+     */
     public Image imageCharacter = new Image("file:res/Images/lucas.png");
+    
+    /**
+     * Les integers pour la position et l'expérience (obtenu une fois un monstre vaincu).
+     */
     protected int u,d,l,r,xp = 0;
+    
+    /**
+     * Le monstre contre qui le personnage se combattra.
+     */
     protected Mob mobVS;
+    
+    /**
+     * Augmentation de la statistique 'attaque' par niveau.
+     */
     protected static final int ATK_PER_LVL = 2;
+    
+    /**
+     * Augmentation de la statistique 'defense' par niveau.
+     */
     protected static final int DEFENSE_PER_LVL = 2;
+    
+    /**
+     * Augmentation de la statistique 'Points de vie' par niveau.
+     */
     protected static final int HEALTH_PER_LVL = 10;
 
     /**
@@ -175,7 +218,7 @@ public class Personnage extends Entity {
     }
     
     /**
-     * Permet d'atteindre le niveau suivant. (ex : niveau actuel 1 -> 2)
+     * Permet d'atteindre le niveau suivant. (ex : niveau actuel 1, niveau suivant 2)
      * @param lvlAfter
      * Le niveau suivant à atteindre (en fonction de l'xp)
      */

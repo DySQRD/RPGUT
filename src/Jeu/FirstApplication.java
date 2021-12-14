@@ -28,9 +28,11 @@ public class FirstApplication extends Application {
 
     /**
      * La méthode où la taille de la fênetre, le stage, les scenes, et la gestion d'évenement en temps réel sont pris en compte.
-     * Exécute aussi l'application.
-     * @param 
-     **/
+     * @throws Exception
+     * Erreur.
+     * @param stage
+     * Objet stage où seront stockés les éléments visuels.
+     */
     @Override
     public void start(Stage stage) throws Exception {
 
