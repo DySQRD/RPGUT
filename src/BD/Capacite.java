@@ -1,6 +1,9 @@
-package Jeu;
+package BD;
 
-import BD.Stats;
+import Jeu.Entity;
+import Jeu.FirstApplication;
+import Jeu.Mob;
+import Jeu.Personnage;
 /**
  * 
  * @author Nasser AZROU-ISGHI
@@ -156,8 +159,8 @@ public class Capacite {
 	 * représente le lanceur.
 	 * */
 	public void use(Entity user) {
-		Entity mob =FirstApplication.loopManager.getGameLoop().perso.mobVS;
-		Entity character = FirstApplication.loopManager.getGameLoop().perso;
+		Mob mob = BD.getPersonnage().getMobVS();
+		Personnage character = BD.getPersonnage();
 		Entity targetE;
 		if(Math.random() <= (precision/100)) {
 		if(this.target.equals("adversaire")) {

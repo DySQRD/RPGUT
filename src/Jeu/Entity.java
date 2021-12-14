@@ -2,6 +2,7 @@ package Jeu;
 
 import BD.BD;
 import BD.EntiteType;
+import BD.Movepool;
 import BD.Stats;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
@@ -35,7 +36,7 @@ public abstract class Entity {
     protected int PV;
     protected int lvl;
 
-    protected Stats statsBonus;
+    public Stats statsBonus;
     
     protected final Stats statsPerLevel = new Stats(10, 2, 2);
     

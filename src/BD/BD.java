@@ -7,17 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import Exceptions.ImprevuDBError;
-import Jeu.Capacite;
-import Jeu.Categorie;
 import Jeu.FirstApplication;
-import Jeu.Listecapacite;
-import Jeu.Listeobjet;
 import Jeu.Mob;
-import Jeu.Movepool;
 import Jeu.Personnage;
 
 
@@ -193,7 +189,7 @@ public class BD {
 					"MDP: ", mdp,
 					"StatsID: ", Integer.toString(statsId),
 					"entiteId: ", Integer.toString(entiteId));
-			return identifier(pseudo, mdp);
+			return connecter();
 		}
 	}
 	
@@ -230,10 +226,8 @@ public class BD {
 	private static boolean verifier(String pseudo) throws SQLException {
 		BDebug("Vérification de la présence du pseudo ", pseudo, " dans la BD.");
 		joueurTable = querir(
-				"SELECT * "
+				"SELECT nom, mdp "
 				+ "FROM joueur "
-				+ "NATURAL JOIN entite "
-				+ "NATURAL JOIN stats "
 				+ "WHERE nom = ? "
 				, pseudo);
 		//next() renvoie true s'il y a au moins un résultat.
@@ -294,6 +288,8 @@ public class BD {
 			
 		}
 		
+		telechargerJoueur();
+		
 		BDebug("Téléchargement des données du joueur à l'id ", Integer.toString(joueurTable.getInt("joueur_id")));
 		
 		telechargerEntite();
@@ -322,6 +318,18 @@ public class BD {
 		//Puisque ça les entoure avec '', qui ne fonctionnent qu'avec les chaînes de caractères !
 	}
 	
+	private static void telechargerJoueur() throws SQLException {
+		joueurTable = querir(
+				"SELECT * "
+				+ "FROM joueur "
+				+ "NATURAL JOIN entite "
+				+ "NATURAL JOIN stats "
+				+ "WHERE nom = ? "
+				, joueurTable.getString("nom"));
+		//next() renvoie true s'il y a au moins un résultat.
+		joueurTable.next();
+	}
+	
 	private static void telechargerEntite() throws SQLException, IOException {
     	//Sélectionne toutes les entites que le joueur n'a pas encore vaincues.
     	//Pour rappel, la table victoire enregistre les entités vaincues par les joueurs.
@@ -340,16 +348,20 @@ public class BD {
 			+ ")",
 			BD.getJoueurTable().getInt("joueur_id")
 		);
+		//Il y a trois niveaux...
+		for(int niveau = 1; niveau <= 3; niveau++) {
+			entites.put(niveau, new HashMap<Integer, HashMap<Integer, Mob>>());
+			//...et neuf maps par niveau.
+			for (int map = 1; map <= 9; map++) {
+				entites.get(niveau).put(map, new HashMap<Integer, Mob>());
+			}
+		}
 		while(entiteTable.next()) {
 			Mob mob = new Mob(entiteTable);
-			entites.putIfAbsent(entiteTable.getInt("niveau_id"), new HashMap<Integer, HashMap<Integer, Mob>>());
-			entites.get(entiteTable.getInt("niveau_id")).putIfAbsent(entiteTable.getInt("map_id"), new HashMap<Integer, Mob>());
-			entites.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).put(entiteTable.getInt("entite_id"), mob);
-			
-			System.out.println(
-				"NbMaps: " + entites.get(entiteTable.getInt("niveau_id")).size() +
-				" Map " + entiteTable.getInt("map_id") +
-				" NbMobs: " + entites.get(entiteTable.getInt("niveau_id")).get(entiteTable.getInt("map_id")).size());
+			int niveauId = entiteTable.getInt("niveau_id");
+			int mapId = entiteTable.getInt("map_id");
+			int entiteId = entiteTable.getInt("entite_id");
+			entites.get(niveauId).get(mapId).put(entiteId, mob);
 		}
     }
 	

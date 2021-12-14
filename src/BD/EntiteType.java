@@ -3,8 +3,6 @@ package BD;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import Jeu.Movepool;
-
 public class EntiteType {
 	public final int entiteTypeId;
 	public final String nom;

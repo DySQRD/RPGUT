@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import BD.BD;
 import BD.Inventaire;
+import BD.Movepool;
 import BD.Stats;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -243,5 +244,11 @@ public class Personnage extends Entity {
 	public Movepool getMovepool() {
 		return movepool;
 	}
+
+	public Mob getMobVS() {
+		return mobVS;
+	}
+	
+	
 
 }

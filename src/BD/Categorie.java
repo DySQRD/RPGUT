@@ -1,4 +1,4 @@
-package Jeu;
+package BD;
 
 public enum Categorie {
 	

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import BD.BD;
 import BD.EntiteType;
+import BD.Movepool;
 import BD.Stats;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
