@@ -2,14 +2,14 @@ package BD;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import Jeu.Movepool;
+import BD.Movepool;
 
 /**
  * 
  * @author Dylan TOLEDANO
  *
  */
+
 
 public class EntiteType {
 	public final int entiteTypeId;

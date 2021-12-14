@@ -26,4 +26,14 @@ public class Stats extends HashMap<String, Integer> {
 	public Stats() {
 		this(0, 0, 0);
 	}
+	
+	static void sauvegarder() throws SQLException {
+		Stats stats = BD.personnage.getStats();
+		BD.informer("UPDATE stats SET pv_max = ?, attaque = ?, defense = ? WHERE stats_id = ?",
+			stats.get("pv_max"),
+			stats.get("attaque"),
+			stats.get("defense"),
+			BD.joueurTable.getInt("stats_id")
+		);
+	}
 }

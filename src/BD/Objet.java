@@ -1,5 +1,7 @@
 package BD;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * 
@@ -95,6 +97,25 @@ public class Objet {
 
 	public String getNom() {
 		return objetType.nom;
+	}
+	
+	
+	static void sauvegarder() throws SQLException {
+		BD.connexion.setAutoCommit(false);
+		//Supprimer tous les objets du joueur dans la BD...
+		BD.informer("DELETE FROM objet WHERE joueur_id = ?", BD.personnage.getJoueurId());
+		//...puis insérer les objets de l'Inventaire dans la BD.
+		BD.preparer("INSERT INTO objet VALUES(?,?,?,?)");
+		Inventaire inventaire = BD.personnage.getInventaire();
+		Set<Integer> cles = inventaire.keySet();
+		for(Integer cle : cles) {
+			Objet objet = inventaire.get(cle);
+			BD.preparer(BD.personnage.getJoueurId(), objet.objetType.objetTypeId, objet.getDurabilite(), cle);
+			BD.preparedStatement.addBatch();
+		}
+		BD.preparedStatement.executeBatch();
+		BD.connexion.commit();	//Dit que toutes les requêtes du batch sont définitives, pas de rollback possible.
+		BD.connexion.setAutoCommit(true);
 	}
 	
 }

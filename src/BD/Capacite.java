@@ -1,6 +1,12 @@
-package Jeu;
+package BD;
 
-import BD.Stats;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import Jeu.Entity;
+import Jeu.FirstApplication;
+import Jeu.Mob;
+import Jeu.Personnage;
 /**
  * 
  * @author Nasser AZROU-ISGHI
@@ -10,7 +16,7 @@ public class Capacite {
 	/* Dans nos idées actuels, une capacité possède un identifiant, un nom,une description, un type, des dégats, une précision, et peut éliminer
 	 * en un coup, d'où le booléan "oneshot"*/
 	
-
+	private final int capaciteId;
 	private final String name;
 	private final String description;
 	private final Categorie categorie;
@@ -21,6 +27,7 @@ public class Capacite {
 	private final int down;
 	private final String target;
 	
+	
 	/**
 	 * Le constructeur des capacités de type offensive.
 	 * @param name_
@@ -30,7 +37,8 @@ public class Capacite {
 	 * @param oneshot_
 	 * @param target
 	 */
-	public Capacite(String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
+	public Capacite(int capaciteId, String name_, String description_, int damage_, int precision_, boolean oneshot_, String target){
+		this.capaciteId = capaciteId;
 		name=name_;
 		description=description_;
 		categorie=Categorie.Offensive;
@@ -52,7 +60,8 @@ public class Capacite {
 	 * @param down
 	 * @param target
 	 */
-	public Capacite(String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
+	public Capacite(int capaciteId, String name_, String description_, int precision_,Categorie soutien, int up, int down,String target){
+		this.capaciteId = capaciteId;
 		name = name_;
 		description=description_;
 		categorie=soutien;
@@ -62,6 +71,13 @@ public class Capacite {
 		this.down=down;
 		oneshot=false;
 		this.target=target;
+	}
+	
+	/**
+	 * 
+	 */
+	public int getCapaciteId() {
+		return capaciteId;
 	}
 	
 	/**
@@ -146,8 +162,8 @@ public class Capacite {
 	 * représente le lanceur.
 	 * */
 	public void use(Entity user) {
-		Entity mob =FirstApplication.loopManager.getGameLoop().perso.mobVS;
-		Entity character = FirstApplication.loopManager.getGameLoop().perso;
+		Mob mob = BD.getPersonnage().getMobVS();
+		Personnage character = BD.getPersonnage();
 		Entity targetE;
 		if(Math.random() <= (precision/100)) {
 		if(this.target.equals("adversaire")) {
@@ -187,5 +203,35 @@ public class Capacite {
 	public boolean equals(Capacite capacite) {
 		if(name.equals(capacite.name) && description .equals(capacite.description) && categorie.equals(capacite.categorie)) return true;
 		else return false;
+	}
+	
+	static void telecharger() throws SQLException {
+		ResultSet capaciteTable = BD.telecharger("capacite");
+		while(capaciteTable.next()) {
+			Capacite cap;
+			if((capaciteTable.getString("categorie")).equals("Offensive")) {
+				cap = new Capacite(
+					capaciteTable.getInt("capacite_id"),
+					capaciteTable.getString("nom"),
+					capaciteTable.getString("description"),
+					capaciteTable.getInt("puissance"),
+					capaciteTable.getInt("precisionn"),
+					capaciteTable.getBoolean("oneshot"),
+					capaciteTable.getString("cibles")
+				);
+			} else {
+				cap = new Capacite(
+					capaciteTable.getInt("capacite_id"),
+					capaciteTable.getString("nom"),
+					capaciteTable.getString("description"),
+					capaciteTable.getInt("precisionn"),
+					Categorie.valueOf(capaciteTable.getString("categorie")),
+					capaciteTable.getInt("up"),
+					capaciteTable.getInt("down"),
+					capaciteTable.getString("cibles")
+				);
+			}
+			BD.capacites.put(capaciteTable.getInt("capacite_id"), cap);
+		}
 	}
 }

@@ -1,4 +1,7 @@
-package Jeu;
+
+package BD;
+
+
 /**
  * 
  * @author Nasser AZROU-ISGHI
