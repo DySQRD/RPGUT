@@ -166,18 +166,18 @@ public class BD {
 	 */
 	public static int inscrire(String pseudo, String mdp) throws SQLException, ImprevuDBError, IOException {
 		connexion = DriverManager.getConnection("jdbc:mysql://localhost/rpgut", "invite", "invite");
-		if(verifier(pseudo)) {// S'il existe déjà un joueur avec ce pseudo...
-			BDebug("Le pseudo demandé est déjà pris ! Pseudo: ", pseudo);
-			return 0;
-		} else if(!(entreeSafe(mdp) && entreeSafe(pseudo))) {//si mot de passe non conforme aux restrictions imposées...
+		if(!(entreeSafe(mdp) && entreeSafe(pseudo))) {//si mot de passe non conforme aux restrictions imposées...
 			BDebug("Pseudonyme ou mot de passe non conforme ! Pseudo: ", pseudo, " MDP: ", mdp,"\n"
 					+ "        Merci de n'utiliser que des chiffres et des lettres !");
 			return -1;
+		} else if(verifier(pseudo)) {// S'il existe déjà un joueur avec ce pseudo...
+			BDebug("Le pseudo demandé est déjà pris ! Pseudo: ", pseudo);
+			return 0;
 		} else {
 			//Création d'un tuple stats pour le nouveau joueur.
 			//Mettre les valeurs à NULL dans la requête indique de créer un tuple avec les valeurs de bases
 			//enregistrées dans la BD.
-			informer("INSERT INTO stats(stats_id) VALUES(NULL)");
+			informer("INSERT INTO stats(pv_max, attaque, defense) VALUES(100, 5, 5)");
 			//On récupère l'id du tuple inséré pour la mettre dans le tuple
 			//de la table entite du joueur.
 			int statsId = derniereId("stats");
@@ -202,7 +202,7 @@ public class BD {
 					"MDP: ", mdp,
 					"StatsID: ", Integer.toString(statsId),
 					"entiteId: ", Integer.toString(entiteId));
-			return connecter();
+			return identifier(pseudo, mdp);
 		}
 	}
 	
